@@ -22,9 +22,9 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-ProfileScreen.navigationOptions = () => {
-  return { header: false };
-};
+// ProfileScreen.navigationOptions = () => {
+//   return { header: false };
+// };
 
 export default ProfileScreen;
 

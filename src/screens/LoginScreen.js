@@ -54,9 +54,9 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-LoginScreen.navigationOptions = () => {
-  return { header: false };
-};
+// LoginScreen.navigationOptions = () => {
+//   return { header: false };
+// };
 
 export default LoginScreen;
 

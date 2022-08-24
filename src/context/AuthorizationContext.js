@@ -2,8 +2,6 @@ import { signIn, signOut, clearTokens } from "@okta/okta-react-native";
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 
-import { navigate } from "../navigationRef";
-
 const authReducer = (state, action) => {
   switch (action.type) {
     case "add_error":
@@ -49,7 +47,8 @@ const login = (dispatch) => {
       await SecureStore.setItemAsync("token", token.access_token);
 
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
-      navigate("Profile");
+      // navigate("Profile");
+      // RootNavigation.navigate("Profile");
     } catch (error) {
       console.log(error.message);
 
@@ -67,7 +66,8 @@ const logout = (dispatch) => {
       const resp = await clearTokens();
       await SecureStore.deleteItemAsync("token");
       dispatch({ type: "sign_out" });
-      navigate("Login");
+      // navigate("Login");
+      // RootNavigation.navigate("Login");
     } catch (err) {
       console.log(err.message);
       dispatch({ type: "add_error", payload: { errorMessage: err.message } });

@@ -1,43 +1,17 @@
 import { StatusBar } from "expo-status-bar";
-import { useContext, useEffect } from "react";
+import { useEffect } from "react";
 import React from "react";
-import { StyleSheet, Text, View } from "react-native";
-import { createStackNavigator } from "react-navigation-stack";
-import { createAppContainer, createSwitchNavigator } from "react-navigation";
-import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
-import { NavigationContainer } from "@react-navigation/native";
+import { StyleSheet } from "react-native";
+
 import { createConfig } from "@okta/okta-react-native";
 import "react-native-gesture-handler";
 
-import LoginScreen from "./src/screens/LoginScreen";
-import { Provider, Context } from "./src/context/AuthorizationContext";
+import { Provider } from "./src/context/AuthorizationContext";
 import oktaConfig from "./okta.config";
-import ProfileScreen from "./src/screens/ProfileScreen";
-import { setNavigator } from "./src/navigationRef";
-import SignUpScreen from "./src/screens/SignUpScreen";
-import { createNativeStackNavigator } from "@react-navigation/native-stack";
 
-const loginNavigator = createStackNavigator(
-  {
-    Login: LoginScreen,
-    Profile: ProfileScreen,
-  },
-  {
-    initialRouteName: "Login",
-    defaultNavigationOptions: {
-      title: "Personicle",
-    },
-  }
-);
-
-const LoginStack = createNativeStackNavigator();
-
-// const AppNavigator = <NavigationContainer></NavigationContainer>
-
-const App = createAppContainer(loginNavigator);
+import Router from "./src/Router";
 
 export default () => {
-  // const { state } = useContext(Context);
   useEffect(() => {
     console.log("setting up okta config");
     createConfig({
@@ -52,38 +26,10 @@ export default () => {
   }, []);
 
   console.log("starting app in app js");
-  // console.log(state);
 
-  const loginPage = (
-    <View>
-      <LoginScreen />
-      <StatusBar style="auto" />
-    </View>
-  );
-
-  const loginView = (
-    <LoginStack.Navigator initialRouteName="Login">
-      <LoginStack.Screen name="Login" component={LoginScreen} />
-      <LoginStack.Screen name="Profile" component={ProfileScreen} />
-    </LoginStack.Navigator>
-  );
-
-  const profilePage = (
-    <View>
-      <ProfileScreen />
-      <StatusBar style="auto" />
-    </View>
-  );
   return (
     <Provider>
-      {
-        <App
-          ref={(navigator) => {
-            setNavigator(navigator);
-          }}
-        />
-        // loginPage
-      }
+      <Router />
     </Provider>
   );
 };
