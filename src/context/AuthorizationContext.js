@@ -1,9 +1,9 @@
-import { signIn, signOut, clearTokens, signInWithBrowser } from "@okta/okta-react-native";
+import { signIn, signOut, clearTokens, signInWithBrowser, getUser, revokeAccessToken, revokeRefreshToken, revokeIdToken} from "@okta/okta-react-native";
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 
 import { navigate } from "../navigationRef";
-import { revokeToken } from "@okta/okta-auth-js";
+import { stopLocationTracking } from "../utils/location";
 
 const authReducer = (state, action) => {
   switch (action.type) {
@@ -49,6 +49,8 @@ const login = (dispatch) => {
       console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
+      let user = await getUser();
+      await SecureStore.setItemAsync("user_id", user['sub']);
 
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
       navigate("Profile");
@@ -67,13 +69,18 @@ const googleSignIn = (dispatch) => {
   return async () => {
     console.log("google sign in triggered");
     try {
+      
       const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7' });
 
       console.log("sign in success");
-
       await SecureStore.setItemAsync("token", token.access_token);
+      let user = await getUser();
+      await SecureStore.setItemAsync("user_id", user['sub']);
+
       
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
+      
+
       navigate("Profile");
     } catch (error) {
       console.log(error.message);
@@ -95,6 +102,8 @@ const signUp = (dispatch) => {
       console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
+      let user = await getUser();
+      await SecureStore.setItemAsync("user_id", user['sub']);
 
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
       navigate("Profile");
@@ -111,14 +120,24 @@ const signUp = (dispatch) => {
 const logout = (dispatch) => {
   return async () => {
     try {
-      const resp = await clearTokens();
+      console.error(await revokeAccessToken());
+      // console.error(await revokeRefreshToken());
+      // console.error(await revokeIdToken());
+      // console.error(await clearTokens());
       await SecureStore.deleteItemAsync("token");
+
+      console.error( await signOut());
+
+      stopLocationTracking();
+      // await revokeAccessToken();
+      // await SecureStore.deleteItemAsync("token");
       // const r = await revokeToken()
-     
 
       dispatch({ type: "sign_out" });
       navigate("Login");
     } catch (err) {
+      console.error(err);
+
       console.log(err.message);
       dispatch({ type: "add_error", payload: { errorMessage: err.message } });
     }

@@ -1,13 +1,35 @@
-import { Button, StyleSheet, Text, View } from "react-native";
-import React, { useContext } from "react";
+import { Button, StyleSheet, Text, View, Alert } from "react-native";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../context/AuthorizationContext";
-import { getAccessToken, isAuthenticated } from "@okta/okta-react-native";
+
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
-  console.log(state);
-  //   const { authenticated } = await isAuthenticated();
-  //   const { access_token } = await getAccessToken();
+  // const [foregroundLocationPersmissionInfo, requestForegroundPermission] = useBackgroundPermissions();
+  
+  const [location, setLocation] = React.useState('');
+  // useEffect(()=> {
+  //   const onLocation = BackgroundGeolocation.onLocation((location) => {
+  //     console.log('[onLocation]', location);
+  //     setLocation(JSON.stringify(location, null, 2));
+  //   })
+  //   // trackLocations(state["token"]);
+    
+  // },[]);
+
+  useEffect(()=>{
+    // (async () => {
+    //   const res = await isAuthed();
+    //   if (res){
+    //     startTracking();
+    //     //  navigate("Profile");
+    //   } else {
+    //     stopLocationTracking();
+    //     navigate("Login");
+    //   }
+    // })();
+  },[]);
+    
   return (
     <View>
       <Text>ProfileScreen</Text>
