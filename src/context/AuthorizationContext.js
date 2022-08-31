@@ -1,4 +1,12 @@
-import { signIn, signOut, clearTokens, signInWithBrowser } from "@okta/okta-react-native";
+import {
+  signIn,
+  signOut,
+  clearTokens,
+  signInWithBrowser,
+  revokeAccessToken,
+  refreshTokens,
+  getIdToken,
+} from "@okta/okta-react-native";
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 
@@ -42,7 +50,6 @@ const login = (dispatch) => {
       const token = await signIn({
         username: userEmail,
         password: password,
-
       });
 
       console.log("sign in success");
@@ -67,12 +74,14 @@ const googleSignIn = (dispatch) => {
   return async () => {
     console.log("google sign in triggered");
     try {
-      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7' });
+      const token = await signInWithBrowser({ idp: "0oa3v658b8VCLoy3L5d7" });
+      const idToken = await getIdToken();
 
       console.log("sign in success");
 
-      await SecureStore.setItemAsync("token", token.access_token);
-      
+      await SecureStore.setItemAsync("access_token", token.access_token);
+      await SecureStore.setItemAsync("id_token", idToken);
+
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
       // navigate("Profile");
       // RootNavigation.navigate("Profile");
@@ -85,7 +94,7 @@ const googleSignIn = (dispatch) => {
       });
     }
   };
-}
+};
 
 const signUp = (dispatch) => {
   return async () => {
@@ -98,7 +107,7 @@ const signUp = (dispatch) => {
       await SecureStore.setItemAsync("token", token.access_token);
 
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
-      navigate("Profile");
+      // navigate("Profile");
     } catch (error) {
       console.log(error.message);
 
@@ -108,61 +117,20 @@ const signUp = (dispatch) => {
       });
     }
   };
+};
 
-const googleSignIn = (dispatch) => {
-  return async () => {
-    console.log("google sign in triggered");
-    try {
-      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7' });
-
-      console.log("sign in success");
-
-      await SecureStore.setItemAsync("token", token.access_token);
-      
-      await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
-      navigate("Profile");
-    } catch (error) {
-      console.log(error.message);
-
-      dispatch({
-        type: "add_error",
-        payload: { errorMessage: `Error while signing in ${error.message}` },
-      });
-    }
-  };
-}
-
-const signUp = (dispatch) => {
-  return async () => {
-    console.log("google sign in triggered");
-    try {
-      const token = await signInWithBrowser();
-
-      console.log("sign in success");
-
-      await SecureStore.setItemAsync("token", token.access_token);
-
-      await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
-      navigate("Profile");
-    } catch (error) {
-      console.log(error.message);
-
-      dispatch({
-        type: "add_error",
-        payload: { errorMessage: `Error while signing in ${error.message}` },
-      });
-    }
-  };
-}
 const logout = (dispatch) => {
   return async () => {
     try {
-      const resp = await clearTokens();
-      await SecureStore.deleteItemAsync("token");
-      // const r = await revokeToken()
-     
+      const r = await revokeAccessToken();
+      if (r) {
+        const resp = await clearTokens();
+        await SecureStore.deleteItemAsync("token");
 
-      dispatch({ type: "sign_out" });
+        dispatch({ type: "sign_out" });
+      } else {
+        throw "Sign out not successful";
+      }
       // navigate("Login");
       // RootNavigation.navigate("Login");
     } catch (err) {
@@ -174,6 +142,6 @@ const logout = (dispatch) => {
 
 export const { Context, Provider } = createDataContext(
   authReducer,
-  { login, logout , googleSignIn, signUp},
+  { login, logout, googleSignIn, signUp },
   { logged_in: false, token: null, errorMessage: "" }
 );

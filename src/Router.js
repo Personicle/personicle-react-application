@@ -10,6 +10,7 @@ export default () => {
   const { state } = useContext(Context);
   return (
     <NavigationContainer ref={navigationRef}>
+      {/* <LoginStack /> */}
       {state.token ? <AppStack /> : <LoginStack />}
     </NavigationContainer>
   );
