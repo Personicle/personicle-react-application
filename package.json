@@ -11,8 +11,13 @@
   "dependencies": {
     "@okta/okta-react-native": "^2.5.0",
     "@react-navigation/bottom-tabs": "^6.3.2",
+    "@react-navigation/native": "^6.0.12",
     "@react-navigation/native-stack": "^6.7.0",
+<<<<<<< HEAD
     "axios": "^0.27.2",
+=======
+    "@react-navigation/stack": "^6.2.3",
+>>>>>>> navigation-update
     "expo": "~45.0.0",
     "expo-app-loading": "~2.0.0",
     "expo-background-fetch": "~10.2.0",
@@ -29,13 +34,15 @@
     "react-native-background-fetch": "^4.1.2",
     "react-native-background-geolocation": "^4.8.2",
     "react-native-gesture-handler": "~2.2.1",
+<<<<<<< HEAD
     "react-native-google-signin": "^2.1.1",
     "react-native-permissions": "^3.6.1",
+=======
+    "react-native-health": "^1.13.0",
+>>>>>>> navigation-update
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "~3.11.1",
-    "react-native-web": "0.17.7",
-    "react-navigation": "^4.4.4",
-    "react-navigation-stack": "^2.10.4"
+    "react-native-web": "0.17.7"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

@@ -1,14 +1,14 @@
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState, useContext } from "react";
-import signInWithBrowser from "@okta/okta-react-native";
-import {GoogleSigninButton,} from 'react-native-google-signin';
+// import signInWithBrowser from "@okta/okta-react-native";
+// import { GoogleSigninButton } from "react-native-google-signin";
 import { Context } from "../context/AuthorizationContext";
 
 const LoginScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
   console.log(userEmail, password);
-  const { state, login, googleSignIn, signUp} = useContext(Context);
+  const { state, login, googleSignIn, signUp } = useContext(Context);
 
   console.log(state);
 
@@ -48,9 +48,10 @@ const LoginScreen = ({ navigation }) => {
             login(userEmail, password);
           }}
         />
-         <GoogleSigninButton
-          style={{marginLeft: 85}}
-          color={GoogleSigninButton.Color.Dark}
+        <Button
+          title="Sign in with Google"
+          style={{ marginLeft: 85 }}
+          // color={GoogleSigninButton.Color.Dark}
           onPress={() => {
             console.log("google sign in button pressed");
             googleSignIn();
@@ -58,8 +59,8 @@ const LoginScreen = ({ navigation }) => {
         />
 
         <Button
-        title="Create a new account"
-          style={{marginLeft: 85}}
+          title="Create a new account"
+          style={{ marginLeft: 85 }}
           onPress={() => {
             console.log("sign up button pressed");
             signUp();
@@ -73,9 +74,9 @@ const LoginScreen = ({ navigation }) => {
   );
 };
 
-LoginScreen.navigationOptions = () => {
-  return { header: false };
-};
+// LoginScreen.navigationOptions = () => {
+//   return { header: false };
+// };
 
 export default LoginScreen;
 

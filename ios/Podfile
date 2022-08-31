@@ -20,6 +20,7 @@ require File.join(File.dirname(`node --print "require.resolve('react-native/pack
 require File.join(File.dirname(`node --print "require.resolve('@react-native-community/cli-platform-ios/package.json')"`), "native_modules")
 
 require 'json'
+require 'xcodeproj'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
 platform :ios, podfile_properties['ios.deploymentTarget'] || '12.0'
@@ -77,8 +78,31 @@ target 'personicleapplication' do
     __apply_Xcode_12_5_M1_post_install_workaround(installer)
   end
 
+
+  def update_pod_build_phase_order(xcodeproj_path, target_name)
+      puts "Updating build phase order of '[CP] Embed Pods Frameworks' in #{xcodeproj_path}, #{target_name} \n"
+      project = Xcodeproj::Project.open(xcodeproj_path)
+      target = project.targets.select { |t| t.name == target_name }.first
+      puts "Found target: #{target.name}\n"
+      cocoapods_index = target.build_phases.index { |b|
+          name = b.name if b.respond_to? :name
+          name == "[CP] Embed Pods Frameworks"
+      }
+      if cocoapods_index.nil? == false
+          puts "#{target_name}: '[CP] Embed Pods Frameworks' index was: #{cocoapods_index}, moving to index 3.\n"
+          target.build_phases.move_from(cocoapods_index, 3) # move further to the top
+      end
+      project.save
+  end
+
+
+  # post_integrate do |installer|
+  #     update_pod_build_phase_order("./Pods/Pods.xcodeproj", "ExpoModulesCore")
+  # end
+
   post_integrate do |installer|
     begin
+      # update_pod_build_phase_order("./Pods/Pods.xcodeproj", "ExpoModulesCore")
       expo_patch_react_imports!(installer)
     rescue => e
       Pod::UI.warn e
