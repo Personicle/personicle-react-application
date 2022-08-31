@@ -1,23 +1,25 @@
 import { Button, StyleSheet, Text, TextInput, View } from "react-native";
 import React, { useState, useContext } from "react";
+import signInWithBrowser from "@okta/okta-react-native";
+import {GoogleSigninButton,} from 'react-native-google-signin';
 import { Context } from "../context/AuthorizationContext";
 
 const LoginScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
   console.log(userEmail, password);
-  const { state, login } = useContext(Context);
+  const { state, login, googleSignIn, signUp} = useContext(Context);
 
   console.log(state);
 
   return (
     <View style={styles.container}>
       <View style={styles.loginIcon}>
-        <Text style={{ fontSize: 40 }}>LoginScreen</Text>
+        <Text style={{ fontSize: 40 }}>Personicle</Text>
       </View>
       <View
         style={{
-          flex: 1,
+          flex: 2,
           alignItems: "stretch",
         }}
       >
@@ -44,6 +46,23 @@ const LoginScreen = ({ navigation }) => {
             console.log("button pressed");
             console.log(userEmail, password);
             login(userEmail, password);
+          }}
+        />
+         <GoogleSigninButton
+          style={{marginLeft: 85}}
+          color={GoogleSigninButton.Color.Dark}
+          onPress={() => {
+            console.log("google sign in button pressed");
+            googleSignIn();
+          }}
+        />
+
+        <Button
+        title="Create a new account"
+          style={{marginLeft: 85}}
+          onPress={() => {
+            console.log("sign up button pressed");
+            signUp();
           }}
         />
         {state.errorMessage ? <Text>{state.errorMessage}</Text> : null}
