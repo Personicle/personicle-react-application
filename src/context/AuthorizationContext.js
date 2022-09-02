@@ -64,7 +64,9 @@ const login = (dispatch) => {
 
       dispatch({
         type: "add_error",
-        payload: { errorMessage: `Error while signing in ${error.message}` },
+        payload: {
+          errorMessage: `Error while signing in ${error.message}`,
+        },
       });
     }
   };
@@ -90,7 +92,9 @@ const googleSignIn = (dispatch) => {
 
       dispatch({
         type: "add_error",
-        payload: { errorMessage: `Error while signing in ${error.message}` },
+        payload: {
+          errorMessage: `Error while signing in ${error.message}`,
+        },
       });
     }
   };

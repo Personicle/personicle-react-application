@@ -1,4 +1,4 @@
-import { Button, StyleSheet, Text, View } from "react-native";
+import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
 import React, { useContext } from "react";
 import { Context } from "../context/AuthorizationContext";
 import { getAccessToken, isAuthenticated } from "@okta/okta-react-native";
@@ -9,16 +9,18 @@ const ProfileScreen = ({ navigation }) => {
   //   const { authenticated } = await isAuthenticated();
   //   const { access_token } = await getAccessToken();
   return (
-    <View>
-      <Text>ProfileScreen</Text>
-      <Text>{JSON.stringify(state)}</Text>
-      <Button
-        title="Sign Out"
-        onPress={() => {
-          logout();
-        }}
-      />
-    </View>
+    <SafeAreaView>
+      <View>
+        <Text>ProfileScreen</Text>
+        <Text>{JSON.stringify(state)}</Text>
+        <Button
+          title="Sign Out"
+          onPress={() => {
+            logout();
+          }}
+        />
+      </View>
+    </SafeAreaView>
   );
 };
 

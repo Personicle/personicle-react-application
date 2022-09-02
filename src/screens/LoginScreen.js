@@ -1,4 +1,11 @@
-import { Button, StyleSheet, Text, TextInput, View } from "react-native";
+import {
+  Button,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import React, { useState, useContext } from "react";
 // import signInWithBrowser from "@okta/okta-react-native";
 // import { GoogleSigninButton } from "react-native-google-signin";
