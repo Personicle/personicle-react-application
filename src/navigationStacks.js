@@ -5,6 +5,7 @@ import TimelineScreen from "./screens/TimelineScreen";
 import FoodLogScreen from "./screens/FoodLogScreen";
 import SleepLogScreen from "./screens/SleepLogScreen";
 import PhysicianQuestionScreen from "./screens/PhysicianQuestionScreen";
+import { Text, View } from "react-native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
@@ -42,5 +43,21 @@ export const AppStack = () => {
         component={PhysicianQuestionScreen}
       />
     </Drawer.Navigator>
+  );
+};
+
+function SplashScreen() {
+  return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
+export const SplashStack = () => {
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen name="Splash" component={SplashScreen} />
+    </Stack.Navigator>
   );
 };

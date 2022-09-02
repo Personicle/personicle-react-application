@@ -1,13 +1,10 @@
-import { Button, SafeAreaView, StyleSheet, Text, View } from "react-native";
-import React, { useContext } from "react";
+import { Button, StyleSheet, Text, View, SafeAreaView } from "react-native";
+import React, { useContext, useEffect } from "react";
 import { Context } from "../context/AuthorizationContext";
-import { getAccessToken, isAuthenticated } from "@okta/okta-react-native";
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
-  console.log(state);
-  //   const { authenticated } = await isAuthenticated();
-  //   const { access_token } = await getAccessToken();
+
   return (
     <SafeAreaView>
       <View>
@@ -23,10 +20,6 @@ const ProfileScreen = ({ navigation }) => {
     </SafeAreaView>
   );
 };
-
-// ProfileScreen.navigationOptions = () => {
-//   return { header: false };
-// };
 
 export default ProfileScreen;
 

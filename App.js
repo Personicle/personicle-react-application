@@ -1,19 +1,20 @@
 import { StatusBar } from "expo-status-bar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import React from "react";
 import { StyleSheet } from "react-native";
-
-import { createConfig } from "@okta/okta-react-native";
 import "react-native-gesture-handler";
-
 import { Provider } from "./src/context/AuthorizationContext";
+
 import oktaConfig from "./okta.config";
 
+import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
 
 export default () => {
+  
   useEffect(() => {
     console.log("setting up okta config");
+
     createConfig({
       clientId: oktaConfig.oidc.clientId,
       redirectUri: oktaConfig.oidc.redirectUri,
