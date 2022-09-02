@@ -40,7 +40,10 @@ export default () => {
           } else {
             stopLocationTracking();
           }
-        } 
+        } else {
+          startTracking();
+
+        }
         // console.error("is logged in:", state.logged_in)
        
     })();
