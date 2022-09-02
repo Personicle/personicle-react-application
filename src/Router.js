@@ -15,7 +15,7 @@ export const startTracking = async () => {
         const token = await SecureStore.getItemAsync("token");
         const user_id = await SecureStore.getItemAsync("user_id");
         await startLocationTracking();
-        await trackLocations(token,user_id)
+        // await trackLocations(token,user_id)
         return true;
     
   } catch (error) {

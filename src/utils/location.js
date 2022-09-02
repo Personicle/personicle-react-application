@@ -1,13 +1,19 @@
 import BackgroundGeolocation from "react-native-background-geolocation";
 import axios from 'axios'
+import * as SecureStore from "expo-secure-store";
 
 async function deleteLocs(){
   await BackgroundGeolocation.destroyLocations();
 }
-async function  sendLocation(location, auth,user_id){
+async function  sendLocation(location){
   let allLocations = await BackgroundGeolocation.getLocations();
-  // if (allLocations.length() == 0) return;
+  if (allLocations.length == 0) return;
+  const token = await SecureStore.getItemAsync("token");
+  const user_id = await SecureStore.getItemAsync("user_id");
+   
+  
   let values = []
+  const auth = SecureStore
   allLocations.forEach(loc => {
     values.push({
       'latitude': loc['coords']['latitude'],
@@ -15,6 +21,7 @@ async function  sendLocation(location, auth,user_id){
       'timestamp': loc['timestamp']
     })
   })
+  
  
   data = {
     "individual_id": user_id,
@@ -29,11 +36,11 @@ async function  sendLocation(location, auth,user_id){
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
-      'Authorization': "Bearer "+auth
+      'Authorization': "Bearer "+token
     }
   }).then(res => {
     if (res.status == 200){
-      deleteLocs()
+      deleteLocs();
     }
   });
  
@@ -42,7 +49,7 @@ async function  sendLocation(location, auth,user_id){
 export async function trackLocations(auth,user_id){
   const onLocation = BackgroundGeolocation.onLocation((location) => {
     // console.error('[onLocation]', location);
-    sendLocation(location,auth,user_id);
+    sendLocation(location);
   })
 }
 
@@ -74,6 +81,11 @@ export function startLocationTracking(){
     
   })
     BackgroundGeolocation.start();
+
+    const onLocation = BackgroundGeolocation.onLocation((location) => {
+      // console.error('[onLocation]', location);
+      sendLocation(location);
+    })
 }
 
 export function stopLocationTracking(){
