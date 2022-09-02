@@ -1,12 +1,7 @@
-import BackgroundGeolocation, {
-    Location,
-    Subscription
-  } from "react-native-background-geolocation";
-import { getAccessToken, isAuthenticated, refreshTokens} from "@okta/okta-react-native";
+import BackgroundGeolocation from "react-native-background-geolocation";
 import axios from 'axios'
 
 async function deleteLocs(){
-  // console.error(location.uuid)
   await BackgroundGeolocation.destroyLocations();
 }
 async function  sendLocation(location, auth,user_id){
@@ -14,19 +9,13 @@ async function  sendLocation(location, auth,user_id){
   // if (allLocations.length() == 0) return;
   let values = []
   allLocations.forEach(loc => {
-    console.error(loc)
     values.push({
       'latitude': loc['coords']['latitude'],
       'longitude': loc['coords']['longitude'],
       'timestamp': loc['timestamp']
     })
   })
-  console.error(typeof allLocations)
-  console.error(typeof location)
-  // val = {
-  //   'latitude': location['coords']['latitude'],
-  //   'longitude': location['coords']['longitude']
-  // }
+ 
   data = {
     "individual_id": user_id,
     "streamName": "com.personicle.individual.datastreams.location",
@@ -47,50 +36,14 @@ async function  sendLocation(location, auth,user_id){
       deleteLocs()
     }
   });
-  // axios.post('https://api.personicle.org/data/write/datastream/upload', JSON.stringify(data), {
-  //   headers: {
-  //     'Accept': 'application/json',
-  //     'Content-Type': 'application/json',
-  //     'Authorization': "Bearer "+auth
-  //   }
-  // }).then(res=> console.error(res.statusText));
+ 
 }
-export async function syncLocations(){
-  BackgroundGeolocation.sync((records) => {
-    console.error("[sync] success: ", records);
-  }).catch((error) => {
-    console.error("[sync] FAILURE: ", error);
-  });
-}
-export async function trackLocations(auth,user_id){
-  // let de = await BackgroundGeolocation.destroyLocations();
 
-  let allLocations = await BackgroundGeolocation.getLocations();
-  let count = await BackgroundGeolocation.getCount();
-  console.error(count)
-  
-  
-  
-  //   try {r
-  //      const res = await refreshTokens();
-  //     console.error(res);
-  //     console.error("hello");
-  
-  //     // business logic goes here
-  // } catch (error) {
-  //     console.error(error) // from creation or business logic
-  // }
+export async function trackLocations(auth,user_id){
   const onLocation = BackgroundGeolocation.onLocation((location) => {
-    console.error('[onLocation]', location);
-    console.error("hola")
+    // console.error('[onLocation]', location);
     sendLocation(location,auth,user_id);
   })
-  // console.error(locations)
-  // console.error(count)
-  // const r = await syncLocations();
-  // console.error(r)
-  
-  
 }
 
 export function startLocationTracking(){

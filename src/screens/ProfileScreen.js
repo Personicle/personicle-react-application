@@ -5,30 +5,7 @@ import { Context } from "../context/AuthorizationContext";
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
-  // const [foregroundLocationPersmissionInfo, requestForegroundPermission] = useBackgroundPermissions();
-  
-  const [location, setLocation] = React.useState('');
-  // useEffect(()=> {
-  //   const onLocation = BackgroundGeolocation.onLocation((location) => {
-  //     console.log('[onLocation]', location);
-  //     setLocation(JSON.stringify(location, null, 2));
-  //   })
-  //   // trackLocations(state["token"]);
-    
-  // },[]);
-
-  useEffect(()=>{
-    // (async () => {
-    //   const res = await isAuthed();
-    //   if (res){
-    //     startTracking();
-    //     //  navigate("Profile");
-    //   } else {
-    //     stopLocationTracking();
-    //     navigate("Login");
-    //   }
-    // })();
-  },[]);
+ 
     
   return (
     <View>
@@ -44,9 +21,6 @@ const ProfileScreen = ({ navigation }) => {
   );
 };
 
-// ProfileScreen.navigationOptions = () => {
-//   return { header: false };
-// };
 
 export default ProfileScreen;
 

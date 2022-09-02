@@ -1,5 +1,6 @@
 import LoginScreen from "./screens/LoginScreen";
 import ProfileScreen from "./screens/ProfileScreen";
+import { Text, View } from 'react-native';
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 const Stack = createNativeStackNavigator();
@@ -19,3 +20,19 @@ export const AppStack = () => {
     </Stack.Navigator>
   );
 };
+
+function SplashScreen() {
+  return (
+    <View>
+      <Text>Loading...</Text>
+    </View>
+  );
+}
+export const SplashStack =() =>{
+  return (
+    <Stack.Navigator initialRouteName="Splash">
+      <Stack.Screen name="Splash" component={SplashScreen} />
+    </Stack.Navigator>
+  );
+}
+
