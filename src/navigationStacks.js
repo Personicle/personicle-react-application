@@ -5,14 +5,45 @@ import TimelineScreen from "./screens/TimelineScreen";
 import FoodLogScreen from "./screens/FoodLogScreen";
 import SleepLogScreen from "./screens/SleepLogScreen";
 import PhysicianQuestionScreen from "./screens/PhysicianQuestionScreen";
+import TimelineScreenWeekly from "./screens/TimelineScreenWeekly";
 import { Text, View } from "react-native";
 
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
+import { Ionicons } from '@expo/vector-icons';
 
-// const Stack = createNativeStackNavigator();
+const Tab = createBottomTabNavigator();
 
-// const Drawer = createDrawerNavigator();
+function TabRoutes(){
+  return (
+    <Tab.Navigator
+        screenOptions={({ route }) => ({
+          tabBarIcon: ({ focused, color, size }) => {
+            let iconName;
+
+            if (route.name === 'Timeline') {
+              iconName = focused
+                ? 'ios-information-circle'
+                : 'ios-information-circle-outline';
+            } else if (route.name === 'Settings') {
+              iconName = focused ? 'ios-list-box' : 'ios-list';
+            }
+
+            // You can return any component that you like here!
+            return <Ionicons name={iconName} size={size} color={color} />;
+          },
+          tabBarActiveTintColor: 'tomato',
+          tabBarInactiveTintColor: 'gray',
+        })}
+        
+        >
+        <Tab.Screen name="Daily" component={TimelineScreen} options={{header: () => null}}/>
+        <Tab.Screen name="Weekly" component={TimelineScreenWeekly} options={{header: () => null}} />
+
+      </Tab.Navigator>
+  )
+}
 
 export const LoginStack = () => {
   const Stack = createNativeStackNavigator();
@@ -35,13 +66,15 @@ export const AppStack = () => {
     >
       <Drawer.Screen name="Profile" component={ProfileScreen} />
       <Drawer.Screen name="Connections" component={ConnectionScreen} />
-      <Drawer.Screen name="Timeline" component={TimelineScreen} />
+      <Drawer.Screen name="Timeline" component={TabRoutes} />
       <Drawer.Screen name="Food Logging" component={FoodLogScreen} />
       <Drawer.Screen name="Sleep Logging" component={SleepLogScreen} />
       <Drawer.Screen
         name="Physician Questionnaire"
         component={PhysicianQuestionScreen}
       />
+
+
     </Drawer.Navigator>
   );
 };
@@ -56,8 +89,8 @@ function SplashScreen() {
 export const SplashStack = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator initialRouteName="Splash">
-      <Stack.Screen name="Splash" component={SplashScreen} />
+    <Stack.Navigator initialRouteName="Loading">
+      <Stack.Screen name="Loading" component={SplashScreen} />
     </Stack.Navigator>
   );
 };
