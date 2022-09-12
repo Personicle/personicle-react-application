@@ -13,7 +13,7 @@ async function  sendLocation(location){
    
   
   let values = []
-  const auth = SecureStore
+  // const auth = SecureStore
   allLocations.forEach(loc => {
     values.push({
       'latitude': loc['coords']['latitude'],
