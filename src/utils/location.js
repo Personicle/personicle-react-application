@@ -11,27 +11,31 @@ async function  sendLocation(location){
   const token = await SecureStore.getItemAsync("token");
   const user_id = await SecureStore.getItemAsync("user_id");
    
-  
+  let dataPoints = []
   let values = []
   // const auth = SecureStore
   allLocations.forEach(loc => {
     values.push({
       'latitude': loc['coords']['latitude'],
       'longitude': loc['coords']['longitude'],
-      'timestamp': loc['timestamp']
+      // 'timestamp': loc['timestamp']
     })
+    dataPoints.push({
+      'timestamp': loc['timestamp'],
+      'value': values
+    })
+    
   })
   
- 
+ try {
+
   data = {
     "individual_id": user_id,
     "streamName": "com.personicle.individual.datastreams.location",
     "source": "PERSONICLE_IOS_APP",
-    "dataPoints":[{
-      "timestamp": location['timestamp'],
-      "value": values
-    }]
+    "dataPoints": dataPoints
   }
+  // console.error("sending location")
   axios.post('https://api.personicle.org/data/write/datastream/upload', JSON.stringify(data), {
     headers: {
       'Accept': 'application/json',
@@ -39,10 +43,15 @@ async function  sendLocation(location){
       'Authorization': "Bearer "+token
     }
   }).then(res => {
+    // console.error(res)
     if (res.status == 200){
       deleteLocs();
     }
   });
+ } catch (error) {
+   console.error(error)
+ }
+  
  
 }
 
