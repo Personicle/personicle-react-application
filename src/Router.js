@@ -29,6 +29,7 @@ export default () => {
   const { state, autoLogin } = useContext(Context);
   useEffect(() => {
     (async () => {
+
       if (state.logged_in == false) {
         // console.error("if is logged in:", state.logged_in)
 

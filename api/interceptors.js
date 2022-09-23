@@ -1,17 +1,18 @@
 import axios from 'axios';
 import * as SecureStore from "expo-secure-store";
 import moment from 'moment'
+import {API_EVENT_READ} from '@env'
 
 const getToken = async()=>{
     const token = await SecureStore.getItemAsync("token");
     return token;
 }
-const getUserId = async() => {
+export const getUserId = async() => {
     const uid = await SecureStore.getItemAsync("user_id");
     return uid;
 }
 const eventRead  = axios.create({
-    baseURL: 'https://api.personicle.org/data/read/events',
+    baseURL: `${API_EVENT_READ}`,
 })
 function toString(number, padLength) {
     return number.toString().padStart(padLength, '0');

@@ -23,15 +23,7 @@ const TimelineScreenWeekly = () => {
   const [chartData, setChartData] = useState({});
   const [formattedChartData, setFormattedChatData] = useState([]);
 
-  const datas = {
-    labels: ["Test1", "Test2"],
-    legend: ["L1", "L2", "L3"],
-    data: [
-      [60, 60, 60],
-      [30, 30, 60]
-    ],
-    barColors: ["#eb4034", "#152ae6", "#21e010"]
-  };
+  
   const chartConfig = {
     backgroundGradientFrom: "#FFFFFF",
     backgroundGradientFromOpacity: 0,
@@ -89,18 +81,13 @@ const TimelineScreenWeekly = () => {
   }, [])
 
   useEffect(() => {
-    
     setCurrentWeekEvents(weeklyEvents[timelineYearWeek]);
-    
    }, [timelineYearWeek]);
-
-   
    useEffect(() => {
     
     try {
+   
       if (currentEvents !== undefined ){
-        // console.error(currentEvents)
-
         const groupedByDayOfWeek = lodash.groupBy(currentEvents, (event) => {
           return [moment(event['time'],'MM-DD-YYYY h:m:s.SSS a').startOf('day').format('dddd').substring(0,3)];
         });
@@ -119,6 +106,9 @@ const TimelineScreenWeekly = () => {
           
 
   
+      } else {
+        setChartData(undefined);
+
       }
         // for (var i = 0; i < currentEvents.length; i++) {
         //   temp[currentEvents[i].title] = currentEvents[i];
@@ -143,17 +133,16 @@ const TimelineScreenWeekly = () => {
           //  console.error(e.length)
            for (const [key, value] of Object.entries(e[1])) {
             console.log(`${key}: ${value}`);
-            temp[key+"_"+e[0]]  = lodash.sumBy(value, (o)=> {return o['duration']})
+            temp[key+"_"+e[0]]  = lodash.sumBy(value, (o)=> {
+              // console.error(o['duration']);
+              return (moment.duration(o['duration']).minutes() )
+            })
           }
           
           
            dataToDisplay.push(Object.values(temp))
         })
-        // console.error(dataToDisplay)
 
-        // console.error(uniqueEventsInWeek)
-        // console.error(formattedChartData)
-        //   console.error(daysActive)
           const datas = {
             labels: daysActive,
             legend: uniqueEventsInWeek,

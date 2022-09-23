@@ -68,6 +68,7 @@ const permissions = {
   },
 };
 
+
 const dataGetterMapping = {
   ActiveEnergyBurned: AppleHealthKit.getActiveEnergyBurned,
   // AppleExerciseTime

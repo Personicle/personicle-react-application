@@ -4,12 +4,15 @@ import {
   Text,
   TouchableOpacity,
   View,
+  Linking,
+  Image
 } from "react-native";
 import React from "react";
 import { FontAwesome } from "@expo/vector-icons";
 
 import { connectHealthKit } from "../utils/healthKitSetup/healthKit";
-
+import { getUserId } from "../../api/interceptors";
+import {GOOGLE_FIT_CONNECTION, FITBIT_CONNECTION, OURA_CONNECTION} from '@env'
 const ConnectionScreen = () => {
   return (
     <SafeAreaView>
@@ -22,11 +25,43 @@ const ConnectionScreen = () => {
         >
           <FontAwesome
             name="apple"
-            size={24}
+            size={45}
             color="black"
             style={{ paddingRight: 10 }}
           />
-          <Text>Connect Apple Health Kit</Text>
+          <Text> Connect Apple Health</Text>
+        </TouchableOpacity>
+        <TouchableOpacity
+          onPress={async () => { 
+            const uid = await getUserId();
+            Linking.openURL(`${GOOGLE_FIT_CONNECTION}?user_id=${uid}`)
+           }}
+          style={styles.connectionStyle}
+        >
+          <Image  style={styles.image} source={require("../../assets/googlefit.png")}/>
+          <Text>  Connect Google fit</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={async () => { 
+            const uid = await getUserId();
+            Linking.openURL(`${FITBIT_CONNECTION}?user_id=${uid}`)
+           }}
+          style={styles.connectionStyle}
+        >
+          <Image  style={styles.image} source={require("../../assets/fitbit.png")}/>
+          <Text style>  Connect Fitbit</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          onPress={async () => { 
+            const uid = await getUserId();
+            Linking.openURL(`${OURA_CONNECTION}?user_id=${uid}`)
+           }}
+          style={styles.connectionStyle}
+        >
+          <Image  style={styles.image} source={require("../../assets/oura.png")}/>
+          <Text style> Connect Oura</Text>
         </TouchableOpacity>
       </View>
     </SafeAreaView>
@@ -41,11 +76,20 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     marginVertical: 10,
     alignItems: "center",
-    paddingHorizontal: 10,
+    justifyContent: "center",
+    padding: 14,
     borderRadius: 5,
     backgroundColor: "white",
   },
   ConnectionView: {
-    alignItems: "center",
+    // flex: 1,
+    justifyContent: "center",
+    // paddingHorizontal: 4,
+    // alignItems: "center",
   },
+  image: {
+    width: 45,
+    paddingRight: 20,
+    height: 45,
+  }
 });
