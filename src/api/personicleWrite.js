@@ -1,6 +1,8 @@
 import axios from "axios";
 import * as SecureStore from "expo-secure-store";
-import {API_EVENT_UPLOAD, API_DATASTREAM_UPLOAD} from '@env'
+// import {API_EVENT_UPLOAD, API_DATASTREAM_UPLOAD} from 'react-native-dotenv'
+// import {API_EVENT_UPLOAD, API_DATASTREAM_UPLOAD} from '@env'
+
 
 export const writeEvents = async (events) => {
   // Create the api end point for writing events
@@ -8,7 +10,7 @@ export const writeEvents = async (events) => {
     const token = await SecureStore.getItemAsync("token");
     console.warn(events);
     const apiEndpoint = axios.create({
-      baseURL: `${API_EVENT_UPLOAD}`,
+      baseURL: `https://api.personicle.org/data/write/event/upload`,
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",
@@ -37,7 +39,7 @@ export const writeDataStream = async (dataPoints) => {
   try {
     const token = await SecureStore.getItemAsync("token");
     const apiEndpoint = axios.create({
-      baseURL: `${API_DATASTREAM_UPLOAD}`, //"http://127.0.0.1:5001/datastream/upload",
+      baseURL: `https://api.personicle.org/data/write/datastream/upload`, //"http://127.0.0.1:5001/datastream/upload",
       headers: {
         "Content-Type": "application/json",
         Accept: "application/json",

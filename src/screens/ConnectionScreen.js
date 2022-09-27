@@ -12,7 +12,9 @@ import { FontAwesome } from "@expo/vector-icons";
 
 import { connectHealthKit } from "../utils/healthKitSetup/healthKit";
 import { getUserId } from "../../api/interceptors";
-import {GOOGLE_FIT_CONNECTION, FITBIT_CONNECTION, OURA_CONNECTION} from '@env'
+// import {GOOGLE_FIT_CONNECTION, FITBIT_CONNECTION, OURA_CONNECTION} from '@env'
+// import {GOOGLE_FIT_CONNECTION, FITBIT_CONNECTION, OURA_CONNECTION} from 'react-native-dotenv'
+
 const ConnectionScreen = () => {
   return (
     <SafeAreaView>
@@ -34,7 +36,7 @@ const ConnectionScreen = () => {
         <TouchableOpacity
           onPress={async () => { 
             const uid = await getUserId();
-            Linking.openURL(`${GOOGLE_FIT_CONNECTION}?user_id=${uid}`)
+            Linking.openURL(`https://personicle-ingestion-staging.azurewebsites.net/google-fit/connection?user_id=${uid}`)
            }}
           style={styles.connectionStyle}
         >
@@ -45,7 +47,7 @@ const ConnectionScreen = () => {
         <TouchableOpacity
           onPress={async () => { 
             const uid = await getUserId();
-            Linking.openURL(`${FITBIT_CONNECTION}?user_id=${uid}`)
+            Linking.openURL(`https://personicle-ingestion-staging.azurewebsites.net/fitbit/connection?user_id=${uid}`)
            }}
           style={styles.connectionStyle}
         >
@@ -56,7 +58,7 @@ const ConnectionScreen = () => {
         <TouchableOpacity
           onPress={async () => { 
             const uid = await getUserId();
-            Linking.openURL(`${OURA_CONNECTION}?user_id=${uid}`)
+            Linking.openURL(`https://personicle-ingestion-staging.azurewebsites.net/oura/connection?user_id=${uid}`)
            }}
           style={styles.connectionStyle}
         >
