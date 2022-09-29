@@ -7,7 +7,7 @@ import SleepLogScreen from "./screens/SleepLogScreen";
 import PhysicianQuestionScreen from "./screens/PhysicianQuestionScreen";
 import TimelineScreenWeekly from "./screens/TimelineScreenWeekly";
 import { Text, View } from "react-native";
-
+import PhysiciansQues from "./screens/PhysiciansQues";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
@@ -29,8 +29,6 @@ function TabRoutes(){
             } else if (route.name === 'Settings') {
               iconName = focused ? 'ios-list-box' : 'ios-list';
             }
-
-            // You can return any component that you like here!
             return <Ionicons name={iconName} size={size} color={color} />;
           },
           tabBarActiveTintColor: 'tomato',
@@ -59,6 +57,8 @@ export const LoginStack = () => {
 
 export const AppStack = () => {
   const Drawer = createDrawerNavigator();
+  const Stack = createNativeStackNavigator();
+
   return (
     <Drawer.Navigator
       initialRouteName="Profile"
@@ -69,13 +69,16 @@ export const AppStack = () => {
       <Drawer.Screen name="Timeline" component={TabRoutes} />
       <Drawer.Screen name="Food Logging" component={FoodLogScreen} />
       <Drawer.Screen name="Sleep Logging" component={SleepLogScreen} />
-      <Drawer.Screen
-        name="Physician Questionnaire"
-        component={PhysicianQuestionScreen}
-      />
-
-
+        <Drawer.Screen
+          name="Physician Questionnaire"
+          component={PhysiciansQuestion}
+        >
+           {/* <Stack.Navigator  initialRouteName="PhysiciansQues"> */}
+            {/* <Stack.Screen name="PhysiciansQues" component={PhysiciansQues} /> */}
+          {/* </Stack.Navigator> */}
+          </Drawer.Screen>
     </Drawer.Navigator>
+    
   );
 };
 
@@ -91,6 +94,16 @@ export const SplashStack = () => {
   return (
     <Stack.Navigator initialRouteName="Loading">
       <Stack.Screen name="Loading" component={SplashScreen} />
+    </Stack.Navigator>
+  );
+};
+
+export const PhysiciansQuestion = () =>{
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator  initialRouteName="Physician Questionnaire">
+      <Stack.Screen name="Physician Questionnaire" component={PhysicianQuestionScreen} options={{header: () => null}}/>
+      <Stack.Screen name="Questionnaire" component={PhysiciansQues} options={{ presentation: 'modal'}}/>
     </Stack.Navigator>
   );
 };

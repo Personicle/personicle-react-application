@@ -31,7 +31,15 @@
       "favicon": "./assets/favicon.png"
     },
     "plugins": [
-      "react-native-health"
+      "react-native-health",
+      [
+       "expo-image-picker",
+       {
+        "photosPermission": "The app accesses your photos to let you share them with your physicians.",
+        "cameraPermission": "Allow personicle to open the camera."
+       }
+
+      ]
     ]
   }
 }

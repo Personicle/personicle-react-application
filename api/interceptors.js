@@ -5,7 +5,7 @@ import moment from 'moment'
 // import {API_EVENT_READ} from 'react-native-dotenv'
 
 
-const getToken = async()=>{
+export const getToken = async()=>{
     const token = await SecureStore.getItemAsync("token");
     return token;
 }
@@ -61,4 +61,27 @@ eventRead.interceptors.response.use((response)=> {
     console.error(error);
     return Promise.reject(error);
 })
-export default eventRead;
+
+
+// get physician questions
+export const getPhysiciansQuestions = axios.create({
+ baseURL: `https://app.personicle.org/physician/questions`,
+
+})
+
+getPhysiciansQuestions.interceptors.request.use(async (request) => {
+    request.headers['Authorization'] = `Bearer ${await getToken()}`
+    return request
+}, (error) => {
+    console.error(error);
+    return Promise.reject(error);
+})
+
+getPhysiciansQuestions.interceptors.response.use((response)=> {
+    return response;
+},(error)=>{
+    console.error(error);
+    return Promise.reject(error);
+})
+
+export default eventRead ;

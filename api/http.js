@@ -1,6 +1,8 @@
 
-import eventRead from "./interceptors"
+import eventRead, { getToken } from "./interceptors"
+import getPhysiciansQuestions from "./interceptors"
 import { getUser } from "@okta/okta-react-native";
+import axios from 'axios';
 
 export async function getUserEvents(){
     try {
@@ -11,6 +13,20 @@ export async function getUserEvents(){
     }
 }
 
+export async function getPhyQuestions(){
+    try {
+        const res = await axios.get('https://app.personicle.org/physician/questions', {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        // console.error(res)
+        
+        return res
+    } catch (error) {ß
+        console.error(error)
+    }
+}
 // const { Pool, Client } = require('pg')
 
 // const client = new Client({

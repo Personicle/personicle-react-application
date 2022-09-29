@@ -2,10 +2,14 @@ import { SafeAreaView, View, FlatList, StyleSheet, Text, StatusBar } from 'react
 import Physician from './Physician';
 
 function renderPhysicians(itemData){
-    return <Physician {...itemData.item}/>
+  // console.error("hola")
+  // console.error(itemData.item)
+    return <Physician  {...itemData.item}/>
 }
 function PhysiciansList({physicians}){
-    console.error(physicians)
+    // console.error("inside")
+    // console.error(physicians)
+
     return (
         <SafeAreaView >
         <FlatList

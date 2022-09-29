@@ -94,6 +94,12 @@
 	<string>Read and understand health data.</string>
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Share workout data with other apps.</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>Give personicle permission to access photos</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Give personicle permission to access your camera</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Give personicle permission to use your microphone</string>
 	<!-- Below is only required if requesting clinical health data -->
 	<!-- <key>NSHealthClinicalHealthRecordsShareUsageDescription</key>
 	<string>Read and understand clinical health data.</string> -->

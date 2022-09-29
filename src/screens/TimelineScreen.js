@@ -1,4 +1,4 @@
-import { Pressable,SafeAreaView, StyleSheet, Text, View } from "react-native";
+import { Footer,Pressable,SafeAreaView, StyleSheet, Text, View,FlatList, RefreshControl,ScrollView } from "react-native";
 import React from "react";
 import Timeline from 'react-native-timeline-flatlist'
 import { getUserEvents } from "../../api/http";
@@ -8,12 +8,13 @@ import groupBy from "lodash/groupBy";
 import moment from "moment";
 import CalendarStrip from 'react-native-calendar-strip';
 
+
 const TimelineScreen = () => {
   const[isloading, setIsLoading] = useState(true);
   const[dailyEvents, setDailyEvents] = useState([]);
   const [todayEvents, setTodayEvents] = useState([]);
   const [firstLoad, setFirstLoad] = useState(true);
-
+  const [onRefresh, setRefresh] = useState(false);
   useEffect(() => {
     async function getEvents(){
     let data = []
@@ -33,7 +34,8 @@ const TimelineScreen = () => {
       setIsLoading(false);
     }
     getEvents();
-  }, [])
+    console.error("hola")
+  }, [onRefresh])
 
   function getSelectedDaysEvents(date){
     if(dailyEvents[moment(date).format('MM-DD-YYYY')] === undefined){
@@ -62,10 +64,17 @@ useEffect(()=> {
     getSelectedDaysEvents(moment().format("MM-DD-YYYY"));
   }
 },[])
-
+const refreshData = async () => {
+  setRefresh(true);
+}
+const getFooter = () => {
+  return <Text>{' '}</Text>;
+};
   return (
-    <View style={styles.container}>
-        {isloading ? (<SplashStack/> ):  [(<CalendarStrip
+    <FlatList style={styles.container} ListHeaderComponent={
+
+      <>
+         {isloading ? (<SplashStack/> ):  [(<CalendarStrip
           scrollable
           style={{height:100, paddingTop: 1, paddingBottom: 2}}
           daySelectionAnimation={{type: 'border', duration: 500, borderWidth: 1, borderHighlightColor: 'black'}}
@@ -86,11 +95,18 @@ useEffect(()=> {
             console.error(e)
             
           }}
+          
          /> ) ]}
+      </>
+
+    } refreshControl={
+      <RefreshControl refreshing={isloading} onRefresh={refreshData}  />
+    }  ListFooterComponent={getFooter} />
+       
         
-      {/* </Pressable> */}
     
-  </View>
+    
+  // </FlatList>
     // <SafeAreaView>
     //   <View>
     //     <Text>TimelineScreen</Text>
