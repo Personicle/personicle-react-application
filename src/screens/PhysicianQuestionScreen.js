@@ -30,9 +30,10 @@ const PhysicianQuestionScreen = () => {
       < ScrollView refreshControl={
         <RefreshControl refreshing={isloading} onRefresh={refreshData} />
       }>
-        {isloading ? (<Text > Loading... </Text> ): (<PhysiciansOutput physicians={physicians} />) }
-        
-      
+        <PhysiciansOutput physicians={physicians} /> 
+      {/* <ScrollView>
+       { isloading ?  (<SplashStack/> ) :  <PhysiciansOutput physicians={physicians} />  }
+       </ScrollView> */}
      </ ScrollView>
     
       // (physicians == undefined ||  Object.keys(physicians).length === 0) ? <Splas

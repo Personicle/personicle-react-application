@@ -6,21 +6,36 @@ import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "../RootNavigation";
 import {navigate} from "../RootNavigation"
 
-function Physician({physician_user_id, questions, physician: {name} = {}} ) {
+
+function Physician({phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
+    console.error(visualization);
   
     function  physicianPressHandler(){
-        navigate("Questionnaire", {phyName: name, questions: questions['questions']});
-    }
+        if(!visualization)
+            navigate("Questionnaire", {physician_id: physician_user_id, phyName: name, questions: questions['questions']});
+        else
+            navigate("Responses Visualization", {physician_id: phy_id, responses: responses[phy_id]});
+
+    }   
     return (
         <SafeAreaView>
-            <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
+            { visualization == true ?  <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
+                <View style={styles.phy}>
+                    <View >
+                        <Text styles={[styles.text]}>{phy_id}</Text>
+                    </View>
+                </View>
+            </Pressable> : <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
                 <View style={styles.phy}>
                     <View >
                         <Text styles={[styles.text]}>{name}</Text>
                     </View>
                 </View>
-            </Pressable>
-        </SafeAreaView>)
+            </Pressable>}
+            
+        </SafeAreaView>
+        
+        )
 }
 export default Physician;
 const styles = StyleSheet.create({

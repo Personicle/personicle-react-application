@@ -13,8 +13,8 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4C59A4B728B83DB3002BE61E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C59A4B628B83DB3002BE61E /* HealthKit.framework */; };
-		68931A4568A3CC7FDC2B7527 /* Pods_personicleapplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 0928A5E9D9625B0A6C336411 /* Pods_personicleapplication.framework */; };
 		96905EF65AED1B983A6B3ABC /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		AE320037A728F5E15F99E81F /* Pods_personicleapplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D770090393777DEBE436981 /* Pods_personicleapplication.framework */; };
 		AF93C68628B6D034001DE2FB /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF93C68528B6D034001DE2FB /* CoreLocation.framework */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
 		BB2F792D24A3F905000567C9 /* Expo.plist in Resources */ = {isa = PBXBuildFile; fileRef = BB2F792C24A3F905000567C9 /* Expo.plist */; };
@@ -22,7 +22,6 @@
 
 /* Begin PBXFileReference section */
 		008F07F21AC5B25A0029DE68 /* main.jsbundle */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = main.jsbundle; sourceTree = "<group>"; };
-		0928A5E9D9625B0A6C336411 /* Pods_personicleapplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_personicleapplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07F961A680F5B00A75B9A /* personicleapplication.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = personicleapplication.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = personicleapplication/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = personicleapplication/AppDelegate.mm; sourceTree = "<group>"; };
@@ -30,13 +29,14 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = personicleapplication/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = personicleapplication/main.m; sourceTree = "<group>"; };
 		4C59A4B628B83DB3002BE61E /* HealthKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = HealthKit.framework; path = System/Library/Frameworks/HealthKit.framework; sourceTree = SDKROOT; };
+		4D770090393777DEBE436981 /* Pods_personicleapplication.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_personicleapplication.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		58B0E82D4FC849F19CF4C435 /* noop-file.swift */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 4; includeInIndex = 0; lastKnownFileType = sourcecode.swift; name = "noop-file.swift"; path = "personicleapplication/noop-file.swift"; sourceTree = "<group>"; };
-		955092A8F93CF174C50EC2DD /* Pods-personicleapplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-personicleapplication.debug.xcconfig"; path = "Target Support Files/Pods-personicleapplication/Pods-personicleapplication.debug.xcconfig"; sourceTree = "<group>"; };
+		7739064EBADBE7174F5A85A4 /* Pods-personicleapplication.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-personicleapplication.debug.xcconfig"; path = "Target Support Files/Pods-personicleapplication/Pods-personicleapplication.debug.xcconfig"; sourceTree = "<group>"; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = personicleapplication/SplashScreen.storyboard; sourceTree = "<group>"; };
 		AF93C68528B6D034001DE2FB /* CoreLocation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreLocation.framework; path = System/Library/Frameworks/CoreLocation.framework; sourceTree = SDKROOT; };
 		BB2F792C24A3F905000567C9 /* Expo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = Expo.plist; sourceTree = "<group>"; };
-		E8D062291F3B38C550117B86 /* Pods-personicleapplication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-personicleapplication.release.xcconfig"; path = "Target Support Files/Pods-personicleapplication/Pods-personicleapplication.release.xcconfig"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
+		F0405E3D9D53EE797A315F32 /* Pods-personicleapplication.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-personicleapplication.release.xcconfig"; path = "Target Support Files/Pods-personicleapplication/Pods-personicleapplication.release.xcconfig"; sourceTree = "<group>"; };
 		FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-personicleapplication/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -48,7 +48,7 @@
 				AF93C68628B6D034001DE2FB /* CoreLocation.framework in Frameworks */,
 				96905EF65AED1B983A6B3ABC /* BuildFile in Frameworks */,
 				4C59A4B728B83DB3002BE61E /* HealthKit.framework in Frameworks */,
-				68931A4568A3CC7FDC2B7527 /* Pods_personicleapplication.framework in Frameworks */,
+				AE320037A728F5E15F99E81F /* Pods_personicleapplication.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -77,7 +77,7 @@
 				AF93C68528B6D034001DE2FB /* CoreLocation.framework */,
 				4C59A4B628B83DB3002BE61E /* HealthKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				0928A5E9D9625B0A6C336411 /* Pods_personicleapplication.framework */,
+				4D770090393777DEBE436981 /* Pods_personicleapplication.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -132,8 +132,8 @@
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				955092A8F93CF174C50EC2DD /* Pods-personicleapplication.debug.xcconfig */,
-				E8D062291F3B38C550117B86 /* Pods-personicleapplication.release.xcconfig */,
+				7739064EBADBE7174F5A85A4 /* Pods-personicleapplication.debug.xcconfig */,
+				F0405E3D9D53EE797A315F32 /* Pods-personicleapplication.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -153,14 +153,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "personicleapplication" */;
 			buildPhases = (
-				9E11A7900BD96DF04E5609B8 /* [CP] Check Pods Manifest.lock */,
+				65E70349CDD0865033819DAB /* [CP] Check Pods Manifest.lock */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				18FC6951FB02640BC52C1DA3 /* [CP] Embed Pods Frameworks */,
-				31B47C09C71C70E9A4C8D941 /* [CP] Copy Pods Resources */,
+				4F6F9CA9CFCBE39A1701140D /* [CP] Embed Pods Frameworks */,
+				94E0A86B09D495B6920BE352 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -232,7 +232,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n\n# The project root by default is one level up from the ios directory\nexport PROJECT_ROOT=\"$PROJECT_DIR\"/..\n\n`node --print \"require('path').dirname(require.resolve('react-native/package.json')) + '/scripts/react-native-xcode.sh'\"`\n";
 		};
-		18FC6951FB02640BC52C1DA3 /* [CP] Embed Pods Frameworks */ = {
+		4F6F9CA9CFCBE39A1701140D /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -318,25 +318,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-personicleapplication/Pods-personicleapplication-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		31B47C09C71C70E9A4C8D941 /* [CP] Copy Pods Resources */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-personicleapplication/Pods-personicleapplication-resources.sh",
-				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
-			);
-			name = "[CP] Copy Pods Resources";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-personicleapplication/Pods-personicleapplication-resources.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		9E11A7900BD96DF04E5609B8 /* [CP] Check Pods Manifest.lock */ = {
+		65E70349CDD0865033819DAB /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -356,6 +338,24 @@
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		94E0A86B09D495B6920BE352 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-personicleapplication/Pods-personicleapplication-resources.sh",
+				"${PODS_CONFIGURATION_BUILD_DIR}/EXConstants/EXConstants.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/EXConstants.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-personicleapplication/Pods-personicleapplication-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FD10A7F022414F080027D42C /* Start Packager */ = {
@@ -396,7 +396,7 @@
 /* Begin XCBuildConfiguration section */
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 955092A8F93CF174C50EC2DD /* Pods-personicleapplication.debug.xcconfig */;
+			baseConfigurationReference = 7739064EBADBE7174F5A85A4 /* Pods-personicleapplication.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -431,7 +431,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = E8D062291F3B38C550117B86 /* Pods-personicleapplication.release.xcconfig */;
+			baseConfigurationReference = F0405E3D9D53EE797A315F32 /* Pods-personicleapplication.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -560,6 +560,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "/usr/lib/swift $(inherited)";
 				LIBRARY_SEARCH_PATHS = "\"$(inherited)\"";
 				MTL_ENABLE_DEBUG_INFO = NO;
+				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				VALIDATE_PRODUCT = YES;
 			};

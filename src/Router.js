@@ -11,6 +11,7 @@ import {
   stopLocationTracking,
 } from "../src/utils/location";
 import { importHealthKit } from "./utils/healthKitSetup/healthKit";
+import PhysiciansContextProvider from "./context/physicians-context";
 
 export const startTracking = async () => {
   try {
@@ -50,15 +51,19 @@ export default () => {
     })();
   }, []);
   return (
+    <PhysiciansContextProvider>
+
     <NavigationContainer ref={navigationRef}>
-      {state.isLoading ? (
-        <SplashStack />
-      ) : state.token == null ? (
-        <LoginStack />
-      ) : (
-        <AppStack />
-      )}
-      {/* { ( state.token) ? <AppStack /> : <LoginStack />} */}
-    </NavigationContainer>
+          {state.isLoading ? (
+            <SplashStack />
+          ) : state.token == null ? (
+            <LoginStack />
+          ) : (
+            <AppStack />
+          )}
+          {/* { ( state.token) ? <AppStack /> : <LoginStack />} */}
+        </NavigationContainer>
+    </PhysiciansContextProvider>
+  
   );
 };

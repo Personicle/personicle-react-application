@@ -1,8 +1,9 @@
 
-import eventRead, { getToken } from "./interceptors"
+import eventRead, { getToken, getUserId } from "./interceptors"
 import getPhysiciansQuestions from "./interceptors"
 import { getUser } from "@okta/okta-react-native";
 import axios from 'axios';
+import moment from 'moment';
 
 export async function getUserEvents(){
     try {
@@ -27,24 +28,62 @@ export async function getPhyQuestions(){
         console.error(error)
     }
 }
-// const { Pool, Client } = require('pg')
 
-// const client = new Client({
-//     user: '',
-//     host: '',
-//     database: '',
-//     password: ''
-//   })
-//   client.connect()
+export async function sendPhysicianResponses (data_packet){
+    console.error(data_packet)
+    try {
+        const res = await axios.post('https://api.personicle.org/data/write/datastream/upload', data_packet, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        // console.error(res)
+        
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}
 
-// export async function getUsers(){
-//     client.query('SELECT * from users', (err, res) => {
-//         if (err) {
-//           console.error(err.stack)
-//         } else {
-//           console.error(res.rows[0])
-//         }
-//       })
-      
-// }
- 
+
+export async function getDatastreams(datatype,dataSource=undefined,start=undefined, end=undefined){
+
+    try {
+        const token = await getToken();
+        const userId = await getUserId();
+   
+        let params = {}
+        const endTime = end === undefined ? moment().utc().format("YYYY-MM-DD HH:mm:ss.SSSSSS").toString() : end 
+        const startTime = end === undefined ? moment().utc().subtract(3,'months').format("YYYY-MM-DD HH:mm:ss.SSSSSS").toString() : start 
+
+        if (dataSource == undefined){
+            params = {
+                datatype: datatype,
+                startTime: startTime,
+                endTime: endTime,
+                user_id: userId
+            };
+        }else {
+            params = {
+                datatype: datatype,
+                source: dataSource,
+                startTime: startTime,
+                endTime: endTime,
+                user_id: userId
+            };
+        }
+       
+        let config = {}
+        config['params'] = params;
+        config['headers'] = {
+            'Authorization': `Bearer ${token}`
+        }
+        const res = await axios.get('https://api.personicle.org/data/read/datastreams', config)
+        console.error("fsdfd")
+
+        console.error(res)
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}

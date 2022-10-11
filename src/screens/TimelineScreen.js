@@ -34,7 +34,7 @@ const TimelineScreen = () => {
       setIsLoading(false);
     }
     getEvents();
-    console.error("hola")
+    console.error("refresh")
   }, [onRefresh])
 
   function getSelectedDaysEvents(date){

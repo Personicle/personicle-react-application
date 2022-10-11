@@ -4,8 +4,10 @@ import ConnectionScreen from "./screens/ConnectionScreen";
 import TimelineScreen from "./screens/TimelineScreen";
 import FoodLogScreen from "./screens/FoodLogScreen";
 import SleepLogScreen from "./screens/SleepLogScreen";
+import VisualizeResponses from "./screens/VisualizeResponses";
 import PhysicianQuestionScreen from "./screens/PhysicianQuestionScreen";
 import TimelineScreenWeekly from "./screens/TimelineScreenWeekly";
+import AllResponses from "./screens/AllResponses";
 import { Text, View } from "react-native";
 import PhysiciansQues from "./screens/PhysiciansQues";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
@@ -77,6 +79,9 @@ export const AppStack = () => {
             {/* <Stack.Screen name="PhysiciansQues" component={PhysiciansQues} /> */}
           {/* </Stack.Navigator> */}
           </Drawer.Screen>
+
+      <Drawer.Screen name="Visualize Response" component={Visualize} />
+
     </Drawer.Navigator>
     
   );
@@ -97,7 +102,15 @@ export const SplashStack = () => {
     </Stack.Navigator>
   );
 };
-
+export const Visualize = () =>{
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator  initialRouteName="Visualize Responses">
+      <Stack.Screen name="Visualize Responses" component={VisualizeResponses} options={{header: () => null}}/>
+      <Stack.Screen name="Responses Visualization" component={AllResponses} options={{header: () => null}}/>
+    </Stack.Navigator>
+  );
+};
 export const PhysiciansQuestion = () =>{
   const Stack = createNativeStackNavigator();
   return (
