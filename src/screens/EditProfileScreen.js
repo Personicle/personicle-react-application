@@ -14,7 +14,8 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import {useTheme} from 'react-native-paper';
 import Animated, { set } from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
-import {updateUserInfo} from "../../api/http";
+import {updateUserInfo, getUserInfo} from "../../api/http";
+
 
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
@@ -25,11 +26,27 @@ function EditProfileScreen ({navigation}){
     const [zipcode, setPostalCode] = useState('');
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
+    const [isLoading, setIsLoading] = useState(true);
+
     const [submitted, formSubmitted] = useState(false);
     bs = React.createRef();
     fall = new Animated.Value(1);
 
-  
+  useEffect( () => {
+    async function getUser(){
+        const res = await getUserInfo();
+        if(res != undefined){
+           setWeight(res['data']['info']['weight'])
+           setAddress(res['data']['info']['address'])
+           setHeight(res['data']['info']['height'])
+           setCountry(res['data']['info']['country'])
+           setCity(res['data']['info']['city'])
+           setPostalCode(res['data']['info']['zipcode'])
+           setIsLoading(false);
+        }
+    }
+    getUser();
+  },[])
 
     const takePhotoFromCamera = () =>{
         ImagePicker.openCamera({
@@ -68,8 +85,6 @@ function EditProfileScreen ({navigation}){
         if(zipcode.length != 0 ) payload["zipcode"] = zipcode
 
         const res =  await updateUserInfo(payload);
-        console.error("hello")
-        console.error(res)
         navigation.goBack();
 
     }
@@ -102,7 +117,8 @@ function EditProfileScreen ({navigation}){
         </View>
     )
     return (
-        <View style={styles.container}>
+        <>
+         {isLoading ? <Text> {'Loading...'}</Text> : <View style={styles.container}>
             <BottomSheet
                 ref={bs}
                 snapPoints={[330, 0]}
@@ -157,6 +173,8 @@ function EditProfileScreen ({navigation}){
                 </View>
                 <View style={styles.action}>
                     {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
+                    <Text style={{color:"#777777", marginLeft: 3}}>Height</Text>
+                    
                     <TextInput
                         placeholder="Enter Height"
                         placeholderTextColor="#666666"
@@ -175,6 +193,8 @@ function EditProfileScreen ({navigation}){
 
                 <View style={styles.action}>
                     {/* <FontAwesome name="weight" color={colors.text} size={20} /> */}
+                    <Text style={{color:"#777777", marginLeft: 3}}>Weight</Text>
+                    
                     <TextInput
                         placeholder="Enter Weight"
                         placeholderTextColor="#666666"
@@ -193,6 +213,8 @@ function EditProfileScreen ({navigation}){
 
                 <View style={styles.action}>
                     <FontAwesome name="address-book-o" color={colors.text} size={20} />
+                    <Text style={{color:"#777777", marginLeft: 7}}>Address</Text>
+
                     <TextInput
                         placeholder="Address"
                         placeholderTextColor="#666666"
@@ -209,6 +231,8 @@ function EditProfileScreen ({navigation}){
                 </View>
                 <View style={styles.action}>
                     <FontAwesome name="globe" color={colors.text} size={20} />
+                    <Text style={{color:"#777777", marginLeft: 7}}>Country</Text>
+
                     <TextInput
                         placeholder="Country"
                         placeholderTextColor="#666666"
@@ -225,6 +249,8 @@ function EditProfileScreen ({navigation}){
                 </View>   
                 <View style={styles.action}>
                     <FontAwesome name="map-marker" color={colors.text} size={20} />
+                    <Text style={{color:"#777777", marginLeft: 13}}>City</Text>
+
                     <TextInput
                         placeholder="City"
                         placeholderTextColor="#666666"
@@ -242,6 +268,8 @@ function EditProfileScreen ({navigation}){
 
                 <View style={styles.action}>
                     <FontAwesome name="location-arrow" color={colors.text} size={20} />
+                    <Text style={{color:"#777777", marginLeft: 9}}>Zipcode</Text>
+
                     <TextInput
                         placeholder="Postal code"
                         placeholderTextColor="#666666"
@@ -257,10 +285,12 @@ function EditProfileScreen ({navigation}){
                     />
                 </View>
                 <TouchableOpacity style={styles.commandButton} onPress={updateUser}>
-                    <Text style={styles.panelButtonTitle}>Submit</Text>
+                    <Text style={styles.panelButtonTitle}>Save</Text>
                 </TouchableOpacity>
             </Animated.View>
-        </View>
+        </View> }
+        </>
+        
     )
 }
 
@@ -271,11 +301,11 @@ const styles = StyleSheet.create({
       flex: 1,
     },
     commandButton: {
-      padding: 15,
-      borderRadius: 10,
+      padding: 12,
+      borderRadius: 15,
       backgroundColor: '#0d58d1',
       alignItems: 'center',
-      marginTop: 10,
+      marginTop: 12,
     },
     panel: {
       padding: 20,

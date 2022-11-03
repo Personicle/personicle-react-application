@@ -1,24 +1,42 @@
 import { Button, StyleSheet, View, SafeAreaView } from "react-native";
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState, useLayoutEffect} from "react";
 import { Context } from "../context/AuthorizationContext";
 import { Avatar,Title,Caption,Text,TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
+import { getUserInfo } from "../../api/http";
+import { useIsFocused } from "@react-navigation/core";
+
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
-
+  const [isLoading, setIsLoading] = useState(true);
+  const [email, setEmail] = useState('');
+  const [city, setCity] = useState('');
+  const [st, setState] = useState('');
+  const [country, setCountry] = useState('');
+  const isFocused = useIsFocused();
+  useEffect(()=>{
+    async function getUser(){
+      const res = await getUserInfo();
+      if(res != undefined){
+        setIsLoading(true);
+        setEmail(res['data']['email']);
+        setCity(res['data']['info']['city'])
+        setState(res['data']['info']['state'])
+        setCountry(res['data']['info']['country'])
+        setIsLoading(false);
+        
+      } else {
+        setIsLoading(false);
+      }
+    }
+    isFocused && getUser();
+  },[isFocused])
 
   return (
-      <SafeAreaView style= {styles.container}>
-        {/* <Text>ProfileScreen</Text>
-        <Text>{JSON.stringify(state)}</Text>
-        <Button
-          title="Sign Out"
-          onPress={() => {
-            logout();
-          }}
-        /> */}
-
+    <>
+     {isLoading ? <Text>{'Loading...'}</Text> : <SafeAreaView style= {styles.container}>
+        
         <View style={styles.userInfoSection}>
           <View style={{flexDirection: 'row', marginTop: 15}}>
             <Avatar.Image
@@ -40,19 +58,21 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.userInfoSection}>
           <View style={styles.row}>
             <Icon name="map-marker-radius" color="#777777" size={20}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>Seattle, WA</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{city}, {country}</Text>
           </View>
-            <View style={styles.row}>
+            {/* <View style={styles.row}>
               <Icon name="phone" color="#777777" size={20}/>
               <Text style={{color:"#777777", marginLeft: 20}}>123456789</Text>
-           </View>
+           </View> */}
           <View style={styles.row}>
             <Icon name="email" color="#777777" size={20}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>jdoe@gmail.com</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{email}</Text>
           </View>
 
         </View>
-      </SafeAreaView>
+      </SafeAreaView> }
+    </>
+      
  
   );
 };

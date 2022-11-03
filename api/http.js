@@ -43,6 +43,19 @@ export async function updateUserInfo(data) {
     }
 }
 
+export async function getUserInfo() {
+    try {
+        const res = await axios.get('https://app.personicle.org/api/user', {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}
+
 export async function getPhyName(phyId){
     try {
         const res = await axios.get(`https://app.personicle.org/api/physician/${phyId}`, {

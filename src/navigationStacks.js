@@ -164,10 +164,8 @@ export const PhysiciansQuestion = () =>{
         options={{
           title: 'Edit Profile',
           presentation: 'modal'
-
         }}
        
-
       />
         
     </Stack.Navigator>
