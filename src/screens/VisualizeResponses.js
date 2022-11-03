@@ -8,7 +8,6 @@ import { SplashStack } from "../navigationStacks";
 import Physician from "../components/Physician";
 
 
-
 function VisualizeResponses(){
   const [responses, setResponses] = useState([]);
   const[isloading, setIsLoading] = useState(true);
@@ -55,21 +54,19 @@ function VisualizeResponses(){
     // console.error(itemData.item)
       return <Physician  visualization={true} responses={responses} {...itemData.item}/>
   }
-  
+  const getFooter = () => {
+    return <Text>{' '}</Text>;
+  };
     return (
-        <ScrollView style={styles.container} refreshControl={
-          <RefreshControl refreshing={isloading} onRefresh={refreshData} />
-        }>
-           
-
-       <FlatList
-          data={physicianIds}
-          renderItem={renderPhysicians}
-          keyExtractor={item => item.physician_id}
-        />
-        </ScrollView>
-      );
-}
+            <FlatList  style={styles.container} data={physicianIds}
+                      renderItem={renderPhysicians}
+                      keyExtractor={item => item.physician_id} ListHeaderComponent={
+            <></>
+            } refreshControl={
+              <RefreshControl refreshing={isloading} onRefresh={refreshData}  />
+            }  ListFooterComponent={getFooter} />
+          );
+  }
 
 const styles = StyleSheet.create({
   container: {

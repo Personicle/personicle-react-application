@@ -42,6 +42,9 @@
     "react-native-form-select-picker": "^0.0.12",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-health": "^1.13.0",
+    "react-native-image-crop-picker": "^0.38.1",
+    "react-native-linear-gradient": "^2.6.2",
+    "react-native-paper": "^4.12.5",
     "react-native-permissions": "^3.6.1",
     "react-native-reanimated": "~2.8.0",
     "react-native-safe-area-context": "4.2.4",
@@ -49,7 +52,9 @@
     "react-native-svg": "^13.1.0",
     "react-native-timeline-flatlist": "^0.8.0",
     "react-native-web": "0.17.7",
-    "recharts": "^2.1.14"
+    "reanimated-bottom-sheet": "^1.0.0-alpha.22",
+    "recharts": "^2.1.15",
+    "victory-native": "^36.6.8"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9"

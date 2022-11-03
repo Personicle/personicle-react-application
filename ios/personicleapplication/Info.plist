@@ -95,7 +95,7 @@
 	<key>NSHealthUpdateUsageDescription</key>
 	<string>Share workout data with other apps.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
-	<string>Give personicle permission to access photos</string>
+	<string>Personicle app requires photo library access</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Give personicle permission to access your camera</string>
 	<key>NSMicrophoneUsageDescription</key>

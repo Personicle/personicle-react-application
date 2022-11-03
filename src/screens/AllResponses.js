@@ -1,38 +1,26 @@
-import {Text,TextInput,View, SafeAreaView, FlatList, StyleSheet,Dimensions} from 'react-native';
+import {Text,View, StyleSheet, Dimensions} from 'react-native';
 import {useState,useEffect} from 'react';
 import SelectPicker from 'react-native-form-select-picker';
-import {
-    LineChart
-  } from 'react-native-chart-kit';
-  import groupBy from "lodash/groupBy";
-  import moment from "moment";
+import LineChartComponent from '../components/LineChartComponent';
+import PieChart from '../components/PieChart';
 
 function AllResponses({route, navigation}){
 
-
     const responses = route.params?.responses;
     const physicianId = route.params?.physician_id;
+    const name = route.params?.phyName;
+
     const [selected, setSelected] = useState("");
-    const [renderChart,setRenderChart] = useState(false);
-    // var groupedByResponseType = responses.reduce(function (r, a) {
-    //     a.value.forEach(val => {  
-    //         r[val.response_type] =  r[val.response_type] || [] 
-    //         r[val.response_type].push(a);
-    //     })
-    //     return r;
-    // }, Object.create(null));
-    console.error(responses);
-
-    // var groupedByTag = responses.reduce(function (r, a) {
-    //     a.value.forEach(val => {  
-    //         r[val.question_id] =  r[val.question_id] || []
-    //         r[val.question_id].push(a);
-    //     })
-    //     return r;
-    // }, Object.create(null));
-    // console.error(groupedByResponseType)
-
-    // console.error(groupedByTag)
+    const [renderChart,setRenderChart] = useState(true);
+    var groupedByQuestionIdTag = responses.reduce(function (r, a) {
+        a.value.forEach(val => {  
+            r[val.question_id] =  r[val.question_id] || [] 
+            r[val.question_id].push(val.response_type);
+        })
+        return r;
+    }, Object.create(null));
+   
+    
     let groupedByTag = {}
     responses.forEach(function(res) { 
       const values = res.value;
@@ -57,118 +45,54 @@ function AllResponses({route, navigation}){
       })
     
     });
- 
+    console.error("grouped by tag")
     console.error(groupedByTag)
     useEffect(() => {
-        if(selected){
-          console.error("sue effect")
+        if(selected)
           setRenderChart(true);
-
-        }
         else
            setRenderChart(false);
     }, [selected])
 
 
-
     function RenderChart({questionId}){
-       
-     const questionIdRes = groupedByTag[questionId];
-
-  //  const  timestamps = groupedByTag[questionId].map(function(value) {
-  //     return value.timestamp;
-  //   });
-     let groupedByDay = groupBy(questionIdRes, (val) => moment(val.timestamp).format('MM-DD-YYYY'))
-
-    console.error(groupedByDay)
-    let avgValByDay = {}
-    for (let [key, value] of Object.entries(groupedByDay)) {
-      let avg = value.reduce(function (sum, v) {
-        console.error(sum);
-        return sum + parseFloat(v.value);
-      }, 0) / value.length;
-      // console.error(value.length)
-      avgValByDay[key] = avg;
+      const questionIdRes = groupedByTag[questionId];
+      const responseType = groupedByQuestionIdTag[questionId]
+      if (responseType !== undefined){
+          if(responseType[0] == "numeric"){
+          return  <LineChartComponent questionIdRes={questionIdRes} />
+          } else if (responseType[0] == "survey" || responseType[0] == "string" ){
+            return <PieChart questionIdRes={questionIdRes} />
+          }
+        }
+  
+      return <Text>{'Not able to visualize this datastream'}</Text>;
     }
    
-    console.error(avgValByDay)
-        // const line = {
-        //     labels: Object.keys(avgValByDay),
-        //     datasets: [
-        //       {
-        //         data: Object.values(avgValByDay),
-        //         strokeWidth: 2, // optional
-        //         metaData: avgValByDay
-        //       },
-        //     ],
-        //   };
 
-          const line = {
-            labels: ["jan","Feb","March", "April", "May","June"],
-            datasets: [
-              {
-                data: [20, 45, 28, 80, 99, 43],
-                strokeWidth: 2, // optional
-              },
-            ],
-          };
-          return (
-              <LineChart
-                data={line}
-                width={Dimensions.get('window').width} // from react-native
-                height={220}
-                yAxisLabel={''}
-                chartConfig={{
-                  backgroundColor: '#1846ab',
-                  backgroundGradientFrom: '#1e58d8',
-                  backgroundGradientTo: '#4476e5',
-                  decimalPlaces: 2, // optional, defaults to 2dp
-                  color: (opacity = 1) => `rgba(255, 255, 255, ${opacity})`,
-                  style: {
-                    borderRadius: 16
-                  }
-                }}
-                onDataPointClick={(value,dataset,getColor) => console.error(values) }
-                bezier
-                style={{
-                  marginVertical: 8,
-                  borderRadius: 16
-                }}
-              />
-             
-   
-          );
-    }
     return (
         <View style={styles.container}>
-            <Text>{physicianId}</Text>
 
+            <Text>{name}</Text>
             <SelectPicker
-                          onValueChange={(value) => {
-                             //render chart
-                            //  console.error("rfe");
-                            //   return <RenderChart/>
-                              setSelected(value);
-                          }}
-                          
-                          selected={selected}
-                          placeholder="--Select-- "
-                          >
-                         
-                         {Object.keys(groupedByTag).map((val, index) => (
-                              <SelectPicker.Item label={val} value={val} key={index} />
-                          ))}
-                  </SelectPicker> 
-                  <View>
-                    {
-                    renderChart ? <RenderChart questionId={selected}/> : <Text>{''}</Text>
+                onValueChange={(value) => {
+                    setSelected(value);
+                }}
+                selected={selected}
+                placeholder="--Select-- "
+                >
+                {Object.keys(groupedByTag).map((val, index) => (
+                    <SelectPicker.Item label={val} value={val} key={index} />
+                ))}
+            </SelectPicker> 
+            <View style={styles.container}>
+              { renderChart ? <RenderChart questionId={selected}/> : <Text>{''}</Text> }
+            </View>
 
-                  }
-                  </View>
+            
+             
                
         </View>
-
-     
     )
 }
 

@@ -10,6 +10,7 @@ import SelectPicker from 'react-native-form-select-picker';
 import ImagePicker from '../components/ImagePicker'
 import { getUserId } from '../../api/interceptors';
 import { sendPhysicianResponses } from '../../api/http';
+import { ScrollView } from 'react-native-gesture-handler';
 
 
 function PhysiciansQues({route, navigation}){
@@ -39,7 +40,7 @@ function PhysiciansQues({route, navigation}){
    for (let key of Object.keys(responses.res)) {
     console.error(key + " -> " + responses.res[key])
     data_packet.push({
-      'question-id': key,
+      'question_id': key,
       'value': responses.res[key]
     })
    }
@@ -47,6 +48,7 @@ function PhysiciansQues({route, navigation}){
    const finalDataPacket = {"streamName": "com.personicle.individual.datastreams.subjective.physician_questionnaire", "individual_id": uid,
    "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": data_packet }]}
     // PhysicianCtx.submitResponses( );
+
     sendPhysicianResponses(finalDataPacket)
     navigation.goBack();
   }
@@ -56,6 +58,7 @@ function PhysiciansQues({route, navigation}){
   }
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
+    console.error("here")
     console.error(inputIdentifier)
     console.error(enteredValue)
           setResponses(prevState => ({
@@ -104,7 +107,8 @@ function PhysiciansQues({route, navigation}){
       return (
         <>
         <Text style={styles.question} >{question['question']}</Text>
-        <SelectPicker  onValueChange={(value) => { setSelected(value) }} selected={selected}placeholder="--Select-- ">
+        <SelectPicker  onValueChange={(value) => { inputChangedHandler.bind(value, question['tag']) 
+        setSelected(value)}} selected={selected}placeholder="--Select-- ">
                   {Object.values(question['options']).map((val, index) => (
                   <SelectPicker.Item label={val} value={val} key={index} />
                   ))}
@@ -125,7 +129,7 @@ function PhysiciansQues({route, navigation}){
       //     renderItem={renderQuestions}
       //   />
 
-   <SafeAreaView style={styles.container} >
+   <ScrollView style={styles.container} >
      {questions.map((ques,i)=>{
        return (
         <>
@@ -142,14 +146,14 @@ function PhysiciansQues({route, navigation}){
           <Button  onPress={confirmHandler} style={styles.button} >Submit</Button>
     </View>
     
-    </SafeAreaView>
+    </ScrollView>
      
       );
 }
 const styles = StyleSheet.create({
   container: {
        padding: 24,
-        alignItems: 'center',
+        // alignItems: 'center',
         paddingTop: 10,
         flex: 1
   },

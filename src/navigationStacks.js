@@ -14,7 +14,10 @@ import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { Ionicons } from '@expo/vector-icons';
-
+import Icon from 'react-native-vector-icons/Ionicons';
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
+import {navigate} from "./RootNavigation"
+import EditProfileScreen from "./screens/EditProfileScreen"
 const Tab = createBottomTabNavigator();
 
 function TabRoutes(){
@@ -66,7 +69,8 @@ export const AppStack = () => {
       initialRouteName="Profile"
       screenOptions={{ headerShown: true }}
     >
-      <Drawer.Screen name="Profile" component={ProfileScreen} />
+      <Drawer.Screen name="Profile"
+       component={ProfileStackScreen} />
       <Drawer.Screen name="Connections" component={ConnectionScreen} />
       <Drawer.Screen name="Timeline" component={TabRoutes} />
       <Drawer.Screen name="Food Logging" component={FoodLogScreen} />
@@ -107,7 +111,7 @@ export const Visualize = () =>{
   return (
     <Stack.Navigator  initialRouteName="Visualize Responses">
       <Stack.Screen name="Visualize Responses" component={VisualizeResponses} options={{header: () => null}}/>
-      <Stack.Screen name="Responses Visualization" component={AllResponses} options={{header: () => null}}/>
+      <Stack.Screen name="Responses Visualization" component={AllResponses} options={{ presentation: 'modal'}}/>
     </Stack.Navigator>
   );
 };
@@ -120,3 +124,52 @@ export const PhysiciansQuestion = () =>{
     </Stack.Navigator>
   );
 };
+
+ export const ProfileStackScreen = () => {
+  const Stack = createNativeStackNavigator();
+  return (
+    <Stack.Navigator  initialRouteName="Profile" screenOptions={{
+      headerStyle: {
+        backgroundColor: "#fff",
+        shadowColor: "#fff",
+        elevation: 0, 
+      },
+      headerTintColor: "#000",
+    }} >
+      <Stack.Screen name="Profile"
+        component={ProfileScreen}
+        
+        options={{
+          title: '',
+    
+          headerRight: () => (
+            <View style={{marginRight: 1}}>
+              <MaterialCommunityIcons.Button
+                name="account-edit"
+                size={25}
+                backgroundColor="#fff"
+                color="#000"
+                // color={colors.text}
+                onPress={() => navigate("EditProfile")}
+              />
+            </View>
+          ),
+        }}
+        />
+
+       <Stack.Screen
+
+        name="EditProfile"
+        component={EditProfileScreen}
+        options={{
+          title: 'Edit Profile',
+          presentation: 'modal'
+
+        }}
+       
+
+      />
+        
+    </Stack.Navigator>
+  )
+}
