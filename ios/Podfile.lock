@@ -52,14 +52,14 @@ PODS:
     - ReactCommon/turbomodule/core (= 0.68.2)
   - fmt (6.2.1)
   - glog (0.3.5)
-  - OktaOidc (3.11.0):
-    - OktaOidc/AppAuth (= 3.11.0)
-    - OktaOidc/Okta (= 3.11.0)
-  - OktaOidc/AppAuth (3.11.0)
-  - OktaOidc/Okta (3.11.0):
+  - OktaOidc (3.11.2):
+    - OktaOidc/AppAuth (= 3.11.2)
+    - OktaOidc/Okta (= 3.11.2)
+  - OktaOidc/AppAuth (3.11.2)
+  - OktaOidc/Okta (3.11.2):
     - OktaOidc/AppAuth
-  - OktaSdkBridgeReactNative (2.5.0):
-    - OktaOidc (= 3.11.0)
+  - OktaSdkBridgeReactNative (2.7.0):
+    - OktaOidc (= 3.11.2)
     - React
   - Permission-AppTrackingTransparency (3.6.1):
     - RNPermissions
@@ -699,8 +699,8 @@ SPEC CHECKSUMS:
   FBReactNativeSpec: 81ce99032d5b586fddd6a38d450f8595f7e04be4
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
   glog: 476ee3e89abb49e07f822b48323c51c57124b572
-  OktaOidc: 7a6a9a827722b26fded69c9715e606f5abc3a3a7
-  OktaSdkBridgeReactNative: d3c30aab64a0bdd7b13f57728a220ec1d9a25d1b
+  OktaOidc: 15fb3d494103d4f07ba8a523b3347d02c4d30486
+  OktaSdkBridgeReactNative: 0e12506b031613f1f057ebe0b619307e58bacec4
   Permission-AppTrackingTransparency: 9eedbc3b5a2907b8cb2c971461754616eac1661d
   Permission-BluetoothPeripheral: 67708853584bb9208c76d36d0e0ea4eafb97ea5b
   Permission-Calendars: dd55f36958c398a487f141d4c89119907e34dca8

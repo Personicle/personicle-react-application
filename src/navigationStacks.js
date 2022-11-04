@@ -12,37 +12,43 @@ import { Text, View } from "react-native";
 import PhysiciansQues from "./screens/PhysiciansQues";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { createDrawerNavigator } from "@react-navigation/drawer";
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { Ionicons } from '@expo/vector-icons';
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+import { Ionicons } from "@expo/vector-icons";
 
 const Tab = createBottomTabNavigator();
 
-function TabRoutes(){
+function TabRoutes() {
   return (
     <Tab.Navigator
-        screenOptions={({ route }) => ({
-          tabBarIcon: ({ focused, color, size }) => {
-            let iconName;
+      screenOptions={({ route }) => ({
+        tabBarIcon: ({ focused, color, size }) => {
+          let iconName;
 
-            if (route.name === 'Timeline') {
-              iconName = focused
-                ? 'ios-information-circle'
-                : 'ios-information-circle-outline';
-            } else if (route.name === 'Settings') {
-              iconName = focused ? 'ios-list-box' : 'ios-list';
-            }
-            return <Ionicons name={iconName} size={size} color={color} />;
-          },
-          tabBarActiveTintColor: 'tomato',
-          tabBarInactiveTintColor: 'gray',
-        })}
-        
-        >
-        <Tab.Screen name="Daily" component={TimelineScreen} options={{header: () => null}}/>
-        <Tab.Screen name="Weekly" component={TimelineScreenWeekly} options={{header: () => null}} />
-
-      </Tab.Navigator>
-  )
+          if (route.name === "Timeline") {
+            iconName = focused
+              ? "ios-information-circle"
+              : "ios-information-circle-outline";
+          } else if (route.name === "Settings") {
+            iconName = focused ? "ios-list-box" : "ios-list";
+          }
+          return <Ionicons name={iconName} size={size} color={color} />;
+        },
+        tabBarActiveTintColor: "tomato",
+        tabBarInactiveTintColor: "gray",
+      })}
+    >
+      <Tab.Screen
+        name="Daily"
+        component={TimelineScreen}
+        options={{ header: () => null }}
+      />
+      <Tab.Screen
+        name="Weekly"
+        component={TimelineScreenWeekly}
+        options={{ header: () => null }}
+      />
+    </Tab.Navigator>
+  );
 }
 
 export const LoginStack = () => {
@@ -71,19 +77,17 @@ export const AppStack = () => {
       <Drawer.Screen name="Timeline" component={TabRoutes} />
       <Drawer.Screen name="Food Logging" component={FoodLogScreen} />
       <Drawer.Screen name="Sleep Logging" component={SleepLogScreen} />
-        <Drawer.Screen
-          name="Physician Questionnaire"
-          component={PhysiciansQuestion}
-        >
-           {/* <Stack.Navigator  initialRouteName="PhysiciansQues"> */}
-            {/* <Stack.Screen name="PhysiciansQues" component={PhysiciansQues} /> */}
-          {/* </Stack.Navigator> */}
-          </Drawer.Screen>
+      <Drawer.Screen
+        name="Physician Questionnaire"
+        component={PhysiciansQuestion}
+      />
+      {/* <Stack.Navigator  initialRouteName="PhysiciansQues"> */}
+      {/* <Stack.Screen name="PhysiciansQues" component={PhysiciansQues} /> */}
+      {/* </Stack.Navigator> */}
+      {/* </Drawer.Screen> */}
 
       <Drawer.Screen name="Visualize Response" component={Visualize} />
-
     </Drawer.Navigator>
-    
   );
 };
 
@@ -102,21 +106,37 @@ export const SplashStack = () => {
     </Stack.Navigator>
   );
 };
-export const Visualize = () =>{
+export const Visualize = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator  initialRouteName="Visualize Responses">
-      <Stack.Screen name="Visualize Responses" component={VisualizeResponses} options={{header: () => null}}/>
-      <Stack.Screen name="Responses Visualization" component={AllResponses} options={{header: () => null}}/>
+    <Stack.Navigator initialRouteName="Visualize Responses">
+      <Stack.Screen
+        name="Visualize Responses"
+        component={VisualizeResponses}
+        options={{ header: () => null }}
+      />
+      <Stack.Screen
+        name="Responses Visualization"
+        component={AllResponses}
+        options={{ header: () => null }}
+      />
     </Stack.Navigator>
   );
 };
-export const PhysiciansQuestion = () =>{
+export const PhysiciansQuestion = () => {
   const Stack = createNativeStackNavigator();
   return (
-    <Stack.Navigator  initialRouteName="Physician Questionnaire">
-      <Stack.Screen name="Physician Questionnaire" component={PhysicianQuestionScreen} options={{header: () => null}}/>
-      <Stack.Screen name="Questionnaire" component={PhysiciansQues} options={{ presentation: 'modal'}}/>
+    <Stack.Navigator initialRouteName="Physician Questionnaire">
+      <Stack.Screen
+        name="Physician Questionnaire"
+        component={PhysicianQuestionScreen}
+        options={{ header: () => null }}
+      />
+      <Stack.Screen
+        name="Questionnaire"
+        component={PhysiciansQues}
+        options={{ presentation: "modal" }}
+      />
     </Stack.Navigator>
   );
 };
