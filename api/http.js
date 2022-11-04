@@ -13,6 +13,45 @@ export async function getUserEvents(){
         console.error(error)
     }
 }
+export const uploadProfilePic = async (image) => {
+    const formData = new FormData();
+    const uid = await getUserId();
+    formData.append('user_image[images][]', {
+        uri: Platform.OS === 'android' ? image['sourceURL'] : image['sourceURL'].replace('file://', ''),
+        name: `image-${uid}`,
+        type: image['mime']
+    })
+     formData.append("user_image[individual_id]", uid);
+      try {
+        const res = await axios.post('https://personicle-file-upload.herokuapp.com/user_images' , formData, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`,
+               'Content-Type': 'multipart/form-data'
+              }
+          })
+       
+          return res
+      } catch (error) {
+        console.error(error.response)
+      }
+      
+}
+
+export async function getImageUrl(imageKey){
+    try {
+        const uid = await getUserId();
+        const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${imageKey}?user_id=${uid}`, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        // console.error(res)
+        
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}
 
 export async function getPhyQuestions(){
     try {
@@ -30,7 +69,7 @@ export async function getPhyQuestions(){
 }
 
 export async function updateUserInfo(data) {
-    console.error(data)
+  
     try {
         const res = await axios.post('https://app.personicle.org/api/update/user', data, {
             headers: {
@@ -70,7 +109,7 @@ export async function getPhyName(phyId){
 }
 
 export async function sendPhysicianResponses (data_packet){
-    console.error(data_packet)
+    // console.error(data_packet)
     try {
         const res = await axios.post('https://staging.personicle.org/data/write/datastream/upload', data_packet, {
             headers: {

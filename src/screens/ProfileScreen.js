@@ -1,9 +1,9 @@
-import { Button, StyleSheet, View, SafeAreaView } from "react-native";
+import { Button, StyleSheet, ActivityIndicator,View, SafeAreaView } from "react-native";
 import React, { useContext, useEffect, useState, useLayoutEffect} from "react";
 import { Context } from "../context/AuthorizationContext";
 import { Avatar,Title,Caption,Text,TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getUserInfo } from "../../api/http";
+import { getUserInfo, getImageUrl } from "../../api/http";
 import { useIsFocused } from "@react-navigation/core";
 
 
@@ -14,9 +14,20 @@ const ProfileScreen = ({ navigation }) => {
   const [city, setCity] = useState('');
   const [st, setState] = useState('');
   const [country, setCountry] = useState('');
+  const [name, setName] = useState('');
+  const [profileImage, setProfileImage] = useState('');
+
+
+
   const isFocused = useIsFocused();
   useEffect(()=>{
-    async function getUser(){
+    async function getProfileImageUrl(imageKey){
+      const res = await getImageUrl(imageKey);
+      setProfileImage(res['data']['image_url'])
+      setIsLoading(false);
+
+    }
+      async function getUser(){
       const res = await getUserInfo();
       if(res != undefined){
         setIsLoading(true);
@@ -24,7 +35,13 @@ const ProfileScreen = ({ navigation }) => {
         setCity(res['data']['info']['city'])
         setState(res['data']['info']['state'])
         setCountry(res['data']['info']['country'])
-        setIsLoading(false);
+        setName(res['data']['name'])
+
+        if(res['data']['info']['image_key'] != undefined){
+          getProfileImageUrl(res['data']['info']['image_key'])
+        } else {
+         setIsLoading(false);
+        }
         
       } else {
         setIsLoading(false);
@@ -35,12 +52,17 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <>
-     {isLoading ? <Text>{'Loading...'}</Text> : <SafeAreaView style= {styles.container}>
+     {isLoading ? <View style={styles.loading}>
+            <ActivityIndicator size='large' color="#0000ff" />
+            </View>: <SafeAreaView style= {styles.container}>
         
         <View style={styles.userInfoSection}>
           <View style={{flexDirection: 'row', marginTop: 15}}>
             <Avatar.Image
-              source={ require("../../src/components/UI/stock.jpg")}
+            source={{
+              uri: profileImage
+            }}
+              // source={ require("../../src/components/UI/stock.jpg")}
               size = {80}
             />
             <View  style={{marginLeft: 20}}>
@@ -48,7 +70,7 @@ const ProfileScreen = ({ navigation }) => {
                 marginTop:15,
                 marginBottom: 5,
                }]}>
-                 Tirth P.
+                  {name}
               </Title>
               {/* <Caption style={styles.caption}>@j_doe</Caption> */}
             </View>
@@ -127,5 +149,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontSize: 16,
     lineHeight: 26,
+  },
+  loading: {
+    position: 'absolute',
+    backgroundColor: '#F5FCFF88',
+    left: 0,
+    right: 0,
+    top: 0,
+    bottom: 0,
+    alignItems: 'center',
+    justifyContent: 'center'
   },
 });
