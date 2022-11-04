@@ -1,28 +1,48 @@
 import {Pressable, View, Text, StyleSheet, SafeAreaView} from 'react-native';
 import {useNavigation} from '@react-navigation/native'
-import { getPhyQuestions } from '../../api/http';
+import { getPhyQuestions, getPhyName } from '../../api/http';
 import {PhysiciansQuestion} from '../navigationStacks'
 import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "../RootNavigation";
 import {navigate} from "../RootNavigation"
+import {useEffect, useState } from "react";
 
 
 function Physician({phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
-    console.error(visualization);
+
+    const [phyName, setPhyName] = useState("")
+    const [isLoading, setLoading] = useState(true)
+    
+    useEffect(() => {
+        if(!visualization){
+            setLoading(false);
+        } else{
+            async function getName(){
+                const name = await getPhyName(phy_id);
+                setPhyName(name['data'][0]['name'])
+                setLoading(false);
+            }
+    
+            getName();
+        }
+       
+
+    }, [])
   
     function  physicianPressHandler(){
         if(!visualization)
             navigate("Questionnaire", {physician_id: physician_user_id, phyName: name, questions: questions['questions']});
         else
-            navigate("Responses Visualization", {physician_id: phy_id, responses: responses[phy_id]});
+            navigate("Responses Visualization", {physician_id: phy_id, phyName: phyName, responses: responses[phy_id]});
 
     }   
     return (
         <SafeAreaView>
-            { visualization == true ?  <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
+            {isLoading ? <Text>{'Loading...'}</Text> :  
+             (visualization == true ) ?  <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
                 <View style={styles.phy}>
                     <View >
-                        <Text styles={[styles.text]}>{phy_id}</Text>
+                        <Text styles={[styles.text]}>{phyName}</Text>
                     </View>
                 </View>
             </Pressable> : <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
@@ -32,6 +52,7 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
                     </View>
                 </View>
             </Pressable>}
+           
             
         </SafeAreaView>
         

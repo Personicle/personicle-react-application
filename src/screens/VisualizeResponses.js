@@ -20,10 +20,6 @@ function VisualizeResponses() {
   const [isloading, setIsLoading] = useState(true);
   const [physicianIds, setPhysicianIds] = useState([]);
 
-  const getFooter = () => {
-    return <Text> </Text>;
-  };
-
   async function getPhysicianResponses() {
     const response = await getDatastreams(
       (datatype =
@@ -72,7 +68,9 @@ function VisualizeResponses() {
       />
     );
   }
-
+  const getFooter = () => {
+    return <Text> </Text>;
+  };
   return (
     <FlatList
       style={styles.container}
@@ -87,7 +85,6 @@ function VisualizeResponses() {
     />
   );
 }
-// </ScrollView>
 
 const styles = StyleSheet.create({
   container: {

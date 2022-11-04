@@ -17,6 +17,7 @@ import SelectPicker from "react-native-form-select-picker";
 import ImagePicker from "../components/ImagePicker";
 import { getUserId } from "../../api/interceptors";
 import { sendPhysicianResponses } from "../../api/http";
+import { ScrollView } from "react-native-gesture-handler";
 
 function PhysiciansQues({ route, navigation }) {
   const PhysicianCtx = useContext(PhysiciansContext);
@@ -44,7 +45,7 @@ function PhysiciansQues({ route, navigation }) {
     for (let key of Object.keys(responses.res)) {
       console.error(key + " -> " + responses.res[key]);
       data_packet.push({
-        "question-id": key,
+        question_id: key,
         value: responses.res[key],
       });
     }
@@ -64,6 +65,7 @@ function PhysiciansQues({ route, navigation }) {
       ],
     };
     // PhysicianCtx.submitResponses( );
+
     sendPhysicianResponses(finalDataPacket);
     navigation.goBack();
   }
@@ -78,6 +80,7 @@ function PhysiciansQues({ route, navigation }) {
   }
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
+    console.error("here");
     console.error(inputIdentifier);
     console.error(enteredValue);
     setResponses((prevState) => ({
@@ -131,6 +134,7 @@ function PhysiciansQues({ route, navigation }) {
           <Text style={styles.question}>{question["question"]}</Text>
           <SelectPicker
             onValueChange={(value) => {
+              inputChangedHandler.bind(value, question["tag"]);
               setSelected(value);
             }}
             selected={selected}
@@ -140,19 +144,6 @@ function PhysiciansQues({ route, navigation }) {
               <SelectPicker.Item label={val} value={val} key={index} />
             ))}
           </SelectPicker>
-        </>
-      );
-    } else {
-      return (
-        <>
-          <Text style={styles.question}>{question["question"]}</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={inputChangedHandler.bind(this, question["tag"])}
-            placeholder="Enter string response"
-            value={responses.res[question["tag"]]}
-            keyboardType="default"
-          />
         </>
       );
     }
@@ -166,7 +157,7 @@ function PhysiciansQues({ route, navigation }) {
     //     renderItem={renderQuestions}
     //   />
 
-    <SafeAreaView style={styles.container}>
+    <ScrollView style={styles.container}>
       {questions.map((ques, i) => {
         return (
           <>
@@ -182,13 +173,13 @@ function PhysiciansQues({ route, navigation }) {
           Submit
         </Button>
       </View>
-    </SafeAreaView>
+    </ScrollView>
   );
 }
 const styles = StyleSheet.create({
   container: {
     padding: 24,
-    alignItems: "center",
+    // alignItems: 'center',
     paddingTop: 10,
     flex: 1,
   },

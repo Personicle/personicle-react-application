@@ -24,19 +24,60 @@ export async function getPhyQuestions(){
         // console.error(res)
         
         return res
-    } catch (error) {ß
+    } catch (error) {
         console.error(error)
+    }
+}
+
+export async function updateUserInfo(data) {
+    console.error(data)
+    try {
+        const res = await axios.post('https://app.personicle.org/api/update/user', data, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function getUserInfo() {
+    try {
+        const res = await axios.get('https://app.personicle.org/api/user', {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)
+    }
+}
+
+export async function getPhyName(phyId){
+    try {
+        const res = await axios.get(`https://app.personicle.org/api/physician/${phyId}`, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)        
     }
 }
 
 export async function sendPhysicianResponses (data_packet){
     console.error(data_packet)
     try {
-        const res = await axios.post('https://api.personicle.org/data/write/datastream/upload', data_packet, {
+        const res = await axios.post('https://staging.personicle.org/data/write/datastream/upload', data_packet, {
             headers: {
                 'Authorization': `Bearer ${await getToken()}`
               }
         })
+
         // console.error(res)
         
         return res
