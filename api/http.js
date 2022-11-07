@@ -109,16 +109,12 @@ export async function getPhyName(phyId){
 }
 
 export async function sendPhysicianResponses (data_packet){
-    // console.error(data_packet)
     try {
         const res = await axios.post('https://staging.personicle.org/data/write/datastream/upload', data_packet, {
             headers: {
                 'Authorization': `Bearer ${await getToken()}`
               }
         })
-
-        // console.error(res)
-        
         return res
     } catch (error) {
         console.error(error)
@@ -159,7 +155,6 @@ export async function getDatastreams(datatype,dataSource=undefined,start=undefin
             'Authorization': `Bearer ${token}`
         }
         const res = await axios.get('https://api.personicle.org/data/read/datastreams', config)
-        console.error("fsdfd")
 
         console.error(res)
         return res

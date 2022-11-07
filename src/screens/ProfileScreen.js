@@ -1,10 +1,13 @@
-import { Button, StyleSheet, ActivityIndicator,View, SafeAreaView } from "react-native";
+import { Button, StyleSheet, ActivityIndicator,View, SafeAreaView,Image , TouchableOpacity} from "react-native";
 import React, { useContext, useEffect, useState, useLayoutEffect} from "react";
 import { Context } from "../context/AuthorizationContext";
 import { Avatar,Title,Caption,Text,TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import { getUserInfo, getImageUrl } from "../../api/http";
 import { useIsFocused } from "@react-navigation/core";
+
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import {navigate} from "../RootNavigation"
 
 
 const ProfileScreen = ({ navigation }) => {
@@ -90,7 +93,15 @@ const ProfileScreen = ({ navigation }) => {
             <Icon name="email" color="#777777" size={20}/>
             <Text style={{color:"#777777", marginLeft: 20}}>{email}</Text>
           </View>
-
+          <View style={styles.row}>
+            <TouchableOpacity style={styles.row} onPress= {() => navigate('AddPhysician')}>
+            <FontAwesome name="plus-circle" size={20} />  
+                <Text style={{color:"#000", marginLeft: 20}}>Add Physician</Text>
+             
+            </TouchableOpacity>
+          </View>
+          
+          
         </View>
       </SafeAreaView> }
     </>
@@ -160,4 +171,5 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
+  
 });

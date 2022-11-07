@@ -18,6 +18,7 @@ import Icon from 'react-native-vector-icons/Ionicons';
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons';
 import {navigate} from "./RootNavigation"
 import EditProfileScreen from "./screens/EditProfileScreen"
+import AddPhysician from "./screens/AddPhysician";
 const Tab = createBottomTabNavigator();
 
 function TabRoutes(){
@@ -125,6 +126,7 @@ export const PhysiciansQuestion = () =>{
   );
 };
 
+
  export const ProfileStackScreen = () => {
   const Stack = createNativeStackNavigator();
   return (
@@ -167,6 +169,17 @@ export const PhysiciansQuestion = () =>{
         }}
        
       />
+
+        <Stack.Screen
+
+        name="AddPhysician"
+        component={AddPhysician}
+        options={{
+          title: 'Add Physician',
+          presentation: 'modal'
+        }}
+
+        />
         
     </Stack.Navigator>
   )

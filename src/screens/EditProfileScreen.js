@@ -102,7 +102,7 @@ function EditProfileScreen ({navigation}){
           }).then(image => {
             // console.error(image);
             setProfilePic(image);
-            setProfileImage(''); // resest the profile image to the image uploaded by user
+            setProfileImage(''); // reset the profile image to the image uploaded by user
             bs.current.snapTo(1);
           });
     }
