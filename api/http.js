@@ -125,9 +125,40 @@ export async function addPhysiciansToUser(physicians){
     }
 }
 
+export async function removePhysiciansFromUser(physicians){
+    try {
+        // physicians is a list of physician ids
+        const data_packet = {"physicians": physicians}
+        const res = await axios.post('https://app.personicle.org/api/user/physicians/remove', data_packet, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)
+        return {'error': error.response.data, 'status': error.response.status}
+        
+    }
+}
+
 export async function getAllPhysicians(){
     try {
         const res = await axios.get(`https://app.personicle.org/api/physicians/all`, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)        
+    }
+}
+
+// get physicians for a user
+export async function getUsersPhysicians(){
+    try {
+        const res = await axios.get(`https://app.personicle.org/api/physicians`, {
             headers: {
                 'Authorization': `Bearer ${await getToken()}`
               }

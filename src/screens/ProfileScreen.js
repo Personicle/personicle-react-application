@@ -1,14 +1,17 @@
-import { Button, StyleSheet, ActivityIndicator,View, SafeAreaView,Image , TouchableOpacity} from "react-native";
+import { Button, Alert,StyleSheet, ActivityIndicator,View, SafeAreaView,Image , Animated, TouchableOpacity} from "react-native";
 import React, { useContext, useEffect, useState, useLayoutEffect} from "react";
 import { Context } from "../context/AuthorizationContext";
 import { Avatar,Title,Caption,Text,TouchableRipple} from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
-import { getUserInfo, getImageUrl } from "../../api/http";
+import { getUserInfo, getImageUrl, getUsersPhysicians, removePhysiciansFromUser } from "../../api/http";
 import { useIsFocused } from "@react-navigation/core";
-
+import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {navigate} from "../RootNavigation"
 import FlashMessage from "react-native-flash-message";
+import {SwipeListView} from 'react-native-swipe-list-view';
+import { TouchableHighlight } from "react-native-gesture-handler";
+import { showMessage } from "react-native-flash-message";
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
@@ -19,6 +22,7 @@ const ProfileScreen = ({ navigation }) => {
   const [country, setCountry] = useState('');
   const [name, setName] = useState('');
   const [profileImage, setProfileImage] = useState('');
+  const [phys, setPhys] = useState([]);
   const isFocused = useIsFocused();
 
   useEffect(()=>{
@@ -28,29 +32,161 @@ const ProfileScreen = ({ navigation }) => {
       setIsLoading(false);
 
     }
-      async function getUser(){
-      const res = await getUserInfo();
-      if(res != undefined){
-        setIsLoading(true);
-        setEmail(res['data']['email']);
-        setCity(res['data']['info']['city'])
-        setState(res['data']['info']['state'])
-        setCountry(res['data']['info']['country'])
-        setName(res['data']['name'])
 
-        if(res['data']['info']['image_key'] != undefined){
-          getProfileImageUrl(res['data']['info']['image_key'])
-        } else {
-         setIsLoading(false);
-        }
-        
-      } else {
-        setIsLoading(false);
-      }
+    async function getPhys(){
+      const res = await getUsersPhysicians();
+      var i = 0;
+      res['data']['physicians'].forEach(phy=>{
+        phy['key'] = i;
+        i++;
+      })
+       setPhys(res['data']['physicians']);
     }
-    isFocused && getUser();
+      async function getUser(){
+        const res = await getUserInfo();
+        if(res != undefined){
+          setIsLoading(true);
+          setEmail(res['data']['email']);
+          setCity(res['data']['info']['city'])
+          setState(res['data']['info']['state'])
+          setCountry(res['data']['info']['country'])
+          setName(res['data']['name'])
+
+          if(res['data']['info']['image_key'] != undefined){
+            getProfileImageUrl(res['data']['info']['image_key'])
+          } else {
+          setIsLoading(false);
+          }
+          
+        } else {
+          setIsLoading(false);
+        }
+    }
+    isFocused && getUser() && getPhys();
   },[isFocused])
 
+  const VisibleItem = props => {
+    const {data} = props;
+    return (
+      <Animated.View
+      style={[styles.rowFront]}>
+      <TouchableHighlight
+        style={styles.rowFrontVisible}
+        onPress={() => console.log('Element touched')}
+        underlayColor={'#aaa'}>
+        <View>
+          <Text style={styles.phyTitle} >
+            {data.item.name}
+          </Text>
+          <Text style={styles.details} numberOfLines={1}>
+            {data.item.user_id}
+          </Text>
+        </View>
+      </TouchableHighlight>
+     </Animated.View>
+    )
+  }
+  const renderItem = (data, rowMap) => {
+    return (
+      <VisibleItem data={data}/>
+    )
+  }
+
+  const HiddenItemWithActions = props => {
+    const {swipeAnimatedValue, rightActionActivated, 
+      rowActionAnimatedValue, rowHeightAnimatedValue, onClose, onDelete} = props;
+      
+    return (
+      <View style={styles.rowBack}>
+        <Text>Left</Text>
+        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnLeft]} onPress={onClose}>
+            <MaterialCommunityIcons
+              name="close-circle-outline"
+              size={25}
+              style={styles.trash}
+              color="#fff"
+            />
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.backRightBtn, styles.backRightBtnRight]} onPress={onDelete}>
+          <Animated.View style={[styles.trash , {
+             transform: [
+              {
+                scale: swipeAnimatedValue.interpolate({
+                  inputRange: [-90, -45],
+                  outputRange: [1, 0],
+                  extrapolate: 'clamp',
+                }),
+              },
+            ],
+          }]}> 
+            <MaterialCommunityIcons
+              name="trash-can-outline"
+              size={25}
+              style={styles.trash}
+              color="#fff"
+            />
+          </Animated.View>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+  const closeRow = (rowMap, rowKey) => {
+    if(rowMap[rowKey]){
+      rowMap[rowKey].closeRow();
+    }
+  }
+  
+  const deleteRow = (rowMap, rowKey) => {
+    closeRow(rowMap,rowKey)
+    const newData = [...phys];
+    const prevIdx = phys.findIndex(item => item.key === rowKey);
+    const phy = phys[prevIdx];
+    newData.splice(prevIdx,1)
+   
+    Alert.alert(
+      "Remove Physician",
+      `Are you sure you want to remove ${phy.name} from your physicians. ${phy.name} will not have access to your data.`,
+      [
+        {
+          text: "Remove",
+          onPress: () => {
+            setPhys(newData);
+            removePhysiciansFromUser([phy.user_id])
+            showMessage({
+              message: `${phy.name} removed from your physicians`,
+              type: "warning",
+              statusBarHeight: 2,
+              duration: 3500,
+              floating: true,
+            });
+          }
+        },
+        {
+          text: "Cancel",
+          onPress: () => console.error("Cancel Pressed"),
+          style: "cancel"
+        },
+
+      ]
+    );
+   
+  }
+
+  const renderHiddenItem = (data, rowMap) => {
+    const rowActionAnimatedValue = new Animated.Value(75);
+    const rowHeightAnimatedValue = new Animated.Value(60);
+
+    return (
+      <HiddenItemWithActions data={data}
+        rowMap={rowMap}
+        rowActionAnimatedValue={rowActionAnimatedValue}
+        rowHeightAnimatedValue={rowHeightAnimatedValue}
+        onClose={() => closeRow(rowMap,data.item.key)}
+        onDelete={() => deleteRow(rowMap, data.item.key)}
+      />
+    )
+  }
   return (
     <>
         <FlashMessage position="top" />
@@ -95,11 +231,21 @@ const ProfileScreen = ({ navigation }) => {
           <View style={styles.row}>
             <TouchableOpacity style={styles.row} onPress= {() => navigate('AddPhysician', {testImage: profileImage})}>
             <FontAwesome name="plus-circle" size={20} />  
-                <Text style={{color:"#000", marginLeft: 20}}>Add Physician</Text>
+                <Text style={{color:"#000", marginLeft: 20}}>Add Physicians</Text>
              
             </TouchableOpacity>
           </View>
-          
+          {/* <Text style={{ marginLeft: 5}}>Your Physicians</Text>
+          <Text style={{color:"#777777", marginLeft: 5}}>Your data is shared with: </Text> */}
+          <SwipeListView
+            data={phys}
+            renderHiddenItem={renderHiddenItem}
+            renderItem={renderItem}
+            leftOpenValue={75}
+            rightOpenValue={-150}
+            // rightActivationValue={-200}
+            disableRightSwipe
+          />
           
         </View>
       </SafeAreaView> }
@@ -170,5 +316,71 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center'
   },
-  
+   backTextWhite: {
+    color: '#FFF',
+  },
+  rowFront: {
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+    height: 60,
+    margin: 5,
+    marginBottom: 15,
+    shadowColor: '#999',
+    shadowOffset: {width: 0, height: 1},
+    shadowOpacity: 0.8,
+    shadowRadius: 2,
+    elevation: 5,
+  },
+  rowFrontVisible: {
+    backgroundColor: '#FFF',
+    borderRadius: 5,
+    height: 60,
+    padding: 10,
+    marginBottom: 15,
+  },
+  rowBack: {
+    alignItems: 'center',
+    backgroundColor: '#DDD',
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingLeft: 15,
+    margin: 5,
+    marginBottom: 15,
+    borderRadius: 5,
+  },
+  backRightBtn: {
+    alignItems: 'flex-end',
+    bottom: 0,
+    justifyContent: 'center',
+    position: 'absolute',
+    top: 0,
+    width: 75,
+    paddingRight: 17,
+  },
+  backRightBtnLeft: {
+    backgroundColor: '#1f65ff',
+    right: 75,
+  },
+  backRightBtnRight: {
+    backgroundColor: 'red',
+    right: 0,
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5,
+  },
+  trash: {
+    height: 25,
+    width: 25,
+    marginRight: 7,
+  },
+  phyTitle: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color: '#666',
+  },
+  details: {
+    fontSize: 12,
+    color: '#999',
+  }
 });

@@ -14,7 +14,7 @@ import SearchBar from "react-native-dynamic-search-bar"
 import axios from 'axios';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { getAllPhysicians, addPhysiciansToUser } from '../../api/http';
-import { showMessage, hideMessage } from "react-native-flash-message";
+import { showMessage } from "react-native-flash-message";
 
 function AddPhysician({navigation, route}) {
     const [data, setData] = useState([]);
