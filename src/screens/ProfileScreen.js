@@ -8,7 +8,7 @@ import { useIsFocused } from "@react-navigation/core";
 
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import {navigate} from "../RootNavigation"
-
+import FlashMessage from "react-native-flash-message";
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
@@ -19,10 +19,8 @@ const ProfileScreen = ({ navigation }) => {
   const [country, setCountry] = useState('');
   const [name, setName] = useState('');
   const [profileImage, setProfileImage] = useState('');
-
-
-
   const isFocused = useIsFocused();
+
   useEffect(()=>{
     async function getProfileImageUrl(imageKey){
       const res = await getImageUrl(imageKey);
@@ -55,6 +53,7 @@ const ProfileScreen = ({ navigation }) => {
 
   return (
     <>
+        <FlashMessage position="top" />
      {isLoading ? <View style={styles.loading}>
             <ActivityIndicator size='large' color="#0000ff" />
             </View>: <SafeAreaView style= {styles.container}>
@@ -94,7 +93,7 @@ const ProfileScreen = ({ navigation }) => {
             <Text style={{color:"#777777", marginLeft: 20}}>{email}</Text>
           </View>
           <View style={styles.row}>
-            <TouchableOpacity style={styles.row} onPress= {() => navigate('AddPhysician')}>
+            <TouchableOpacity style={styles.row} onPress= {() => navigate('AddPhysician', {testImage: profileImage})}>
             <FontAwesome name="plus-circle" size={20} />  
                 <Text style={{color:"#000", marginLeft: 20}}>Add Physician</Text>
              

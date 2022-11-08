@@ -108,6 +108,36 @@ export async function getPhyName(phyId){
     }
 }
 
+export async function addPhysiciansToUser(physicians){
+    try {
+        // physicians is a list of physician ids
+        const data_packet = {"physicians": physicians}
+        const res = await axios.post('https://app.personicle.org/api/user/physicians', data_packet, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)
+        return {'error': error.response.data, 'status': error.response.status}
+        
+    }
+}
+
+export async function getAllPhysicians(){
+    try {
+        const res = await axios.get(`https://app.personicle.org/api/physicians/all`, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`
+              }
+        })
+        return res
+    } catch (error) {
+        console.error(error)        
+    }
+}
+
 export async function sendPhysicianResponses (data_packet){
     try {
         const res = await axios.post('https://staging.personicle.org/data/write/datastream/upload', data_packet, {
