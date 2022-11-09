@@ -18,6 +18,7 @@ import Icon from "react-native-vector-icons/Ionicons";
 import MaterialCommunityIcons from "react-native-vector-icons/MaterialCommunityIcons";
 import { navigate } from "./RootNavigation";
 import EditProfileScreen from "./screens/EditProfileScreen";
+import AddPhysician from "./screens/AddPhysician";
 const Tab = createBottomTabNavigator();
 
 function TabRoutes() {
@@ -184,6 +185,15 @@ export const ProfileStackScreen = () => {
         component={EditProfileScreen}
         options={{
           title: "Edit Profile",
+          presentation: "modal",
+        }}
+      />
+
+      <Stack.Screen
+        name="AddPhysician"
+        component={AddPhysician}
+        options={{
+          title: "Add Physician",
           presentation: "modal",
         }}
       />

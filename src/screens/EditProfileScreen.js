@@ -5,6 +5,7 @@ import {
   TouchableOpacity,
   ImageBackground,
   TextInput,
+  ActivityIndicator,
   StyleSheet,
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -14,7 +15,8 @@ import BottomSheet from 'reanimated-bottom-sheet';
 import {useTheme} from 'react-native-paper';
 import Animated, { set } from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
-import {updateUserInfo, getUserInfo} from "../../api/http";
+import {updateUserInfo, getUserInfo, uploadProfilePic, getImageUrl} from "../../api/http";
+import BackgroundGeolocation from "react-native-background-geolocation";
 
 
 function EditProfileScreen ({navigation}){
@@ -27,13 +29,37 @@ function EditProfileScreen ({navigation}){
     const [city, setCity] = useState('');
     const [country, setCountry] = useState('');
     const [isLoading, setIsLoading] = useState(true);
-
+    const [name, setName] = useState('');
+    const [imageKey, setImageKey] = useState('');
+    const [profileImage, setProfileImage] = useState(''); // profile image url fetched from api
+    
     const [submitted, formSubmitted] = useState(false);
     bs = React.createRef();
     fall = new Animated.Value(1);
-
+    
   useEffect( () => {
+
+    async function getProfileImageUrl(imageKey){
+        const res = await getImageUrl(imageKey);
+        setProfileImage(res['data']['image_url'])
+        if(res){
+            setIsLoading(false);
+        }
+      }
     async function getUser(){
+        let location = await BackgroundGeolocation.getCurrentPosition({
+            timeout: 30,          // 30 second timeout to fetch location
+            maximumAge: 5000,     // Accept the last-known-location if not older than 5000 ms.
+            desiredAccuracy: 10,  // Try to fetch a location with an accuracy of `10` meters.
+            samples: 3,           // How many location samples to attempt.
+            extras: {             // Custom meta-data.
+              "route_id": 123
+            }
+          });
+        //   console.error(location['coords']['latitude'])
+        //   console.error(location['coords']['longitude'])
+
+
         const res = await getUserInfo();
         if(res != undefined){
            setWeight(res['data']['info']['weight'])
@@ -42,7 +68,12 @@ function EditProfileScreen ({navigation}){
            setCountry(res['data']['info']['country'])
            setCity(res['data']['info']['city'])
            setPostalCode(res['data']['info']['zipcode'])
-           setIsLoading(false);
+           setName(res['data']['name'])
+           if(res['data']['info']['image_key'] != undefined){
+             getProfileImageUrl(res['data']['info']['image_key'])
+           } else {
+            setIsLoading(false);
+           }
         }
     }
     getUser();
@@ -55,8 +86,9 @@ function EditProfileScreen ({navigation}){
             cropping: true,
             compressImageQuality: 0.7
           }).then(image => {
-            console.error(image);
-            set(image.path);
+            // console.error(image);
+            setProfilePic(image);
+            setProfileImage('');
             bs.current.snapTo(1);
           });
     }
@@ -68,14 +100,14 @@ function EditProfileScreen ({navigation}){
             cropping: true,
             compressImageQuality: 0.7
           }).then(image => {
-            console.error(image);
-            setProfilePic(image.path);
+            // console.error(image);
+            setProfilePic(image);
+            setProfileImage(''); // reset the profile image to the image uploaded by user
             bs.current.snapTo(1);
           });
     }
+    
     const updateUser =  async () => {
-        console.error(weight)
-        console.error(height)
         let  payload = {}
         if(height.length != 0 ) payload["height"] = height
         if(weight.length != 0 )payload["weight"] = weight
@@ -83,8 +115,24 @@ function EditProfileScreen ({navigation}){
         if(city.length != 0 ) payload["city"] = city
         if(country.length != 0 ) payload["country"] = country
         if(zipcode.length != 0 ) payload["zipcode"] = zipcode
+       
+        if(Object.keys(profilePic).length !== 0){
+             const imageUploadRes = await uploadProfilePic(profilePic)
+        
+            if(imageUploadRes){
+                setImageKey(imageUploadRes['data'][0]['image_key'])
+                payload["image_key"] = imageUploadRes['data'][0]['image_key']
+                setIsLoading(true);
+                const res =  await updateUserInfo(payload);
+                setIsLoading(false);
 
-        const res =  await updateUserInfo(payload);
+            }
+        }else{
+            setIsLoading(true);
+            const res =  await updateUserInfo(payload);
+            setIsLoading(false);
+
+        }
         navigation.goBack();
 
     }
@@ -118,7 +166,12 @@ function EditProfileScreen ({navigation}){
     )
     return (
         <>
-         {isLoading ? <Text> {'Loading...'}</Text> : <View style={styles.container}>
+        {/* {isLoading &&
+           
+        } */}
+         {isLoading ?  <View style={styles.loading}>
+            <ActivityIndicator size='large' color="#0000ff" />
+            </View> : (<View style={styles.container}>
             <BottomSheet
                 ref={bs}
                 snapPoints={[330, 0]}
@@ -142,7 +195,7 @@ function EditProfileScreen ({navigation}){
                             <ImageBackground 
                                 // source= { require("../../src/components/UI/stock.jpg")}
                                 source={{
-                                    uri: profilePic,
+                                    uri: profileImage.length > 0 ? profileImage :  profilePic['path'],
                                   }}
                                 style={{height: 100, width: 100}}
                                 imageStyle={{borderRadius: 15}}
@@ -169,7 +222,7 @@ function EditProfileScreen ({navigation}){
                             </ImageBackground>
                         </View>
                     </TouchableOpacity>
-                     <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>Tirth P</Text>               
+                     <Text style={{marginTop: 10, fontSize: 18, fontWeight: 'bold'}}>{name}</Text>               
                 </View>
                 <View style={styles.action}>
                     {/* <FontAwesome name="user-o" color={colors.text} size={20} /> */}
@@ -288,7 +341,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={styles.panelButtonTitle}>Save</Text>
                 </TouchableOpacity>
             </Animated.View>
-        </View> }
+            </View> ) }
         </>
         
     )
@@ -307,6 +360,16 @@ const styles = StyleSheet.create({
       alignItems: 'center',
       marginTop: 12,
     },
+    loading: {
+        position: 'absolute',
+        backgroundColor: '#F5FCFF88',
+        left: 0,
+        right: 0,
+        top: 0,
+        bottom: 0,
+        alignItems: 'center',
+        justifyContent: 'center'
+      },
     panel: {
       padding: 20,
       backgroundColor: '#FFFFFF',
