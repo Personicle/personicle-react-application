@@ -128,7 +128,7 @@ function PhysiciansQues({ route, navigation }) {
           <ImagePicker />
         </>
       );
-    } else if (question["response_type"] == "survey") {
+    } else {
       return (
         <>
           <Text style={styles.question}>{question["question"]}</Text>
