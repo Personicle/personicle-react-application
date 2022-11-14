@@ -1,34 +1,49 @@
-import {Pressable, View, Text, StyleSheet, SafeAreaView} from 'react-native';
-import {useNavigation} from '@react-navigation/native'
+import {Pressable, View, Text, StyleSheet, SafeAreaView, RefreshControl, ScrollView} from 'react-native';
+import {useNavigation, useIsFocused} from '@react-navigation/native'
 import { getPhyQuestions, getPhyName } from '../../api/http';
 import {PhysiciansQuestion} from '../navigationStacks'
 import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "../RootNavigation";
 import {navigate} from "../RootNavigation"
 import {useEffect, useState } from "react";
+import { FlatList } from 'react-native-gesture-handler';
 
 
 function Physician({phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
 
     const [phyName, setPhyName] = useState("")
+    const [phyRemoved, setPhyRemoved] = useState(false)
+    const isFocused = useIsFocused();
     const [isLoading, setLoading] = useState(true)
-    
+    // to get physician
+    async function getName(){
+        const res = await getPhyName(phy_id);
+        if(res.status == 404){
+            setPhyRemoved(true); // requested phy does not exist for this user
+        } else {
+            setPhyRemoved(false); 
+            setPhyName(res['data'][0]['name'])
+        }
+        setLoading(false);
+      
+    }
+   // we are fetching physician questionnaire datastream for all physicians for a user.
+   // So when a physician is removed, we still get that physician's responses when fetching physician_questionnaire datastream for a user
+   // When we call the api to get the physician name, we correctly do not get the response back as this user has removed the physician.
+   //Handling this case here
+
     useEffect(() => {
         if(!visualization){
             setLoading(false);
         } else{
-            async function getName(){
-                const name = await getPhyName(phy_id);
-                setPhyName(name['data'][0]['name'])
-                setLoading(false);
-            }
-    
             getName();
         }
-       
-
-    }, [])
-  
+    
+    }, [isFocused])
+    const refreshData = async () => {
+        console.error("hola")
+        await getName();
+      }
     function  physicianPressHandler(){
         if(!visualization)
             navigate("Questionnaire", {physician_id: physician_user_id, phyName: name, questions: questions['questions']});
@@ -37,8 +52,10 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
 
     }   
     return (
-        <SafeAreaView>
-            {isLoading ? <Text>{'Loading...'}</Text> :  
+        
+         <SafeAreaView> 
+            
+            {isLoading && !phyRemoved ? <Text>{'Loading...'}</Text> : (phyRemoved ? null :  
              (visualization == true ) ?  <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
                 <View style={styles.phy}>
                     <View >
@@ -51,10 +68,11 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
                         <Text styles={[styles.text]}>{name}</Text>
                     </View>
                 </View>
-            </Pressable>}
+            </Pressable>)}
            
             
-        </SafeAreaView>
+         </SafeAreaView> 
+        
         
         )
 }

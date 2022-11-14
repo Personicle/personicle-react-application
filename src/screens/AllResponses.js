@@ -45,8 +45,8 @@ function AllResponses({route, navigation}){
       })
     
     });
-    console.error("grouped by tag")
-    console.error(groupedByTag)
+    // console.error("grouped by tag")
+    // console.error(groupedByTag)
     useEffect(() => {
         if(selected)
           setRenderChart(true);
@@ -58,6 +58,7 @@ function AllResponses({route, navigation}){
     function RenderChart({questionId}){
       const questionIdRes = groupedByTag[questionId];
       const responseType = groupedByQuestionIdTag[questionId]
+      
       if (responseType !== undefined){
           if(responseType[0] == "numeric"){
           return  <LineChartComponent questionIdRes={questionIdRes} />

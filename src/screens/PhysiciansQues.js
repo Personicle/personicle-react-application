@@ -1,5 +1,5 @@
 import {Text,TextInput,View, SafeAreaView, FlatList, StyleSheet} from 'react-native';
-import {useState,useLayoutEffect, useContext} from 'react';
+import {useState,useLayoutEffect, useEffect, useContext, useRef} from 'react';
 import RenderQuestions from '../components/RenderQuestions';
 import Button from '../components/UI/Button';
 import {GlobalStyles} from "../../constants/styles"
@@ -11,7 +11,7 @@ import ImagePicker from '../components/ImagePicker'
 import { getUserId } from '../../api/interceptors';
 import { sendPhysicianResponses } from '../../api/http';
 import { ScrollView } from 'react-native-gesture-handler';
-
+import { Dropdown } from 'react-native-element-dropdown';
 
 function PhysiciansQues({route, navigation}){
   const PhysicianCtx = useContext(PhysiciansContext);
@@ -20,10 +20,10 @@ function PhysiciansQues({route, navigation}){
       test: '',
       res: {},
   });
+  const[pickerValue, setPickerValue] = useState({});
   const phyName = route.params?.phyName;
   const questions = route.params?.questions;
   const physicianId = route.params?.physician_id;
-
   useLayoutEffect(()=> {
     navigation.setOptions({
       title: `Questionnaire by ${phyName}`
@@ -38,10 +38,16 @@ function PhysiciansQues({route, navigation}){
   async function  confirmHandler(){
    let data_packet = []
    for (let key of Object.keys(responses.res)) {
-    console.error(key + " -> " + responses.res[key])
+  
+    let resType = ''
+    questions.forEach(element => {
+      if(element['tag'] === key) resType = element['response_type']
+    });
+
     data_packet.push({
       'question_id': key,
-      'value': responses.res[key]
+      'value': responses.res[key],
+      'response_type': resType
     })
    }
    const uid = await getUserId()
@@ -49,7 +55,8 @@ function PhysiciansQues({route, navigation}){
    "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": data_packet }]}
     // PhysicianCtx.submitResponses( );
 
-    sendPhysicianResponses(finalDataPacket)
+    const res = await sendPhysicianResponses(finalDataPacket)
+    console.error(res)
     navigation.goBack();
   }
   function renderQuestions(itemData ,onCancel,onSubmit){
@@ -58,18 +65,22 @@ function PhysiciansQues({route, navigation}){
   }
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
-    console.error("here")
-    console.error(inputIdentifier)
-    console.error(enteredValue)
           setResponses(prevState => ({
             res:{
               ...prevState.res,
-              [inputIdentifier]: enteredValue
+              [inputIdentifier]: enteredValue,
             }
           }));
   }
 
   function Question({question}){
+    let items =[]
+    question['options'].map( (val,index) => {
+      let temp = {}
+      temp['label'] = val;
+      temp['value'] = val;
+      items.push(temp);
+    })
     if(question['response_type'] == 'numeric') {
       return ( 
         <>
@@ -107,12 +118,44 @@ function PhysiciansQues({route, navigation}){
       return (
         <>
         <Text style={styles.question} >{question['question']}</Text>
-        <SelectPicker  onValueChange={(value) => { inputChangedHandler.bind(value, question['tag']) 
+        {/* <SelectPicker  key={question['tag']} onValueChange={(value) => { inputChangedHandler.bind(value, question['tag']) 
         setSelected(value)}} selected={selected}placeholder="--Select-- ">
                   {Object.values(question['options']).map((val, index) => (
                   <SelectPicker.Item label={val} value={val} key={index} />
                   ))}
-        </SelectPicker> 
+        </SelectPicker>  */}
+        
+
+        <Dropdown
+          style={styles.dropdown}
+          data={items}
+
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+
+          search
+          value={pickerValue[question['tag']]}
+          // onFocus={() => setIsFocus(true)}
+          // onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setPickerValue((curr) => ({
+              ...curr,
+              [question['tag']]: item.value
+            }));
+
+            // setIsFocus(false);
+            // console.error(item)
+            setResponses(prevState => ({
+              res:{
+                ...prevState.res,
+                [question['tag']]: item.value
+              }
+            }));
+          }}
+          
+        />
+       
        </>
       )
     } 
@@ -181,6 +224,13 @@ const styles = StyleSheet.create({
   button: {
     minWidth: 120,
     marginHorizontal: 8,
+  },
+  dropdown: {
+    height: 30,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
   },
 });
 export default PhysiciansQues;

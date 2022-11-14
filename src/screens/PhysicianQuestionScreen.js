@@ -17,6 +17,7 @@ const PhysicianQuestionScreen = () => {
      setPhysicians(filteredPhysiciansWithQuestions)
      setIsLoading(false)
 
+
     }
     getPhysicians();
   }, [])
