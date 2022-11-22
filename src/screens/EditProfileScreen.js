@@ -40,7 +40,7 @@ function EditProfileScreen ({navigation}){
   useEffect( () => {
     async function getImageUrlFromCache(){
       try {
-        const res = await ImageCache.get("profileImageUrl")
+        // const res = await ImageCache.get("profileImageUrl")
         return res;
       } catch (error) {
       console.error(error)
@@ -54,7 +54,7 @@ function EditProfileScreen ({navigation}){
         const url = res['data']['image_url'];
         setProfileImage(url)
         setIsLoading(false);
-        await ImageCache.set("profileImageUrl", url )
+        // await ImageCache.set("profileImageUrl", url )
       }
     async function getUser(){
         let location = await BackgroundGeolocation.getCurrentPosition({
@@ -141,7 +141,7 @@ function EditProfileScreen ({navigation}){
                 setIsLoading(true);
                 const res =  await updateUserInfo(payload);
                 // clear image cache
-                await ImageCache.clearAll();
+                // await ImageCache.clearAll();
                 setIsLoading(false);
 
             }

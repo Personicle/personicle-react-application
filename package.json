@@ -9,6 +9,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@georstat/react-native-image-gallery": "^1.1.0",
     "@okta/okta-react-native": "^2.5.0",
     "@react-native-async-storage/async-storage": "^1.17.10",
     "@react-native-picker/picker": "^1.16.8",
@@ -46,6 +47,7 @@
     "react-native-flash-message": "^0.3.1",
     "react-native-form-select-picker": "^0.0.12",
     "react-native-gesture-handler": "~2.2.1",
+    "react-native-grid-image-viewer-with-caption": "^1.0.5",
     "react-native-health": "^1.13.0",
     "react-native-image-crop-picker": "^0.38.1",
     "react-native-linear-gradient": "^2.6.2",

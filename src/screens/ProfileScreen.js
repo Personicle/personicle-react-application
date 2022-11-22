@@ -32,7 +32,6 @@ const ProfileScreen = ({ navigation }) => {
 
         headerLeft: () => (
             <TouchableOpacity onPress={() => logout()} style={{
-              
             }}>
           <Text
             style={{
@@ -46,8 +45,8 @@ const ProfileScreen = ({ navigation }) => {
         )
     })
   }, [navigation]);
-  useEffect(()=>{
 
+  useEffect(()=>{
     async function getImageUrlFromCache(){
       console.error("here")
       try {
@@ -57,9 +56,7 @@ const ProfileScreen = ({ navigation }) => {
         console.error(res)
       } catch (error) {
       console.error(error)
-        
       }
-      
     }
 
     async function getProfileImageUrl(imageKey){
@@ -67,7 +64,7 @@ const ProfileScreen = ({ navigation }) => {
       const url = res['data']['image_url']
       setProfileImage(url)
       setIsLoading(false);
-      await ImageCache.set("profileImageUrl", url )
+      // await ImageCache.set("profileImageUrl", url )
     }
 
     async function getPhys(){
@@ -88,7 +85,8 @@ const ProfileScreen = ({ navigation }) => {
           setState(res['data']['info']['state'])
           setCountry(res['data']['info']['country'])
           setName(res['data']['name'])
-          var profileImageUrl = await getImageUrlFromCache();
+          // var profileImageUrl = await getImageUrlFromCache();
+          var profileImageUrl = undefined
           if(profileImageUrl !== undefined){
             setProfileImage(profileImageUrl);
             setIsLoading(false);

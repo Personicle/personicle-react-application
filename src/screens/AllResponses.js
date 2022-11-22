@@ -3,6 +3,7 @@ import {useState,useEffect} from 'react';
 import SelectPicker from 'react-native-form-select-picker';
 import LineChartComponent from '../components/LineChartComponent';
 import PieChart from '../components/PieChart';
+import ImageComponent from '../components/ImageComponent';
 
 function AllResponses({route, navigation}){
 
@@ -60,10 +61,17 @@ function AllResponses({route, navigation}){
       const responseType = groupedByQuestionIdTag[questionId]
       
       if (responseType !== undefined){
+ 
           if(responseType[0] == "numeric"){
+           
           return  <LineChartComponent questionIdRes={questionIdRes} />
           } else if (responseType[0] == "survey" || responseType[0] == "string" ){
+            console.error("holaaaaaqaa")
+            console.error(responseType)
+
             return <PieChart questionIdRes={questionIdRes} />
+          } else if (responseType[0] == "image" ){
+            return <ImageComponent  questionIdRes={questionIdRes} questionId={questionId} physicianId={physicianId}/>
           }
         }
   
@@ -74,8 +82,8 @@ function AllResponses({route, navigation}){
     return (
         <View style={styles.container}>
 
-            <Text>{name}</Text>
-            <SelectPicker
+            <Text style={{alignItems: 'center', textAlign: 'center'}}>{name}</Text>
+            <SelectPicker style={{alignItems: 'center'}}
                 onValueChange={(value) => {
                     setSelected(value);
                 }}
@@ -99,8 +107,8 @@ function AllResponses({route, navigation}){
 
 const styles = StyleSheet.create({
     container: {
-         padding: 24,
-          alignItems: 'center',
+         padding: 5,
+          // alignItems: 'center',
           paddingTop: 10,
           flex: 1
     }

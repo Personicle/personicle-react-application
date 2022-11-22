@@ -7,11 +7,12 @@ import moment from "moment";
 import QuestionnaireForm from '../components/QuestionnaireForm';
 import { PhysiciansContext } from '../context/physicians-context';
 import SelectPicker from 'react-native-form-select-picker';
-import ImagePicker from '../components/ImagePicker'
+// import ImagePicker from '../components/ImagePicker'
 import { getUserId } from '../../api/interceptors';
 import { sendPhysicianResponses } from '../../api/http';
-import { ScrollView } from 'react-native-gesture-handler';
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
+import ImagePicker from 'react-native-image-crop-picker';
 
 function PhysiciansQues({route, navigation}){
   const PhysicianCtx = useContext(PhysiciansContext);
@@ -34,6 +35,25 @@ function PhysiciansQues({route, navigation}){
   function cancelHandler(){
     navigation.goBack();
   }
+
+  const choosePhotoFromLibrary = () => {
+    ImagePicker.openPicker({
+        width: 300,
+        height: 300,
+        cropping: true,
+        compressImageQuality: 0.7
+      }).then(image => {
+        console.error(image);
+        setResponses(prevState => ({
+          res:{
+            ...prevState.res,
+            [question['tag']]: item.value
+          }
+        }));
+        // setProfilePic(image);
+        // setProfileImage(''); // reset the profile image to the image uploaded by user
+      });
+}
   
   async function  confirmHandler(){
    let data_packet = []
@@ -59,11 +79,7 @@ function PhysiciansQues({route, navigation}){
     console.error(res)
     navigation.goBack();
   }
-  function renderQuestions(itemData ,onCancel,onSubmit){
-
-    return <RenderQuestions  onSubmit={confirmHandler} onCancel={cancelHandler} {...itemData.item}/>
-  }
-
+  
   function inputChangedHandler(inputIdentifier, enteredValue) {
           setResponses(prevState => ({
             res:{
@@ -111,41 +127,29 @@ function PhysiciansQues({route, navigation}){
       return (
         <>
         <Text style={styles.question} >{question['question']}</Text>
-        <ImagePicker/> 
+        <TouchableOpacity  style={styles.commandButton} onPress={choosePhotoFromLibrary}>
+           <Text style={styles.panelButtonTitle}>Upload Image</Text>
+        </TouchableOpacity>
+        {/* <ImagePicker/>  */}
        </>
       )
     } else if(question['response_type'] == 'survey') {
       return (
         <>
         <Text style={styles.question} >{question['question']}</Text>
-        {/* <SelectPicker  key={question['tag']} onValueChange={(value) => { inputChangedHandler.bind(value, question['tag']) 
-        setSelected(value)}} selected={selected}placeholder="--Select-- ">
-                  {Object.values(question['options']).map((val, index) => (
-                  <SelectPicker.Item label={val} value={val} key={index} />
-                  ))}
-        </SelectPicker>  */}
-        
-
         <Dropdown
           style={styles.dropdown}
           data={items}
-
           maxHeight={300}
           labelField="label"
           valueField="value"
-
           search
           value={pickerValue[question['tag']]}
-          // onFocus={() => setIsFocus(true)}
-          // onBlur={() => setIsFocus(false)}
           onChange={item => {
             setPickerValue((curr) => ({
               ...curr,
               [question['tag']]: item.value
             }));
-
-            // setIsFocus(false);
-            // console.error(item)
             setResponses(prevState => ({
               res:{
                 ...prevState.res,
@@ -153,7 +157,6 @@ function PhysiciansQues({route, navigation}){
               }
             }));
           }}
-          
         />
        
        </>
@@ -231,6 +234,19 @@ const styles = StyleSheet.create({
     borderWidth: 0.5,
     borderRadius: 8,
     paddingHorizontal: 8,
+  },
+  panelButtonTitle: {
+    fontSize: 17,
+    fontWeight: 'bold',
+    color: 'white',
+    marginLeft: 25
+  },
+  commandButton: {
+    padding: 10,
+    borderRadius: 15,
+    backgroundColor: '#0d58d1',
+    alignItems: 'center',
+    marginTop: 10,
   },
 });
 export default PhysiciansQues;
