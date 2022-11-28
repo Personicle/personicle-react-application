@@ -16,48 +16,35 @@ function AllResponses({ route, navigation }) {
       r[val.question_id] = r[val.question_id] || [];
       r[val.question_id].push(val.response_type);
     });
-    return r;
-  }, Object.create(null));
+    // console.error("grouped by tag")
+    // console.error(groupedByTag)
+    useEffect(() => {
+        if(selected)
+          setRenderChart(true);
+        else
+           setRenderChart(false);
+    }, [selected])
 
   let groupedByTag = {};
   responses.forEach(function (res) {
     const values = res.value;
 
-    values.forEach(function (val) {
-      let temp = {};
-      temp = {
-        question_id: val.question_id,
-        timestamp: res.timestamp,
-        value: val.value,
-        confidence: res.confidence,
-        response_type: val.response_type,
-      };
-      if (!groupedByTag[val.question_id]) {
-        groupedByTag[val.question_id] = [temp];
-      } else {
-        groupedByTag[val.question_id].push(temp);
-      }
-    });
-  });
-  console.error("grouped by tag");
-  console.error(groupedByTag);
-  useEffect(() => {
-    if (selected) setRenderChart(true);
-    else setRenderChart(false);
-  }, [selected]);
-
-  function RenderChart({ questionId }) {
-    const questionIdRes = groupedByTag[questionId];
-    const responseType = groupedByQuestionIdTag[questionId];
-    if (responseType !== undefined) {
-      if (responseType[0] == "numeric") {
-        return <LineChartComponent questionIdRes={questionIdRes} />;
-      } else if (responseType[0] == "survey" || responseType[0] == "string") {
-        return <PieChart questionIdRes={questionIdRes} />;
-      }
+    function RenderChart({questionId}){
+      const questionIdRes = groupedByTag[questionId];
+      const responseType = groupedByQuestionIdTag[questionId]
+      
+      if (responseType !== undefined){
+          if(responseType[0] == "numeric"){
+          return  <LineChartComponent questionIdRes={questionIdRes} />
+          } else if (responseType[0] == "survey" || responseType[0] == "string" ){
+            return <PieChart questionIdRes={questionIdRes} />
+          }
+        }
+  
+      return <Text>{'Not able to visualize this datastream'}</Text>;
     }
 
-    return <Text>{"Not able to visualize this datastream"}</Text>;
+  //   return <Text>{"Not able to visualize this datastream"}</Text>;
   }
 
   return (

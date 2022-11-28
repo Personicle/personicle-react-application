@@ -4,14 +4,14 @@ import React from "react";
 import { StyleSheet } from "react-native";
 import "react-native-gesture-handler";
 import { Provider } from "./src/context/AuthorizationContext";
-
+import  AsyncStorage  from '@react-native-async-storage/async-storage';
 import oktaConfig from "./okta.config";
 
 import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
 
 export default () => {
-  
+ 
   useEffect(() => {
     console.log("setting up okta config");
 

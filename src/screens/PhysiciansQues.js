@@ -1,36 +1,30 @@
-import {
-  Text,
-  TextInput,
-  View,
-  SafeAreaView,
-  FlatList,
-  StyleSheet,
-} from "react-native";
-import { useState, useLayoutEffect, useContext } from "react";
-import RenderQuestions from "../components/RenderQuestions";
-import Button from "../components/UI/Button";
-import { GlobalStyles } from "../../constants/styles";
+import {Text,TextInput,View, SafeAreaView, FlatList, StyleSheet} from 'react-native';
+import {useState,useLayoutEffect, useEffect, useContext, useRef} from 'react';
+import RenderQuestions from '../components/RenderQuestions';
+import Button from '../components/UI/Button';
+import {GlobalStyles} from "../../constants/styles"
 import moment from "moment";
-import QuestionnaireForm from "../components/QuestionnaireForm";
-import { PhysiciansContext } from "../context/physicians-context";
-import SelectPicker from "react-native-form-select-picker";
-import ImagePicker from "../components/ImagePicker";
-import { getUserId } from "../../api/interceptors";
-import { sendPhysicianResponses } from "../../api/http";
-import { ScrollView } from "react-native-gesture-handler";
+import QuestionnaireForm from '../components/QuestionnaireForm';
+import { PhysiciansContext } from '../context/physicians-context';
+import SelectPicker from 'react-native-form-select-picker';
+import ImagePicker from '../components/ImagePicker'
+import { getUserId } from '../../api/interceptors';
+import { sendPhysicianResponses } from '../../api/http';
+import { ScrollView } from 'react-native-gesture-handler';
+import { Dropdown } from 'react-native-element-dropdown';
 
-function PhysiciansQues({ route, navigation }) {
+function PhysiciansQues({route, navigation}){
   const PhysicianCtx = useContext(PhysiciansContext);
   const [selected, setSelected] = useState();
   const [responses, setResponses] = useState({
     test: "",
     res: {},
   });
+  const[pickerValue, setPickerValue] = useState({});
   const phyName = route.params?.phyName;
   const questions = route.params?.questions;
   const physicianId = route.params?.physician_id;
-
-  useLayoutEffect(() => {
+  useLayoutEffect(()=> {
     navigation.setOptions({
       title: `Questionnaire by ${phyName}`,
     });
@@ -39,34 +33,29 @@ function PhysiciansQues({ route, navigation }) {
   function cancelHandler() {
     navigation.goBack();
   }
+  
+  async function  confirmHandler(){
+   let data_packet = []
+   for (let key of Object.keys(responses.res)) {
+  
+    let resType = ''
+    questions.forEach(element => {
+      if(element['tag'] === key) resType = element['response_type']
+    });
 
-  async function confirmHandler() {
-    let data_packet = [];
-    for (let key of Object.keys(responses.res)) {
-      console.error(key + " -> " + responses.res[key]);
-      data_packet.push({
-        question_id: key,
-        value: responses.res[key],
-      });
-    }
-    const uid = await getUserId();
-    const finalDataPacket = {
-      streamName:
-        "com.personicle.individual.datastreams.subjective.physician_questionnaire",
-      individual_id: uid,
-      source: `Personicle:${physicianId}`,
-      unit: "",
-      confidence: 100,
-      dataPoints: [
-        {
-          timestamp: moment().format("YYYY-MM-DD HH:mm:ss"),
-          value: data_packet,
-        },
-      ],
-    };
+    data_packet.push({
+      'question_id': key,
+      'value': responses.res[key],
+      'response_type': resType
+    })
+   }
+   const uid = await getUserId()
+   const finalDataPacket = {"streamName": "com.personicle.individual.datastreams.subjective.physician_questionnaire", "individual_id": uid,
+   "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": data_packet }]}
     // PhysicianCtx.submitResponses( );
 
-    sendPhysicianResponses(finalDataPacket);
+    const res = await sendPhysicianResponses(finalDataPacket)
+    console.error(res)
     navigation.goBack();
   }
   function renderQuestions(itemData, onCancel, onSubmit) {
@@ -80,20 +69,24 @@ function PhysiciansQues({ route, navigation }) {
   }
 
   function inputChangedHandler(inputIdentifier, enteredValue) {
-    console.error("here");
-    console.error(inputIdentifier);
-    console.error(enteredValue);
-    setResponses((prevState) => ({
-      res: {
-        ...prevState.res,
-        [inputIdentifier]: enteredValue,
-      },
-    }));
+          setResponses(prevState => ({
+            res:{
+              ...prevState.res,
+              [inputIdentifier]: enteredValue,
+            }
+          }));
   }
 
-  function Question({ question }) {
-    if (question["response_type"] == "numeric") {
-      return (
+  function Question({question}){
+    let items =[]
+    question['options'].map( (val,index) => {
+      let temp = {}
+      temp['label'] = val;
+      temp['value'] = val;
+      items.push(temp);
+    })
+    if(question['response_type'] == 'numeric') {
+      return ( 
         <>
           <Text style={styles.question}>{question["question"]}</Text>
 
@@ -107,6 +100,103 @@ function PhysiciansQues({ route, navigation }) {
             keyboardType="numeric"
           />
         </>
+      )
+    } else if(question['response_type'] == 'string') {
+      return (
+        <>
+        <Text style={styles.question} >{question['question']}</Text>
+        <TextInput  style={styles.input} 
+         onChangeText={inputChangedHandler.bind(this, question['tag'])}  
+         placeholder="Enter string response" 
+         value = {responses.res[question['tag']]}
+         keyboardType="default"/>
+       </>
+      )
+    
+    } else if(question['response_type'] == 'image') {
+      return (
+        <>
+        <Text style={styles.question} >{question['question']}</Text>
+        <ImagePicker/> 
+       </>
+      )
+    } else if(question['response_type'] == 'survey') {
+      return (
+        <>
+        <Text style={styles.question} >{question['question']}</Text>
+        {/* <SelectPicker  key={question['tag']} onValueChange={(value) => { inputChangedHandler.bind(value, question['tag']) 
+        setSelected(value)}} selected={selected}placeholder="--Select-- ">
+                  {Object.values(question['options']).map((val, index) => (
+                  <SelectPicker.Item label={val} value={val} key={index} />
+                  ))}
+        </SelectPicker>  */}
+        
+
+        <Dropdown
+          style={styles.dropdown}
+          data={items}
+
+          maxHeight={300}
+          labelField="label"
+          valueField="value"
+
+          search
+          value={pickerValue[question['tag']]}
+          // onFocus={() => setIsFocus(true)}
+          // onBlur={() => setIsFocus(false)}
+          onChange={item => {
+            setPickerValue((curr) => ({
+              ...curr,
+              [question['tag']]: item.value
+            }));
+
+            // setIsFocus(false);
+            // console.error(item)
+            setResponses(prevState => ({
+              res:{
+                ...prevState.res,
+                [question['tag']]: item.value
+              }
+            }));
+          }}
+          
+        />
+       
+       </>
+      )
+    } 
+    
+  }
+  
+
+    return (
+       
+      // <SafeAreaView style={styles.container} >
+      //   {/* <QuestionnaireForm questions={questions} onCancel={cancelHandler} onSubmit={confirmHandler} /> */}
+      //   <FlatList
+      //     data={questions}
+      //     renderItem={renderQuestions}
+      //   />
+
+   <ScrollView style={styles.container} >
+     {questions.map((ques,i)=>{
+       return (
+        <>
+          <Question  question={ques}/>
+          
+      
+         </>
+       )
+  
+    })}
+    <View style={styles.buttons}>
+
+    <Button mode="flat" onPress={cancelHandler} style={styles.button} >Cancel</Button>
+          <Button  onPress={confirmHandler} style={styles.button} >Submit</Button>
+    </View>
+    
+    </ScrollView>
+     
       );
     } else if (question["response_type"] == "string") {
       return (
@@ -207,6 +297,13 @@ const styles = StyleSheet.create({
   button: {
     minWidth: 120,
     marginHorizontal: 8,
+  },
+  dropdown: {
+    height: 30,
+    borderColor: 'gray',
+    borderWidth: 0.5,
+    borderRadius: 8,
+    paddingHorizontal: 8,
   },
 });
 export default PhysiciansQues;

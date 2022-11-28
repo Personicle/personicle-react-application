@@ -19,7 +19,6 @@ const PhysicianQuestionScreen = () => {
   useEffect(() => {
     async function getPhysicians() {
       const phys = await getPhyQuestions();
-      console.warn(JSON.stringify(phys));
       const filteredPhysiciansWithQuestions = phys["data"][
         "physician_users"
       ].filter((obj) => Object.keys(obj.questions).length != 0);

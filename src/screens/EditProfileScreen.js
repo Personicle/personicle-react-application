@@ -17,7 +17,7 @@ import Animated, { set } from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
 import {updateUserInfo, getUserInfo, uploadProfilePic, getImageUrl} from "../../api/http";
 import BackgroundGeolocation from "react-native-background-geolocation";
-
+import {ImageCache} from "../utils/cache";
 
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
@@ -38,13 +38,23 @@ function EditProfileScreen ({navigation}){
     fall = new Animated.Value(1);
     
   useEffect( () => {
+    async function getImageUrlFromCache(){
+      try {
+        const res = await ImageCache.get("profileImageUrl")
+        return res;
+      } catch (error) {
+      console.error(error)
+        
+      }
+      
+    }
 
     async function getProfileImageUrl(imageKey){
         const res = await getImageUrl(imageKey);
-        setProfileImage(res['data']['image_url'])
-        if(res){
-            setIsLoading(false);
-        }
+        const url = res['data']['image_url'];
+        setProfileImage(url)
+        setIsLoading(false);
+        await ImageCache.set("profileImageUrl", url )
       }
     async function getUser(){
         let location = await BackgroundGeolocation.getCurrentPosition({
@@ -59,7 +69,6 @@ function EditProfileScreen ({navigation}){
         //   console.error(location['coords']['latitude'])
         //   console.error(location['coords']['longitude'])
 
-
         const res = await getUserInfo();
         if(res != undefined){
            setWeight(res['data']['info']['weight'])
@@ -69,11 +78,18 @@ function EditProfileScreen ({navigation}){
            setCity(res['data']['info']['city'])
            setPostalCode(res['data']['info']['zipcode'])
            setName(res['data']['name'])
-           if(res['data']['info']['image_key'] != undefined){
-             getProfileImageUrl(res['data']['info']['image_key'])
-           } else {
-            setIsLoading(false);
-           }
+            var profileImageUrl = await getImageUrlFromCache();
+            if(profileImageUrl != undefined){
+              setProfileImage(profileImageUrl);
+              setIsLoading(false);;
+            } else {
+              if(res['data']['info']['image_key'] != undefined){
+                getProfileImageUrl(res['data']['info']['image_key'])
+              }
+            }
+          setIsLoading(false);
+        } else {
+          setIsLoading(false);
         }
     }
     getUser();
@@ -124,6 +140,8 @@ function EditProfileScreen ({navigation}){
                 payload["image_key"] = imageUploadRes['data'][0]['image_key']
                 setIsLoading(true);
                 const res =  await updateUserInfo(payload);
+                // clear image cache
+                await ImageCache.clearAll();
                 setIsLoading(false);
 
             }

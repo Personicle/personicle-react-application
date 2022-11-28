@@ -12,6 +12,7 @@ import FlashMessage from "react-native-flash-message";
 import {SwipeListView} from 'react-native-swipe-list-view';
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { showMessage } from "react-native-flash-message";
+import {ImageCache} from "../utils/cache";
 
 const ProfileScreen = ({ navigation }) => {
   const { state, logout } = useContext(Context);
@@ -25,12 +26,48 @@ const ProfileScreen = ({ navigation }) => {
   const [phys, setPhys] = useState([]);
   const isFocused = useIsFocused();
 
+  
+  useLayoutEffect(()=> {
+    navigation.setOptions({
+
+        headerLeft: () => (
+            <TouchableOpacity onPress={() => logout()} style={{
+              
+            }}>
+          <Text
+            style={{
+                fontSize: 20,
+                textAlign: "center",
+                color: "#000",
+            }}
+           >Sign out</Text>
+        </TouchableOpacity>
+
+        )
+    })
+  }, [navigation]);
   useEffect(()=>{
+
+    async function getImageUrlFromCache(){
+      console.error("here")
+      try {
+        const res = await ImageCache.get("profileImageUrl")
+        // console.error(res)
+        return res;
+        console.error(res)
+      } catch (error) {
+      console.error(error)
+        
+      }
+      
+    }
+
     async function getProfileImageUrl(imageKey){
       const res = await getImageUrl(imageKey);
-      setProfileImage(res['data']['image_url'])
+      const url = res['data']['image_url']
+      setProfileImage(url)
       setIsLoading(false);
-
+      await ImageCache.set("profileImageUrl", url )
     }
 
     async function getPhys(){
@@ -51,18 +88,24 @@ const ProfileScreen = ({ navigation }) => {
           setState(res['data']['info']['state'])
           setCountry(res['data']['info']['country'])
           setName(res['data']['name'])
-
-          if(res['data']['info']['image_key'] != undefined){
-            getProfileImageUrl(res['data']['info']['image_key'])
+          var profileImageUrl = await getImageUrlFromCache();
+          if(profileImageUrl !== undefined){
+            setProfileImage(profileImageUrl);
+            setIsLoading(false);
+            console.error("profile image url from cache")
           } else {
-          setIsLoading(false);
+            if(res['data']['info']['image_key'] != undefined){
+              getProfileImageUrl(res['data']['info']['image_key'])
+              console.error("profile image url from api call")
+            }
           }
-          
+          setIsLoading(false);
         } else {
           setIsLoading(false);
         }
     }
-    isFocused && getUser() && getPhys();
+    
+    isFocused && getUser() && getPhys() ;
   },[isFocused])
 
   const VisibleItem = props => {
@@ -136,7 +179,9 @@ const ProfileScreen = ({ navigation }) => {
       rowMap[rowKey].closeRow();
     }
   }
-  
+  // note: removing physician from a user also removes the physician questionnaire for this user, because the questionniare is stored in the physician_users relation.
+  // So user will not be able to see the questionnaire once physician is added back
+  // however the user is able to visualize the previous responses when the physician is added back as the responses are stored as datastream in physician_questionnaire table
   const deleteRow = (rowMap, rowKey) => {
     closeRow(rowMap,rowKey)
     const newData = [...phys];
@@ -235,8 +280,8 @@ const ProfileScreen = ({ navigation }) => {
              
             </TouchableOpacity>
           </View>
-          {/* <Text style={{ marginLeft: 5}}>Your Physicians</Text>
-          <Text style={{color:"#777777", marginLeft: 5}}>Your data is shared with: </Text> */}
+          <Text style={{ marginLeft: 5}}>Your Physicians</Text>
+          <Text style={{color:"#777777", marginLeft: 5}}>Your data is shared with: </Text>
           <SwipeListView
             data={phys}
             renderHiddenItem={renderHiddenItem}

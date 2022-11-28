@@ -42,12 +42,10 @@ function VisualizeResponses() {
 
       arr.push(temp);
     }
-
     setPhysicianIds(arr);
 
     setResponses(result);
     console.error("grouped by phys");
-    console.error(result);
     setIsLoading(false);
   }
   useEffect(() => {
@@ -58,8 +56,6 @@ function VisualizeResponses() {
     await getPhysicianResponses();
   };
   function renderPhysicians(itemData) {
-    // console.error("hola")
-    // console.error(itemData.item)
     return (
       <Physician
         visualization={true}
