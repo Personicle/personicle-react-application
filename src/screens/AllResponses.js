@@ -3,6 +3,7 @@ import { useState, useEffect } from "react";
 import SelectPicker from "react-native-form-select-picker";
 import LineChartComponent from "../components/LineChartComponent";
 import PieChart from "../components/PieChart";
+import ImageComponent from "../components/ImageComponent";
 
 function AllResponses({ route, navigation }) {
   const responses = route.params?.responses;
@@ -16,41 +17,67 @@ function AllResponses({ route, navigation }) {
       r[val.question_id] = r[val.question_id] || [];
       r[val.question_id].push(val.response_type);
     });
-    // console.error("grouped by tag")
-    // console.error(groupedByTag)
-    useEffect(() => {
-        if(selected)
-          setRenderChart(true);
-        else
-           setRenderChart(false);
-    }, [selected])
+    return r;
+  }, Object.create(null));
 
   let groupedByTag = {};
   responses.forEach(function (res) {
     const values = res.value;
 
-    function RenderChart({questionId}){
-      const questionIdRes = groupedByTag[questionId];
-      const responseType = groupedByQuestionIdTag[questionId]
-      
-      if (responseType !== undefined){
-          if(responseType[0] == "numeric"){
-          return  <LineChartComponent questionIdRes={questionIdRes} />
-          } else if (responseType[0] == "survey" || responseType[0] == "string" ){
-            return <PieChart questionIdRes={questionIdRes} />
-          }
-        }
-  
-      return <Text>{'Not able to visualize this datastream'}</Text>;
+    values.forEach(function (val) {
+      let temp = {};
+      temp = {
+        question_id: val.question_id,
+        timestamp: res.timestamp,
+        value: val.value,
+        confidence: res.confidence,
+        response_type: val.response_type,
+      };
+      if (!groupedByTag[val.question_id]) {
+        groupedByTag[val.question_id] = [temp];
+      } else {
+        groupedByTag[val.question_id].push(temp);
+      }
+    });
+  });
+  // console.error("grouped by tag")
+  // console.error(groupedByTag)
+  useEffect(() => {
+    if (selected) setRenderChart(true);
+    else setRenderChart(false);
+  }, [selected]);
+
+  function RenderChart({ questionId }) {
+    const questionIdRes = groupedByTag[questionId];
+    const responseType = groupedByQuestionIdTag[questionId];
+
+    if (responseType !== undefined) {
+      if (responseType[0] == "numeric") {
+        return <LineChartComponent questionIdRes={questionIdRes} />;
+      } else if (responseType[0] == "survey" || responseType[0] == "string") {
+        console.error("holaaaaaqaa");
+        console.error(responseType);
+
+        return <PieChart questionIdRes={questionIdRes} />;
+      } else if (responseType[0] == "image") {
+        return (
+          <ImageComponent
+            questionIdRes={questionIdRes}
+            questionId={questionId}
+            physicianId={physicianId}
+          />
+        );
+      }
     }
 
-  //   return <Text>{"Not able to visualize this datastream"}</Text>;
+    return <Text>{"Not able to visualize this datastream"}</Text>;
   }
 
   return (
     <View style={styles.container}>
-      <Text>{name}</Text>
+      <Text style={{ alignItems: "center", textAlign: "center" }}>{name}</Text>
       <SelectPicker
+        style={{ alignItems: "center" }}
         onValueChange={(value) => {
           setSelected(value);
         }}
@@ -74,8 +101,8 @@ function AllResponses({ route, navigation }) {
 
 const styles = StyleSheet.create({
   container: {
-    padding: 24,
-    alignItems: "center",
+    padding: 5,
+    // alignItems: 'center',
     paddingTop: 10,
     flex: 1,
   },

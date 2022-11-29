@@ -49,9 +49,6 @@ useEffect(()=> {
     groupEventsByWeek();
 },[])
 useEffect(() => {
-    console.error("hola")
-    console.error(timelineYearWeek)
-    console.error(groupedByWeek[timelineYearWeek])
     setCurrentWeekEvents(groupedByWeek[timelineYearWeek]);
     setRenderBarChart(false);
    }, [timelineYearWeek]);
@@ -64,10 +61,8 @@ const setCalendarHeader = (sd,ed) => {
         setYearWeek(yw);
 
     } else {
-        console.error("not first load")
         setDateRange(moment(sd).format("MMM Do YY") + " - "+ moment(ed).format("MMM Do YY"))
         const yw2 = `${moment(sd,).year()}-${moment(ed,).week()}`;
-        console.error(yw2)
         setYearWeek(yw2);
     }
   }
@@ -75,18 +70,15 @@ const setCalendarHeader = (sd,ed) => {
   useEffect(()=>{
 
     if(currentEvents !=  undefined){
-        console.error("Exists")
         let formattedData = [];
             let temp = {}
             currentEvents.forEach(r => {
                 if(temp[r.value] == undefined){
-                    console.error("hereee")
                     temp[r.value] = []
                     temp[r.value].push(r)
         
                 }
                 else{
-                    console.error("hereee else")
                     temp[r.value].push(r)
                 }
         
@@ -105,61 +97,13 @@ const setCalendarHeader = (sd,ed) => {
 
     }
   }, [currentEvents])
-    function getSelectedDaysResponses(date){
-        // if(firstLoad)
-        //     setgroupedByDay(events)
-        if(groupedByDay[moment(date).format('MM-DD-YYYY')] === undefined){
-          setTodayEvents([]);
-          setFirstLoad(false);
-          setIsLoading(false)
-          console.error("if undefiend")
-        } else {
-          console.error("defined")
-
-            let dayToPlot = groupedByDay[moment(date).format('MM-DD-YYYY')]
-            setIsLoading(true);
-            let formattedData = [];
-            let temp = {}
-            dayToPlot.forEach(r => {
-                if(temp[r.value] == undefined){
-                    console.error("hereee")
-                    temp[r.value] = []
-                    temp[r.value].push(r)
-        
-                }
-                else{
-                    console.error("hereee else")
-                    temp[r.value].push(r)
-                }
-        
-            })
-            formattedData.push(temp)
-            console.error(formattedData)
-            
-           
-            let dataToPlot = []
-            Object.entries(formattedData[0]).forEach( ([k,v]) => {
-                dataToPlot.push( {
-                    x: k, y: v.length, details: v
-                })
-            })
-          setFirstLoad(false);
-          setTodayEvents(dataToPlot);
-          setIsLoading(false);
-        }
-      }
+  
 
     function BarChart(){
         formattedBarChartData = [];
-        console.error(BarChartData)
+        
         let groupedByDay = groupBy(BarChartData, (val) => moment(val.timestamp).format('MM-DD-YYYY'))
-        console.error(groupedByDay)
-        // BarChartData.forEach(res => {
-        //     let temp = {}
-        //     temp['x'] = moment(res.timestamp).format('MM-DD-YYYY')
-        //     temp['y'] = res.value
-        //     formattedBarChartData.push(temp);
-        // });
+       
         Object.entries(groupedByDay).forEach( ([k,v]) => {
           let temp ={}
           temp['x'] = k
@@ -172,52 +116,23 @@ const setCalendarHeader = (sd,ed) => {
             <VictoryChart
             theme={VictoryTheme.material}
             height={250}
-            //  style={{
-            //   parent: {
-            //     // border: "1px solid #ccc"
-            //   },
-              
-            //   background: {
-            //     // fill: "#0761e0",
-            //     fillOpacity: 0.9,
-            //   }
-            // }}
             >
-              <VictoryBar
-            barWidth={({ index }) => index * 2 + 8}
-            style={{
-              data: { fill: "#c43a31" }
-            }}
-            labels={({ datum }) => `${datum.y}`}
-          data={formattedBarChartData}
-          />
-            {/* <VictoryLine
-              interpolation="natural"
-              animate={{
-                onLoad: { duration: 3000 }
-              }}
-                style={{
-                  
-                  data: {
-                    stroke: 'white' ,
-                    // strokeWidth: ({ data }) => data.length,
-                    
-                  },
-                  labels: {
-                    fontSize: 15,
-                    // fill: ({ datum }) => datum.x === 3 ? "#000000" : "#c43a31"
-                  }
-                }}
+                <VictoryBar
+                  barWidth={({ index }) => index * 2 + 8}
+                  style={{
+                    data: { fill: "#c43a31" }
+                  }}
+                  labels={({ datum }) => `${datum.y}`}
                 data={formattedBarChartData}
-              /> */}
-            </VictoryChart>
-            
-            </View>)
+                 />
+          </VictoryChart>
+         </View>)
     }
 
     return (
         // (formattedChartData == undefined ||  formattedChartData.length == 0)  ?   <Text>{'No events'}</Text>  
               <View style={styles.container}>
+                 
                         {[( <CalendarStrip
                             scrollable
                             style={{height:50, paddingTop: 0, paddingBottom: 0}}
@@ -229,7 +144,7 @@ const setCalendarHeader = (sd,ed) => {
                             headerText ={dateRange}
                             showDayName = {false}
                             showDayNumber = {false}
-                         />),  (<VictoryPie
+                         />),  formattedChartData !== undefined ? (<VictoryPie
                             innerRadius={5} labelRadius={50}
                             labels={({ datum }) => `${datum.x}`}
                             width={350} height={320}
@@ -275,7 +190,7 @@ const setCalendarHeader = (sd,ed) => {
                             }]}
                             />
 
-                    ) ]}
+                    ): <Text style={{textAlign: 'center'}}>No Data Available</Text> ]}
 
          
            {renderBarChart == true ? <BarChart/> : null}
