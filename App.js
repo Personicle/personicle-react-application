@@ -6,12 +6,12 @@ import "react-native-gesture-handler";
 import { Provider } from "./src/context/AuthorizationContext";
 import  AsyncStorage  from '@react-native-async-storage/async-storage';
 import oktaConfig from "./okta.config";
-
+import { QueryClientProvider, QueryClient} from 'react-query';
 import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
 
 export default () => {
- 
+  const queryClient = new QueryClient()
   useEffect(() => {
     console.log("setting up okta config");
 
@@ -29,9 +29,11 @@ export default () => {
   console.log("starting app in app js");
 
   return (
-    <Provider>
-      <Router />
-    </Provider>
+    <QueryClientProvider client={queryClient}>
+      <Provider>
+        <Router />
+      </Provider>
+    </QueryClientProvider>
   );
 };
 

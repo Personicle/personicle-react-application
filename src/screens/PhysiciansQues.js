@@ -1,4 +1,4 @@
-import {Text,TextInput,View, SafeAreaView, FlatList, StyleSheet} from 'react-native';
+import {Text,Alert,TextInput,View, SafeAreaView, FlatList, StyleSheet} from 'react-native';
 import {useState,useLayoutEffect, useEffect, useContext, useRef} from 'react';
 import RenderQuestions from '../components/RenderQuestions';
 import Button from '../components/UI/Button';
@@ -9,10 +9,11 @@ import { PhysiciansContext } from '../context/physicians-context';
 import SelectPicker from 'react-native-form-select-picker';
 // import ImagePicker from '../components/ImagePicker'
 import { getUserId } from '../../api/interceptors';
-import { sendPhysicianResponses } from '../../api/http';
+import { sendPhysicianResponses, uploadImage } from '../../api/http';
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler';
 import { Dropdown } from 'react-native-element-dropdown';
 import ImagePicker from 'react-native-image-crop-picker';
+import { showMessage } from "react-native-flash-message";
 
 function PhysiciansQues({route, navigation}){
   const PhysicianCtx = useContext(PhysiciansContext);
@@ -36,7 +37,7 @@ function PhysiciansQues({route, navigation}){
     navigation.goBack();
   }
 
-  const choosePhotoFromLibrary = () => {
+  const choosePhotoFromLibrary = (question) => {
     ImagePicker.openPicker({
         width: 300,
         height: 300,
@@ -47,7 +48,7 @@ function PhysiciansQues({route, navigation}){
         setResponses(prevState => ({
           res:{
             ...prevState.res,
-            [question['tag']]: item.value
+            [question['tag']]: image.sourceURL
           }
         }));
         // setProfilePic(image);
@@ -57,27 +58,81 @@ function PhysiciansQues({route, navigation}){
   
   async function  confirmHandler(){
    let data_packet = []
+   let image_data_packet = []
    for (let key of Object.keys(responses.res)) {
   
     let resType = ''
     questions.forEach(element => {
-      if(element['tag'] === key) resType = element['response_type']
+      if(element['tag'] === key) {
+        resType = element['response_type']
+      }
     });
+    if( resType == "image"){
+      
+      // call image uupload api to validate and return image key, then format datastream response 
+   // calling uploadImagefunction, (call image upload service with image)
+     const r = await uploadImage(responses.res[key])
+      console.error(r)
+     try {
+      if(r['status'] == 201){
+        image_data_packet.push({
+          'question_id': key,
+          'value': r['data'][0]['image_key'],
+          'response_type': resType
+        })
+        console.error("here")
+        console.error(image_data_packet)
 
-    data_packet.push({
-      'question_id': key,
-      'value': responses.res[key],
-      'response_type': resType
-    })
+       } else if (r['status'] == 422){
+        Alert.alert(
+          "Error",
+          `${r['error'][0]}`,
+          [
+            {
+              text: "Cancel",
+              style: "cancel"
+            },
+    
+          ]
+        );
+        return;
+       }
+     } catch (error) {
+       console.error(error)
+     }
+     
+     
+    } else {
+      data_packet.push({
+        'question_id': key,
+        'value': responses.res[key],
+        'response_type': resType
+      })
+    }
+    
    }
+  //  console.error(data_packet)
    const uid = await getUserId()
-   const finalDataPacket = {"streamName": "com.personicle.individual.datastreams.subjective.physician_questionnaire", "individual_id": uid,
-   "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": data_packet }]}
+  //  try {
+    
+  //   console.error("final")
+  //   console.error(image_data_packet)
+  //  } catch (error) {
+  //    console.error(error)
+  //  }
+    if( data_packet.length > 0 || image_data_packet.length > 0){
+      let finalPacket = data_packet.concat(image_data_packet)
+      const finalDataPacket = {"streamName": "com.personicle.individual.datastreams.subjective.physician_questionnaire", "individual_id": uid,
+      "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": finalPacket }]}
+      const res = await sendPhysicianResponses(finalDataPacket)
+      navigation.goBack();
+
+    }
+
     // PhysicianCtx.submitResponses( );
 
-    const res = await sendPhysicianResponses(finalDataPacket)
-    console.error(res)
-    navigation.goBack();
+    
+    // console.error(res)
   }
   
   function inputChangedHandler(inputIdentifier, enteredValue) {
@@ -127,7 +182,7 @@ function PhysiciansQues({route, navigation}){
       return (
         <>
         <Text style={styles.question} >{question['question']}</Text>
-        <TouchableOpacity  style={styles.commandButton} onPress={choosePhotoFromLibrary}>
+        <TouchableOpacity  style={styles.commandButton} onPress={()=>choosePhotoFromLibrary(question)}>
            <Text style={styles.panelButtonTitle}>Upload Image</Text>
         </TouchableOpacity>
         {/* <ImagePicker/>  */}

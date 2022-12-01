@@ -98,8 +98,6 @@ function AllResponses({route, navigation}){
               { renderChart ? <RenderChart questionId={selected}/> : <Text>{''}</Text> }
             </View>
 
-            
-             
                
         </View>
     )

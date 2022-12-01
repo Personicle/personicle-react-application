@@ -18,6 +18,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {updateUserInfo, getUserInfo, uploadProfilePic, getImageUrl} from "../../api/http";
 import BackgroundGeolocation from "react-native-background-geolocation";
 import {ImageCache} from "../utils/cache";
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import axios from 'axios'
+import { getToken } from '../../api/interceptors';
+import { userProfileData, userProfileMutation } from '../utils/user';
+
 
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
@@ -32,15 +37,15 @@ function EditProfileScreen ({navigation}){
     const [name, setName] = useState('');
     const [imageKey, setImageKey] = useState('');
     const [profileImage, setProfileImage] = useState(''); // profile image url fetched from api
-    
+    const[updatedData, setDataToUpdate] = useState({});
     const [submitted, formSubmitted] = useState(false);
     bs = React.createRef();
     fall = new Animated.Value(1);
-    
+    let  payload = { data : { info : {} }}
   useEffect( () => {
     async function getImageUrlFromCache(){
       try {
-        // const res = await ImageCache.get("profileImageUrl")
+        const res = await ImageCache.get("profileImageUrl")
         return res;
       } catch (error) {
       console.error(error)
@@ -75,7 +80,7 @@ function EditProfileScreen ({navigation}){
            setAddress(res['data']['info']['address'])
            setHeight(res['data']['info']['height'])
            setCountry(res['data']['info']['country'])
-           setCity(res['data']['info']['city'])
+          //  setCity(res['data']['info']['city'])
            setPostalCode(res['data']['info']['zipcode'])
            setName(res['data']['name'])
             var profileImageUrl = await getImageUrlFromCache();
@@ -94,7 +99,53 @@ function EditProfileScreen ({navigation}){
     }
     getUser();
   },[])
+  const queryClient = useQueryClient()
+  
+  // const getUserCity = async () => {
+  //   try {
+  //     console.error("network call get user info here")
+  //     const res = await axios.get('https://app.personicle.org/api/user', {
+  //         headers: {
+  //             'Authorization': `Bearer ${await getToken()}`
+  //           }
+  //     })
+  //     return res['data']['info']['city']
+  // } catch (error) {
+  //     console.error(error)
+  // }
+  // }
+  // const userCity = useQuery('user-city',getUserCity, {
+  //   onSuccess: ()=> {console.warn("on succces use query")},
+  //   refetchIntervalInBackground: true,
+  //   refetchInterval: 15000
+  // })
+  // setCity(userCity)
+  
+  // const updateUserCity = async ({city}) => {
+  //   let payload=  {}
+  //   payload['city'] = city
+  //   const res =  await updateUserInfo(payload);
+  // }
+  // const mutation = useMutation(updateUserCity, {
+  //   onSuccess: () => {
+  //     console.error("on success mutation")
+  //     queryClient.setQueryData(['user-city'], (prevCity) => city)
+  //   }
+  // })
 
+
+  const userData = userProfileData();
+
+    const profileMutation = useMutation(updateUserInfo, {
+        onSuccess: () => {
+        // console.error("on success mutation")
+        // console.error(updatedData)
+
+        queryClient.setQueryData(['user-profile-data'], (prev) => (payload))
+        }
+    })
+  
+  console.error(userData);
     const takePhotoFromCamera = () =>{
         ImagePicker.openCamera({
             compressImageMaxWidth: 300,
@@ -124,33 +175,50 @@ function EditProfileScreen ({navigation}){
     }
     
     const updateUser =  async () => {
-        let  payload = {}
-        if(height.length != 0 ) payload["height"] = height
-        if(weight.length != 0 )payload["weight"] = weight
-        if(address.length != 0 ) payload["address"] = address
-        if(city.length != 0 ) payload["city"] = city
-        if(country.length != 0 ) payload["country"] = country
-        if(zipcode.length != 0 ) payload["zipcode"] = zipcode
-       
-        if(Object.keys(profilePic).length !== 0){
-             const imageUploadRes = await uploadProfilePic(profilePic)
+      try {
         
-            if(imageUploadRes){
-                setImageKey(imageUploadRes['data'][0]['image_key'])
-                payload["image_key"] = imageUploadRes['data'][0]['image_key']
-                setIsLoading(true);
-                const res =  await updateUserInfo(payload);
-                // clear image cache
-                // await ImageCache.clearAll();
-                setIsLoading(false);
+        if(height.length != 0 ) payload["data"]["info"]["height"] = height
+        if(weight.length != 0 )payload["data"]["info"]["weight"] = weight
+        if(address.length != 0 ) payload["data"]["info"]["address"] = address
+        if(city.length != 0 ) { 
+           payload["data"]["info"]["city"] = city 
+           setDataToUpdate(payload)
+          //  console.error(payload)
+        
+             profileMutation.mutate(payload["data"]["info"]) 
 
-            }
-        }else{
-            setIsLoading(true);
-            const res =  await updateUserInfo(payload);
-            setIsLoading(false);
+          
+          
+      }
+      } catch (error) {
+        console.error(error)
+      }
+        
+        // if(country.length != 0 ) payload["country"] = country
+        // if(zipcode.length != 0 ) payload["zipcode"] = zipcode
+       
+        // if(Object.keys(profilePic).length !== 0){
+               
+        //      const imageUploadRes = await uploadProfilePic(profilePic)
+        
+        //     if(imageUploadRes){
+        //         setImageKey(imageUploadRes['data'][0]['image_key'])
+        //         payload["image_key"] = imageUploadRes['data'][0]['image_key']
+        //         setIsLoading(true);
+        //         const res =  await updateUserInfo(payload);
+        //         // clear image cache
+        //         // await ImageCache.clearAll();
+        //         setIsLoading(false);
 
-        }
+        //     }
+        // }else{
+        //     setIsLoading(true);
+        //     const res =  await updateUserInfo(payload);
+        //     setIsLoading(false);
+
+        // }
+        setIsLoading(false);
+
         navigation.goBack();
 
     }
@@ -323,7 +391,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 13}}>City</Text>
 
                     <TextInput
-                        placeholder="City"
+                        placeholder={userData['data']['data']['info']['city']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -333,7 +401,7 @@ function EditProfileScreen ({navigation}){
                         },
                         ]}
                         onChangeText={t => setCity(t)}
-                        value={city}
+                        
                     />
                 </View>
 
