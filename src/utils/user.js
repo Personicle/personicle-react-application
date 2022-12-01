@@ -8,7 +8,7 @@ import { getUserInfo, updateUserInfo } from '../../api/http';
    export const userProfileData = () => {
         const profileData = useQuery('user-profile-data',getUserInfo, {
             onSuccess: ()=> {
-                // console.warn("on succces use query")
+                // console.warn("on success use query")
             },
             refetchIntervalInBackground: true,
             refetchInterval: 15000,
