@@ -10,37 +10,29 @@ import {
 } from 'react-native';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import Feather from 'react-native-vector-icons/Feather';
 import BottomSheet from 'reanimated-bottom-sheet';
 import {useTheme} from 'react-native-paper';
 import Animated, { set } from 'react-native-reanimated';
 import ImagePicker from 'react-native-image-crop-picker';
-import {updateUserInfo, getUserInfo, uploadProfilePic, getImageUrl} from "../../api/http";
+import {updateUserInfo, getUserInfo, getImageUrl} from "../../api/http";
 import BackgroundGeolocation from "react-native-background-geolocation";
 import {ImageCache} from "../utils/cache";
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import axios from 'axios'
-import { getToken } from '../../api/interceptors';
-import { userProfileData, userProfileMutation } from '../utils/user';
+import { useMutation, useQueryClient } from 'react-query'
+import { userProfileData, userProfileImage, updateUserProfileImage } from '../utils/user';
 import { isEqual } from 'lodash';
+
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
     const [profilePic, setProfilePic] = useState('');
-    const [height, setHeight] = useState('');
-    const [weight, setWeight] = useState('');
-    const [address, setAddress] = useState('');
-    const [zipcode, setPostalCode] = useState('');
-    const [city, setCity] = useState('');
-    const [country, setCountry] = useState('');
     const [isLoading, setIsLoading] = useState(true);
     const [name, setName] = useState('');
-    const [imageKey, setImageKey] = useState('');
-    const [profileImage, setProfileImage] = useState(''); // profile image url fetched from api
-    const[updatedData, setDataToUpdate] = useState({});
-    const [submitted, formSubmitted] = useState(false);
+    // const [profileImage, setProfileImage] = useState(''); // profile image url fetched from api
+    const [userUploadedImage, setUserUploadedImage] = useState('');
     bs = React.createRef();
     fall = new Animated.Value(1);
     let  payload = { data : { info : {} }}
+    // 
+
     const [info, setInfo] = useState({
       'height': '',
       'weight': '',
@@ -59,85 +51,26 @@ function EditProfileScreen ({navigation}){
       'zipcode': '',
 
     });
+    const queryClient = useQueryClient()
+    const profileImage = userProfileImage(); //uncomment once image upload service is running
+    const userData = userProfileData();
   useEffect( () => {
-    async function getImageUrlFromCache(){
-      try {
-        const res = await ImageCache.get("profileImageUrl")
-        return res;
-      } catch (error) {
-      console.error(error)
-        
-      }
-      
-    }
-
-    async function getProfileImageUrl(imageKey){
-        const res = await getImageUrl(imageKey);
-        const url = res['data']['image_url'];
-        setProfileImage(url)
-        setIsLoading(false);
-        // await ImageCache.set("profileImageUrl", url )
-      }
-    async function getUser(){
-        let location = await BackgroundGeolocation.getCurrentPosition({
-            timeout: 30,          // 30 second timeout to fetch location
-            maximumAge: 5000,     // Accept the last-known-location if not older than 5000 ms.
-            desiredAccuracy: 10,  // Try to fetch a location with an accuracy of `10` meters.
-            samples: 3,           // How many location samples to attempt.
-            extras: {             // Custom meta-data.
-              "route_id": 123
-            }
-          });
-        //   console.error(location['coords']['latitude'])
-        //   console.error(location['coords']['longitude'])
-
-        const res = await getUserInfo();
-        if(res != undefined){
-           setWeight(res['data']['info']['weight'])
-           setAddress(res['data']['info']['address'])
-           setHeight(res['data']['info']['height'])
-           setCountry(res['data']['info']['country'])
-         
-
-           setCity(res['data']['info']['city'])
-           setPostalCode(res['data']['info']['zipcode'])
-           setName(res['data']['name'])
-
-           setInitialInfo({
-             'height': res['data']['info']['height'],
-             'weight': res['data']['info']['weight'],
-             'address': res['data']['info']['address'],
-             'country': res['data']['info']['country'],
-             'city': res['data']['info']['city'],
-             'zipcode': res['data']['info']['zipcode'],
-           })
-           setInfo({
-            'height': res['data']['info']['height'],
-            'weight': res['data']['info']['weight'],
-            'address': res['data']['info']['address'],
-            'country': res['data']['info']['country'],
-            'city': res['data']['info']['city'],
-            'zipcode': res['data']['info']['zipcode'],
-          })
-            var profileImageUrl = await getImageUrlFromCache();
-            if(profileImageUrl != undefined){
-              setProfileImage(profileImageUrl);
-              setIsLoading(false);;
-            } else {
-              if(res['data']['info']['image_key'] != undefined){
-                getProfileImageUrl(res['data']['info']['image_key'])
-              }
-            }
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
+    async function setUser(){
+        let uData = {
+          'height': userData['data']['data']['info']['height'],
+          'weight': userData['data']['data']['info']['weight'],
+          'address': userData['data']['data']['info']['address'],
+          'country': userData['data']['data']['info']['country'],
+          'city': userData['data']['data']['info']['city'],
+          'zipcode': userData['data']['data']['info']['zipcode'],
         }
-    }
-    getUser();
-  },[])
-  const queryClient = useQueryClient()
+        setInitialInfo(uData)
+        setInfo(uData)
+        setIsLoading(false);
 
-  const userData = userProfileData();
+    }
+    setUser();
+  },[])
 
     const profileMutation = useMutation(updateUserInfo, {
         onSuccess: () => {
@@ -150,7 +83,21 @@ function EditProfileScreen ({navigation}){
          }))
         }
     })
-  
+    const profileImageMutation = useMutation(updateUserProfileImage, {
+      onSuccess: () => {
+      // console.error("on success mutation")
+      // console.error(updatedData)
+
+      queryClient.setQueryData(['user-profile-image'], (prev) => (userUploadedImage))
+      },
+      onError: async (error, variables, context) =>{
+        const errorObj = error;
+      const errorObjAsJSON = await errorObj.json();
+      console.error("on error")
+      const { message } = errorObjAsJSON;
+      console.error(message);
+      }
+  })
   
     const takePhotoFromCamera = () =>{
         ImagePicker.openCamera({
@@ -165,7 +112,7 @@ function EditProfileScreen ({navigation}){
             bs.current.snapTo(1);
           });
     }
-
+    let temp = ''
     const choosePhotoFromLibrary = () => {
         ImagePicker.openPicker({
             width: 300,
@@ -173,9 +120,25 @@ function EditProfileScreen ({navigation}){
             cropping: true,
             compressImageQuality: 0.7
           }).then(image => {
+            
+            setUserUploadedImage(image['path'])
+
+           
+
             // console.error(image);
-            setProfilePic(image);
-            setProfileImage(''); // reset the profile image to the image uploaded by user
+            // setProfilePic(image);
+            // setProfileImage(''); // reset the profile image to the image uploaded by user
+
+            // let imagePayload = {}
+            // imagePayload[]
+            // console.error(image)
+            // console.error(image['path'])
+
+         
+            // setUserUploadedImage(image['path'])
+            profileImageMutation.mutate(image , {
+              onError: () =>{console.error("there was an error uploading image")}
+            }) // this shouls be called after user presses submit button
             bs.current.snapTo(1);
           });
     }
@@ -228,12 +191,9 @@ function EditProfileScreen ({navigation}){
     )
     return (
         <>
-        {/* {isLoading &&
-           
-        } */}
-         {isLoading ?  <View style={styles.loading}>
-            <ActivityIndicator size='large' color="#0000ff" />
-            </View> : (<View style={styles.container}>
+        {profileImageMutation.isError && <Text>There was an error uploading profile image</Text>}
+         { (userData.isLoading ) && <Text>Loading...</Text>}
+         {userData.isFetched && userData.isSuccess &&  (<View style={styles.container}>
             <BottomSheet
                 ref={bs}
                 snapPoints={[330, 0]}
@@ -254,14 +214,16 @@ function EditProfileScreen ({navigation}){
                             justifyContent: 'center',
                             alignItems: 'center',
                         }}>
+                          {/* {console.error(temp)} */}
                             <ImageBackground 
                                 // source= { require("../../src/components/UI/stock.jpg")}
                                 source={{
-                                    uri: profileImage.length > 0 ? profileImage :  profilePic['path'],
+                                    uri:  profileImage.isSuccess ? profileImage.data : userUploadedImage // uncomment once image upload service is running
                                   }}
                                 style={{height: 100, width: 100}}
                                 imageStyle={{borderRadius: 15}}
                             >
+                              {/* {console.error(userUploadedImage)} */}
                                 <View style={{
                                     flex: 1,
                                     justifyContent: 'center',
@@ -291,7 +253,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 3}}>Height</Text>
                     
                     <TextInput
-                        placeholder={height}
+                        placeholder={userData['data']['data']['info']['height']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -324,7 +286,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 3}}>Weight</Text>
                     
                     <TextInput
-                        placeholder={weight}
+                        placeholder={userData['data']['data']['info']['weight']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -362,7 +324,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 7}}>Address</Text>
 
                     <TextInput
-                        placeholder={address}
+                        placeholder={userData['data']['data']['info']['address']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -393,7 +355,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 7}}>Country</Text>
 
                     <TextInput
-                        placeholder={country}
+                        placeholder={userData['data']['data']['info']['country']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -455,7 +417,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 9}}>Zipcode</Text>
 
                     <TextInput
-                        placeholder={zipcode}
+                        placeholder={userData['data']['data']['info']['zipcode']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[

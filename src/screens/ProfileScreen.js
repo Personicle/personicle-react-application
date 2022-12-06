@@ -17,13 +17,18 @@ import { useQuery, useQueryClient} from 'react-query';
 import { getToken } from "../../api/interceptors";
 import axios from 'axios'
 import { userProfileData, userProfileImage } from "../utils/user";
+import { phyResponses } from "../utils/physician";
+
 const ProfileScreen = ({ navigation }) => {
     const { state, logout } = useContext(Context);
     const [phys, setPhys] = useState([]);
     const isFocused = useIsFocused();
     const userData = userProfileData();
+    // console.error(userData)
     const profileImage = userProfileImage();
-   
+    const r = phyResponses(); 
+
+  
   useLayoutEffect(()=> {
     navigation.setOptions({
 
@@ -45,6 +50,7 @@ const ProfileScreen = ({ navigation }) => {
 
   useEffect(()=>{
     async function getPhys(){
+      console.error("use effecr")
       const res = await getUsersPhysicians();
       var i = 0;
       res['data']['physicians'].forEach(phy=>{
@@ -183,11 +189,15 @@ const ProfileScreen = ({ navigation }) => {
   }
   return (
     <>
-    {profileImage.isFetching && (
-          <Text>    Loading... </Text>
+    {profileImage.isFetching && profileImage.isLoading && (
+          <Text>    Loading... </Text>  // uncomment once image upload service is running
+     
       )}
       
         <FlashMessage position="top" />
+        
+        {profileImage.isError && <Text>Error uploading image</Text>}
+        {/* uncomment once image upload service is running  */}
      { userData.isFetched &&  userData.isSuccess && <SafeAreaView style= {styles.container}>
        
         <View style={styles.userInfoSection}>
@@ -195,7 +205,7 @@ const ProfileScreen = ({ navigation }) => {
           
                <Avatar.Image
                source={{
-                 uri: profileImage.isSuccess ? profileImage.data : null
+                 uri: profileImage.isSuccess ? profileImage.data : null // uncomment once image upload service is running
                }}
                  // source={ require("../../src/components/UI/stock.jpg")}
                  size = {80}

@@ -123,7 +123,7 @@ function PhysiciansQues({route, navigation}){
     if( data_packet.length > 0 || image_data_packet.length > 0){
       let finalPacket = data_packet.concat(image_data_packet)
       const finalDataPacket = {"streamName": "com.personicle.individual.datastreams.subjective.physician_questionnaire", "individual_id": uid,
-      "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().format("YYYY-MM-DD HH:mm:ss"), "value": finalPacket }]}
+      "source": `Personicle:${physicianId}`, "unit": "", "confidence": 100, "dataPoints":[{ "timestamp": moment().utc().format("YYYY-MM-DD HH:mm:ss"), "value": finalPacket }]}
       const res = await sendPhysicianResponses(finalDataPacket)
       navigation.goBack();
 

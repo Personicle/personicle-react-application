@@ -9,9 +9,31 @@ import oktaConfig from "./okta.config";
 import { QueryClientProvider, QueryClient} from 'react-query';
 import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
+import { PersistQueryClientProvider, persistQueryClient } from '@tanstack/react-query-persist-client'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 export default () => {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient(
+    {
+    defaultOptions: {
+      queries: {
+        cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+      },
+    },
+  }
+  )
+  
+  
+ 
+  const persister = createAsyncStoragePersister({
+    storage: AsyncStorage,
+  });
+  persistQueryClient({
+    queryClient,
+    persister,
+    maxAge: 1000 * 60 * 60 * 24, // 24 hours
+
+  })
   useEffect(() => {
     console.log("setting up okta config");
 
@@ -29,11 +51,16 @@ export default () => {
   console.log("starting app in app js");
 
   return (
+    <PersistQueryClientProvider 
+    client={queryClient}
+    persistOptions={{ persister: persister }}
+    >
     <QueryClientProvider client={queryClient}>
       <Provider>
         <Router />
       </Provider>
     </QueryClientProvider>
+    </PersistQueryClientProvider>
   );
 };
 
