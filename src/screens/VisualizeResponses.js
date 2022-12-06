@@ -14,10 +14,15 @@ function VisualizeResponses(){
   const[isloading, setIsLoading] = useState(true);
   const [physicianIds, setPhysicianIds] = useState([]);
   const r = phyResponses();
-  async function getPhysicianResponses(){
-    // const response =  await getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire");
-    
-    const response = r['data'];
+  async function getPhysicianResponses(hardRefresh){
+    // const response =  
+    let response;
+    var hardRefresh = hardRefresh || false
+    if(!hardRefresh){
+      response = r['data'];
+    } else {
+     response =  await getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire");
+    }
     console.error(r)
     console.error(response)
     
@@ -49,7 +54,7 @@ function VisualizeResponses(){
 
 
   const refreshData = async () => {
-    await getPhysicianResponses();
+    await getPhysicianResponses(true);
   }
   function renderPhysicians(itemData){
       return <Physician  visualization={true} responses={responses} {...itemData.item}/>

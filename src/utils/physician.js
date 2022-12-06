@@ -16,6 +16,7 @@ export const physicianQuestions = () => {
 export const phyResponses = () => {
     const res = useQuery('physician-responses', () => getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire"), {
         onSuccess: () => {console.warn("fetched physician responses")},
+        refetchOnMount: "always",
         // refetchIntervalInBackground: true,
         // refetchInterval: 15 * 1000 ,
 

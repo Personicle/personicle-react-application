@@ -50,7 +50,6 @@ const ProfileScreen = ({ navigation }) => {
 
   useEffect(()=>{
     async function getPhys(){
-      console.error("use effecr")
       const res = await getUsersPhysicians();
       var i = 0;
       res['data']['physicians'].forEach(phy=>{
