@@ -1,6 +1,6 @@
 import React, {useState,useEffect} from 'react';
 import axios from 'axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery, useQueryClient , } from 'react-query'
 import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../../api/http';
 import { showMessage } from 'react-native-flash-message';
 
@@ -35,7 +35,7 @@ import { showMessage } from 'react-native-flash-message';
 
             // refetchIntervalInBackground: true,
             // refetchInterval: 60 * 1000 * 12,
-            // cacheTime: 1000 * 60 * 60 * 24,
+            cacheTime: 1000 * 60 * 60 * 24,
             // refetchOnMount: "always"
           });
   

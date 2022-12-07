@@ -30,23 +30,29 @@ export default () => {
 
   const { state, autoLogin } = useContext(Context);
   async function refetchTokens() {
-    console.error("refetch tokens called")
-    if (state.logged_in == false) {
-      // console.error("if is logged in:", state.logged_in)
 
-      const res = await autoLogin();
-      // console.error("auto login response: ", res)
-      if (res) {
-        startTracking();
-        importHealthKit();
+    console.error("refetch tokens called")
+    try {
+      if (state.logged_in == false) {
+        // console.error("if is logged in:", state.logged_in)
+  
+        const res= await autoLogin();
+        // console.error("auto login response: ", res)
+        if (res) {
+          startTracking();
+          importHealthKit();
+        } else {
+          stopLocationTracking();
+        }
       } else {
-        stopLocationTracking();
+        startTracking();
+        console.warn("Start tracking after signing in");
+        importHealthKit();
       }
-    } else {
-      startTracking();
-      console.warn("Start tracking after signing in");
-      importHealthKit();
+    } catch (error) {
+      console.error(error)
     }
+    
   }
   useEffect(() => {
     (async () => {
