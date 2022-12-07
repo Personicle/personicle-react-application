@@ -27,28 +27,63 @@ export const startTracking = async () => {
 };
 
 export default () => {
+
   const { state, autoLogin } = useContext(Context);
+  async function refetchTokens() {
+    console.error("refetch tokens called")
+    if (state.logged_in == false) {
+      // console.error("if is logged in:", state.logged_in)
+
+      const res = await autoLogin();
+      // console.error("auto login response: ", res)
+      if (res) {
+        startTracking();
+        importHealthKit();
+      } else {
+        stopLocationTracking();
+      }
+    } else {
+      startTracking();
+      console.warn("Start tracking after signing in");
+      importHealthKit();
+    }
+  }
   useEffect(() => {
     (async () => {
-
-      if (state.logged_in == false) {
-        // console.error("if is logged in:", state.logged_in)
-
-        const res = await autoLogin();
-        // console.error("auto login response: ", res)
-        if (res) {
-          startTracking();
-          importHealthKit();
-        } else {
-          stopLocationTracking();
-        }
-      } else {
-        startTracking();
-        console.warn("Start tracking after signing in");
-        importHealthKit();
-      }
-      // console.error("is logged in:", state.logged_in)
+      const firstFetch = await refetchTokens();
+     
+        try {
+          const ress =  setInterval( async () =>  await refetchTokens(), 3480000  ) // refresh tokens every 58 minutes
+            // console.error(ress)
+          } catch (error) {
+            console.error(error)
+          }
+      
     })();
+    
+    // (async () => {
+
+    //   if (state.logged_in == false) {
+    //     // console.error("if is logged in:", state.logged_in)
+       
+        
+
+    //     const res = await autoLogin();
+    //     // console.error("auto login response: ", res)
+    //     if (res) {
+    //       startTracking();
+    //       importHealthKit();
+    //     } else {
+    //       stopLocationTracking();
+    //     }
+    //   } else {
+    //     startTracking();
+    //     console.warn("Start tracking after signing in");
+    //     importHealthKit();
+    //   }
+    //   // console.error("is logged in:", state.logged_in)
+    // })();
+
   }, []);
   return (
     <PhysiciansContextProvider>
