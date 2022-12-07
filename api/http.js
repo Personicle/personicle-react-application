@@ -13,6 +13,33 @@ export async function getUserEvents(){
         console.error(error)
     }
 }
+
+export const uploadImage = async (image) => {
+    const formData = new FormData();
+    const uid = await getUserId();
+    formData.append('user_image[images][]', {
+        uri: Platform.OS === 'android' ? image : image.replace('file://', ''),
+        name: `image-${uid}`,
+        type: image['mime']
+    })
+     formData.append("user_image[individual_id]", uid);
+      try {
+        const res = await axios.post('https://personicle-file-upload.herokuapp.com/user_images' , formData, {
+            headers: {
+                'Authorization': `Bearer ${await getToken()}`,
+               'Content-Type': 'multipart/form-data'
+              }
+          })
+       
+          return res
+      } catch (error) {
+        // console.error(error.response)
+        return  {'error': error.response.data, 'status': error.response.status}
+
+        
+      }
+      
+}
 export const uploadProfilePic = async (image) => {
     const formData = new FormData();
     const uid = await getUserId();
@@ -33,12 +60,14 @@ export const uploadProfilePic = async (image) => {
           return res
       } catch (error) {
         console.error(error.response)
+        return error
       }
       
 }
 
 export async function getImageUrl(imageKey){
     try {
+        // console.error("network call get image url")
         const uid = await getUserId();
         const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${imageKey}?user_id=${uid}`, {
             headers: {
@@ -84,6 +113,7 @@ export async function updateUserInfo(data) {
 
 export async function getUserInfo() {
     try {
+        // console.error("network call get user info")
         const res = await axios.get('https://app.personicle.org/api/user', {
             headers: {
                 'Authorization': `Bearer ${await getToken()}`

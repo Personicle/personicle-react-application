@@ -64,6 +64,7 @@
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-timeline-flatlist": "^0.8.0",
     "react-native-web": "0.17.7",
+    "react-query": "^3.39.2",
     "reanimated-bottom-sheet": "^1.0.0-alpha.22",
     "recharts": "^2.1.15",
     "victory-native": "^36.6.8"

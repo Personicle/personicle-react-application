@@ -22,8 +22,18 @@ function LineChartComponent({questionIdRes}){
             avgValByDay[key] = avg;
         }
        let formattedData = []
+       let maxY = Number.MIN_VALUE;
+       let minY = Number.MAX_VALUE;
+      //  let min = 0;
+      //  let max = 0 ;
+       
        for(let [key,value] of Object.entries(avgValByDay)){
          let temp = {}
+         // max y and min y
+         
+         if(value > maxY) maxY = value;
+         if(value < minY) minY = value;
+
          temp['x'] = key;
          temp['y'] = value;
          temp['info'] = groupedByDay[key]
@@ -39,7 +49,8 @@ function LineChartComponent({questionIdRes}){
           },
         ],
       };
-      console.error(formattedData)
+      // console.error(formattedData)
+    
         return (
           <View >
           <Svg>
@@ -49,7 +60,10 @@ function LineChartComponent({questionIdRes}){
               <Stop offset="100%" stopColor="red" />
               </LinearGradient>
             </Defs>
+            {console.error(minY)}
+            {console.error(maxY)}
 
+      {/* console.error(maxValue) */}
             <VictoryChart
             theme={VictoryTheme.material}
              style={{
@@ -61,6 +75,9 @@ function LineChartComponent({questionIdRes}){
                 fillOpacity: 0.9,
               }
             }}
+            maxDomain={{y: maxY + 0.03*maxY}}
+            minDomain={{y: minY - 0.03*minY}}
+
             containerComponent={
               <VictoryVoronoiContainer
                 labels={({ datum }) =>  `${( JSON.stringify(datum.info,null,'\n'))}, avg ${(datum.y)}`}

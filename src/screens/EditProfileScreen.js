@@ -18,7 +18,11 @@ import ImagePicker from 'react-native-image-crop-picker';
 import {updateUserInfo, getUserInfo, uploadProfilePic, getImageUrl} from "../../api/http";
 import BackgroundGeolocation from "react-native-background-geolocation";
 import {ImageCache} from "../utils/cache";
-
+import { useMutation, useQuery, useQueryClient } from 'react-query'
+import axios from 'axios'
+import { getToken } from '../../api/interceptors';
+import { userProfileData, userProfileMutation } from '../utils/user';
+import { isEqual } from 'lodash';
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
     const [profilePic, setProfilePic] = useState('');
@@ -32,15 +36,33 @@ function EditProfileScreen ({navigation}){
     const [name, setName] = useState('');
     const [imageKey, setImageKey] = useState('');
     const [profileImage, setProfileImage] = useState(''); // profile image url fetched from api
-    
+    const[updatedData, setDataToUpdate] = useState({});
     const [submitted, formSubmitted] = useState(false);
     bs = React.createRef();
     fall = new Animated.Value(1);
-    
+    let  payload = { data : { info : {} }}
+    const [info, setInfo] = useState({
+      'height': '',
+      'weight': '',
+      'address': '',
+      'country': '',
+      'city': '',
+      'zipcode': '',
+
+    });
+    const [initialInfo, setInitialInfo] = useState({
+      'height': '',
+      'weight': '',
+      'address': '',
+      'country': '',
+      'city': '',
+      'zipcode': '',
+
+    });
   useEffect( () => {
     async function getImageUrlFromCache(){
       try {
-        // const res = await ImageCache.get("profileImageUrl")
+        const res = await ImageCache.get("profileImageUrl")
         return res;
       } catch (error) {
       console.error(error)
@@ -75,9 +97,28 @@ function EditProfileScreen ({navigation}){
            setAddress(res['data']['info']['address'])
            setHeight(res['data']['info']['height'])
            setCountry(res['data']['info']['country'])
+         
+
            setCity(res['data']['info']['city'])
            setPostalCode(res['data']['info']['zipcode'])
            setName(res['data']['name'])
+
+           setInitialInfo({
+             'height': res['data']['info']['height'],
+             'weight': res['data']['info']['weight'],
+             'address': res['data']['info']['address'],
+             'country': res['data']['info']['country'],
+             'city': res['data']['info']['city'],
+             'zipcode': res['data']['info']['zipcode'],
+           })
+           setInfo({
+            'height': res['data']['info']['height'],
+            'weight': res['data']['info']['weight'],
+            'address': res['data']['info']['address'],
+            'country': res['data']['info']['country'],
+            'city': res['data']['info']['city'],
+            'zipcode': res['data']['info']['zipcode'],
+          })
             var profileImageUrl = await getImageUrlFromCache();
             if(profileImageUrl != undefined){
               setProfileImage(profileImageUrl);
@@ -94,7 +135,23 @@ function EditProfileScreen ({navigation}){
     }
     getUser();
   },[])
+  const queryClient = useQueryClient()
 
+  const userData = userProfileData();
+
+    const profileMutation = useMutation(updateUserInfo, {
+        onSuccess: () => {
+        // console.error("on success mutation")
+        // console.error(updatedData)
+
+        queryClient.setQueryData(['user-profile-data'], (prev) => ( {
+          ...prev,
+          data: payload['data'] 
+         }))
+        }
+    })
+  
+  
     const takePhotoFromCamera = () =>{
         ImagePicker.openCamera({
             compressImageMaxWidth: 300,
@@ -124,33 +181,20 @@ function EditProfileScreen ({navigation}){
     }
     
     const updateUser =  async () => {
-        let  payload = {}
-        if(height.length != 0 ) payload["height"] = height
-        if(weight.length != 0 )payload["weight"] = weight
-        if(address.length != 0 ) payload["address"] = address
-        if(city.length != 0 ) payload["city"] = city
-        if(country.length != 0 ) payload["country"] = country
-        if(zipcode.length != 0 ) payload["zipcode"] = zipcode
-       
-        if(Object.keys(profilePic).length !== 0){
-             const imageUploadRes = await uploadProfilePic(profilePic)
-        
-            if(imageUploadRes){
-                setImageKey(imageUploadRes['data'][0]['image_key'])
-                payload["image_key"] = imageUploadRes['data'][0]['image_key']
-                setIsLoading(true);
-                const res =  await updateUserInfo(payload);
-                // clear image cache
-                // await ImageCache.clearAll();
-                setIsLoading(false);
-
-            }
-        }else{
-            setIsLoading(true);
-            const res =  await updateUserInfo(payload);
-            setIsLoading(false);
-
+      try {
+        if(!isEqual(initialInfo, info)){
+          // if there is a change from user
+          payload["data"]["info"] = info
+          payload["data"]["email"] = userData['data']['data']['email']
+          payload["data"]["name"] = userData['data']['data']['name']
+          profileMutation.mutate(payload["data"]["info"]) 
         }
+  
+      } catch (error) {
+        console.error(error)
+      }
+        setIsLoading(false);
+
         navigation.goBack();
 
     }
@@ -247,7 +291,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 3}}>Height</Text>
                     
                     <TextInput
-                        placeholder="Enter Height"
+                        placeholder={height}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -257,8 +301,21 @@ function EditProfileScreen ({navigation}){
                         },
                         ]}
                         keyboardType="number-pad"
-                        onChangeText={t => setHeight(t)}
-                        value={height}
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              height: initialInfo['height']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              height: t
+                            }))
+                          }
+                       }
+                      }
+                        // value={height}
                     />
                 </View>
 
@@ -267,7 +324,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 3}}>Weight</Text>
                     
                     <TextInput
-                        placeholder="Enter Weight"
+                        placeholder={weight}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -277,8 +334,26 @@ function EditProfileScreen ({navigation}){
                         },
                         ]}
                         keyboardType="number-pad"
-                        onChangeText={t => setWeight(t)}
-                        value={weight}
+                        // onChangeText={t => setInfo( (prev) => ({
+                        //   ...prev,
+                        //   weight: t
+                        // }) )}
+
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              weight: initialInfo['weight']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              weight: t
+                            }))
+                          }
+                       }
+                      }
+                        // value={weight}
                     />
                 </View>
 
@@ -287,7 +362,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 7}}>Address</Text>
 
                     <TextInput
-                        placeholder="Address"
+                        placeholder={address}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -296,8 +371,21 @@ function EditProfileScreen ({navigation}){
                             color: colors.text,
                         },
                         ]}
-                        onChangeText={t => setAddress(t)}
-                        value={address}
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              address: initialInfo['address']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              address: t
+                            }))
+                          }
+                       }
+                      }
+                        // value={address}
                     />
                 </View>
                 <View style={styles.action}>
@@ -305,7 +393,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 7}}>Country</Text>
 
                     <TextInput
-                        placeholder="Country"
+                        placeholder={country}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -314,8 +402,21 @@ function EditProfileScreen ({navigation}){
                             color: colors.text,
                         },
                         ]}
-                        onChangeText={t => setCountry(t)}
-                        value={country}
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              country: initialInfo['country']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              country: t
+                            }))
+                          }
+                       }
+                      }
+                        // value={country}
                     />
                 </View>   
                 <View style={styles.action}>
@@ -323,7 +424,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 13}}>City</Text>
 
                     <TextInput
-                        placeholder="City"
+                        placeholder={userData['data']['data']['info']['city']}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -332,8 +433,20 @@ function EditProfileScreen ({navigation}){
                             color: colors.text,
                         },
                         ]}
-                        onChangeText={t => setCity(t)}
-                        value={city}
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              city: initialInfo['city']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              city: t
+                            }))
+                          }
+                       }
+                      }
                     />
                 </View>
 
@@ -342,7 +455,7 @@ function EditProfileScreen ({navigation}){
                     <Text style={{color:"#777777", marginLeft: 9}}>Zipcode</Text>
 
                     <TextInput
-                        placeholder="Postal code"
+                        placeholder={zipcode}
                         placeholderTextColor="#666666"
                         autoCorrect={false}
                         style={[
@@ -351,11 +464,24 @@ function EditProfileScreen ({navigation}){
                             color: colors.text,
                         },
                         ]}
-                        onChangeText={t => setPostalCode(t)}
-                        value={zipcode}
+                        onChangeText={ (t) => {
+                          if(t === ''){
+                            setInfo( (prev) => ({
+                              ...prev,
+                              zipcode: initialInfo['zipcode']
+                            }))
+                          } else {
+                            setInfo( (prev) => ({
+                              ...prev,
+                              zipcode: t
+                            }))
+                          }
+                       }
+                      }
+                        
                     />
                 </View>
-                <TouchableOpacity style={styles.commandButton} onPress={updateUser}>
+                <TouchableOpacity style={[ isEqual(info,initialInfo) ? styles.commandButtonDisabled : styles.commandButton]} onPress={updateUser} disabled={isEqual(info,initialInfo)}>
                     <Text style={styles.panelButtonTitle}>Save</Text>
                 </TouchableOpacity>
             </Animated.View>
@@ -375,6 +501,13 @@ const styles = StyleSheet.create({
       padding: 12,
       borderRadius: 15,
       backgroundColor: '#0d58d1',
+      alignItems: 'center',
+      marginTop: 12,
+    },
+    commandButtonDisabled: {
+      padding: 12,
+      borderRadius: 15,
+      backgroundColor: '#cccccc',
       alignItems: 'center',
       marginTop: 12,
     },

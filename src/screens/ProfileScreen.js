@@ -13,20 +13,17 @@ import {SwipeListView} from 'react-native-swipe-list-view';
 import { TouchableHighlight } from "react-native-gesture-handler";
 import { showMessage } from "react-native-flash-message";
 import {ImageCache} from "../utils/cache";
-
+import { useQuery, useQueryClient} from 'react-query';
+import { getToken } from "../../api/interceptors";
+import axios from 'axios'
+import { userProfileData, userProfileImage } from "../utils/user";
 const ProfileScreen = ({ navigation }) => {
-  const { state, logout } = useContext(Context);
-  const [isLoading, setIsLoading] = useState(true);
-  const [email, setEmail] = useState('');
-  const [city, setCity] = useState('');
-  const [st, setState] = useState('');
-  const [country, setCountry] = useState('');
-  const [name, setName] = useState('');
-  const [profileImage, setProfileImage] = useState('');
-  const [phys, setPhys] = useState([]);
-  const isFocused = useIsFocused();
-
-  
+    const { state, logout } = useContext(Context);
+    const [phys, setPhys] = useState([]);
+    const isFocused = useIsFocused();
+    const userData = userProfileData();
+    const profileImage = userProfileImage();
+   
   useLayoutEffect(()=> {
     navigation.setOptions({
 
@@ -47,26 +44,6 @@ const ProfileScreen = ({ navigation }) => {
   }, [navigation]);
 
   useEffect(()=>{
-    async function getImageUrlFromCache(){
-      console.error("here")
-      try {
-        const res = await ImageCache.get("profileImageUrl")
-        // console.error(res)
-        return res;
-        console.error(res)
-      } catch (error) {
-      console.error(error)
-      }
-    }
-
-    async function getProfileImageUrl(imageKey){
-      const res = await getImageUrl(imageKey);
-      const url = res['data']['image_url']
-      setProfileImage(url)
-      setIsLoading(false);
-      // await ImageCache.set("profileImageUrl", url )
-    }
-
     async function getPhys(){
       const res = await getUsersPhysicians();
       var i = 0;
@@ -76,34 +53,8 @@ const ProfileScreen = ({ navigation }) => {
       })
        setPhys(res['data']['physicians']);
     }
-      async function getUser(){
-        const res = await getUserInfo();
-        if(res != undefined){
-          setIsLoading(true);
-          setEmail(res['data']['email']);
-          setCity(res['data']['info']['city'])
-          setState(res['data']['info']['state'])
-          setCountry(res['data']['info']['country'])
-          setName(res['data']['name'])
-          // var profileImageUrl = await getImageUrlFromCache();
-          var profileImageUrl = undefined
-          if(profileImageUrl !== undefined){
-            setProfileImage(profileImageUrl);
-            setIsLoading(false);
-            console.error("profile image url from cache")
-          } else {
-            if(res['data']['info']['image_key'] != undefined){
-              getProfileImageUrl(res['data']['info']['image_key'])
-              console.error("profile image url from api call")
-            }
-          }
-          setIsLoading(false);
-        } else {
-          setIsLoading(false);
-        }
-    }
-    
-    isFocused && getUser() && getPhys() ;
+     
+    isFocused  && getPhys() ;
   },[isFocused])
 
   const VisibleItem = props => {
@@ -232,26 +183,30 @@ const ProfileScreen = ({ navigation }) => {
   }
   return (
     <>
+    {profileImage.isFetching && (
+          <Text>    Loading... </Text>
+      )}
+      
         <FlashMessage position="top" />
-     {isLoading ? <View style={styles.loading}>
-            <ActivityIndicator size='large' color="#0000ff" />
-            </View>: <SafeAreaView style= {styles.container}>
-        
+     { userData.isFetched &&  userData.isSuccess && <SafeAreaView style= {styles.container}>
+       
         <View style={styles.userInfoSection}>
           <View style={{flexDirection: 'row', marginTop: 15}}>
-            <Avatar.Image
-            source={{
-              uri: profileImage
-            }}
-              // source={ require("../../src/components/UI/stock.jpg")}
-              size = {80}
-            />
+          
+               <Avatar.Image
+               source={{
+                 uri: profileImage.isSuccess ? profileImage.data : null
+               }}
+                 // source={ require("../../src/components/UI/stock.jpg")}
+                 size = {80}
+               />
+           
             <View  style={{marginLeft: 20}}>
               <Title style={[styles.title, {
                 marginTop:15,
                 marginBottom: 5,
                }]}>
-                  {name}
+                  {userData['data']['data']['name']}
               </Title>
               {/* <Caption style={styles.caption}>@j_doe</Caption> */}
             </View>
@@ -261,7 +216,7 @@ const ProfileScreen = ({ navigation }) => {
         <View style={styles.userInfoSection}>
           <View style={styles.row}>
             <Icon name="map-marker-radius" color="#777777" size={20}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{city}, {country}</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{userData['data']['data']['info']['city']}, {userData['data']['data']['info']['country']}</Text>
           </View>
             {/* <View style={styles.row}>
               <Icon name="phone" color="#777777" size={20}/>
@@ -269,7 +224,7 @@ const ProfileScreen = ({ navigation }) => {
            </View> */}
           <View style={styles.row}>
             <Icon name="email" color="#777777" size={20}/>
-            <Text style={{color:"#777777", marginLeft: 20}}>{email}</Text>
+            <Text style={{color:"#777777", marginLeft: 20}}>{userData['data']['data']['email']}</Text>
           </View>
           <View style={styles.row}>
             <TouchableOpacity style={styles.row} onPress= {() => navigate('AddPhysician', {testImage: profileImage})}>
@@ -291,10 +246,8 @@ const ProfileScreen = ({ navigation }) => {
           />
           
         </View>
-      </SafeAreaView> }
+          </SafeAreaView> }
     </>
-      
- 
   );
 };
 
