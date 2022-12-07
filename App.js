@@ -9,7 +9,7 @@ import oktaConfig from "./okta.config";
 import { QueryClientProvider, QueryClient} from 'react-query';
 import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
-import { PersistQueryClientProvider, persistQueryClient } from '@tanstack/react-query-persist-client'
+import { PersistQueryClientProvider, persistQueryClient, persistQueryClientRestore } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 export default () => {
@@ -17,7 +17,7 @@ export default () => {
     {
     defaultOptions: {
       queries: {
-        cacheTime: 1000 * 60 * 60 * 24, // 24 hours
+        cacheTime: Infinity
       },
     },
   }
@@ -31,7 +31,7 @@ export default () => {
   persistQueryClient({
     queryClient,
     persister,
-    maxAge: 1000 * 60 * 60 * 24, // 24 hours
+    maxAge: Infinity
 
   })
   useEffect(() => {
@@ -60,7 +60,7 @@ export default () => {
         <Router />
       </Provider>
     </QueryClientProvider>
-    </PersistQueryClientProvider>
+     </PersistQueryClientProvider>
   );
 };
 

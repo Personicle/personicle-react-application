@@ -2,15 +2,18 @@ import React, {useState,useEffect} from 'react';
 import axios from 'axios'
 import { useMutation, useQuery, useQueryClient } from 'react-query'
 import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../../api/http';
+import { showMessage } from 'react-native-flash-message';
 
    export const userProfileData = () => {
         const profileData = useQuery('user-profile-data',getUserInfo, {
             onSuccess: ()=> {
                 console.warn("on success use query user profile data fetched")
             },
-            refetchIntervalInBackground: true,
-            refetchInterval: 60 * 1000 * 20,
-            // staleTime: 60 * 1000 * 2 // data will be considered state after 2 minutes
+            
+            // cacheTime: 1000 * 60 * 60 * 24,
+            // refetchIntervalInBackground: true,
+            // refetchInterval: 60 * 1000 * 20,
+            // staleTime: 60 * 1000 * 60 * 24 // data will be considered state after 2 minutes
         })
         // console.error(profileData)
         return profileData;
@@ -29,9 +32,10 @@ import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../.
       try {
         const profileImage = useQuery("user-profile-image", () => getProfileImageUrl(), { 
             onSuccess: () => {console.warn("on success user profile image url fetched")},
-            keepPreviousData: true,
-            refetchIntervalInBackground: true,
-            refetchInterval: 60 * 1000 * 12,
+
+            // refetchIntervalInBackground: true,
+            // refetchInterval: 60 * 1000 * 12,
+            // cacheTime: 1000 * 60 * 60 * 24,
             refetchOnMount: "always"
           });
   
@@ -45,11 +49,7 @@ import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../.
   export const updateUserProfileImage = async (image) => {
       // try {
         const res = await uploadProfilePic(image);
-        console.error("hola")
-
-        console.error(res)
         if(res['status'] != 422){
-          console.error(res['status'])
            const key =  res['data'][0]['image_key']
            let payload = {}
            payload["image_key"] = key
@@ -57,9 +57,16 @@ import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../.
            
            return r; 
         }  else {
-          throw `${res['error']}`;
+            throw `${res['error']}`;
         }
       // } catch (error) {
+      //   showMessage({
+      //     message: `${error}`,
+      //     type: "warning",
+      //     statusBarHeight: 2,
+      //     duration: 3500,
+      //     floating: true,
+      //   });
       //     console.error("herre")
       //     console.error(error)
 

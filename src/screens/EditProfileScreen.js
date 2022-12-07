@@ -20,6 +20,8 @@ import {ImageCache} from "../utils/cache";
 import { useMutation, useQueryClient } from 'react-query'
 import { userProfileData, userProfileImage, updateUserProfileImage } from '../utils/user';
 import { isEqual } from 'lodash';
+import FlashMessage from "react-native-flash-message";
+import { showMessage } from "react-native-flash-message";
 
 function EditProfileScreen ({navigation}){
     const {colors} = useTheme();
@@ -87,15 +89,25 @@ function EditProfileScreen ({navigation}){
       onSuccess: () => {
       // console.error("on success mutation")
       // console.error(updatedData)
-
       queryClient.setQueryData(['user-profile-image'], (prev) => (userUploadedImage))
+      showMessage({
+        message: `Profile image updated!`,
+        type: "success",
+        statusBarHeight: 2,
+        duration: 3500,
+        floating: true,
+      });
+      navigation.goBack();
       },
-      onError: async (error, variables, context) =>{
-        const errorObj = error;
-      const errorObjAsJSON = await errorObj.json();
-      console.error("on error")
-      const { message } = errorObjAsJSON;
-      console.error(message);
+      onError: (error, variables, context) =>{
+      showMessage({
+        message: `${error}`,
+        type: "warning",
+        statusBarHeight: 2,
+        duration: 3500,
+        floating: true,
+      });
+      navigation.goBack();
       }
   })
   
@@ -123,21 +135,8 @@ function EditProfileScreen ({navigation}){
             
             setUserUploadedImage(image['path'])
 
-           
-
-            // console.error(image);
-            // setProfilePic(image);
-            // setProfileImage(''); // reset the profile image to the image uploaded by user
-
-            // let imagePayload = {}
-            // imagePayload[]
-            // console.error(image)
-            // console.error(image['path'])
-
-         
-            // setUserUploadedImage(image['path'])
             profileImageMutation.mutate(image , {
-              onError: () =>{console.error("there was an error uploading image")}
+              onError: () =>{}
             }) // this shouls be called after user presses submit button
             bs.current.snapTo(1);
           });
@@ -191,6 +190,9 @@ function EditProfileScreen ({navigation}){
     )
     return (
         <>
+        <FlashMessage position="top" />
+        {console.error(profileImageMutation)}
+        {profileImageMutation.isLoading && Object.keys(profileImageMutation.variables).length !== 0 && <Text>Updating Profile Image...</Text>}
         {profileImageMutation.isError && <Text>There was an error uploading profile image</Text>}
          { (userData.isLoading ) && <Text>Loading...</Text>}
          {userData.isFetched && userData.isSuccess &&  (<View style={styles.container}>

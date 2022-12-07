@@ -24,7 +24,7 @@ const ProfileScreen = ({ navigation }) => {
     const [phys, setPhys] = useState([]);
     const isFocused = useIsFocused();
     const userData = userProfileData();
-    // console.error(userData)
+    console.error(userData)
     const profileImage = userProfileImage();
     const r = phyResponses(); 
 
