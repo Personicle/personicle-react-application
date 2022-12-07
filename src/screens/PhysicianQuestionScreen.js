@@ -40,8 +40,8 @@ const PhysicianQuestionScreen = () => {
   // }, [])
   const refreshData = async () => {
     setIsLoading(true)
-    const phys =  await getPhyQuestions();
-    const filteredPhysiciansWithQuestions = phys['data']['physician_users'].filter(obj => Object.keys(obj.questions).length != 0)
+    const physs =  await getPhyQuestions();
+    const filteredPhysiciansWithQuestions = physs['data']['physician_users'].filter(obj => Object.keys(obj.questions).length != 0)
      setPhysicians(filteredPhysiciansWithQuestions)
      setManualRefresh(true);
      setIsLoading(false)

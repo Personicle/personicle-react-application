@@ -191,7 +191,6 @@ function EditProfileScreen ({navigation}){
     return (
         <>
         <FlashMessage position="top" />
-        {console.error(profileImageMutation)}
         {profileImageMutation.isLoading && Object.keys(profileImageMutation.variables).length !== 0 && <Text>Updating Profile Image...</Text>}
         {profileImageMutation.isError && <Text>There was an error uploading profile image</Text>}
          { (userData.isLoading ) && <Text>Loading...</Text>}

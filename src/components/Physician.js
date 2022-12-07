@@ -10,7 +10,7 @@ import { FlatList } from 'react-native-gesture-handler';
 import { getPhyNameFromId } from "../utils/physician"
 
 
-function Physician({phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
+function Physician({hardRefresh,phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
 
     const [phyName, setPhyName] = useState("")
     const [phyRemoved, setPhyRemoved] = useState(false)
@@ -19,9 +19,11 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
     const r = getPhyNameFromId(phy_id);
     // console.error(r)
     // to get physician
-    async function getName(){
-        // const res = await getPhyName(phy_id);
-        const res = r['data']
+    async function getName(hardRefresh){
+        let res;
+        hardRefresh = hardRefresh || false
+        if(!hardRefresh) res = r['data']
+        else res = await getPhyName(phy_id);
         
         if(res.status == 404){
             setPhyRemoved(true); // requested phy does not exist for this user
@@ -41,7 +43,7 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
         if(!visualization){
             setLoading(false);
         } else{
-            getName();
+            getName(hardRefresh);
         }
     
     }, [isFocused && r.isFetched])

@@ -13,6 +13,8 @@ function VisualizeResponses(){
   const [responses, setResponses] = useState([]);
   const[isloading, setIsLoading] = useState(true);
   const [physicianIds, setPhysicianIds] = useState([]);
+  const [hf, setHardRefresh] = useState(false);
+
   const r = phyResponses();
   async function getPhysicianResponses(hardRefresh){
     // const response =  
@@ -51,13 +53,12 @@ function VisualizeResponses(){
     r.isFetched && getPhysicianResponses();
   }, [r.isFetched])
 
-
-
   const refreshData = async () => {
+    setHardRefresh(true);
     await getPhysicianResponses(true);
   }
   function renderPhysicians(itemData){
-      return <Physician  visualization={true} responses={responses} {...itemData.item}/>
+      return <Physician  hardRefresh = {hf} visualization={true} responses={responses} {...itemData.item}/>
   }
   const getFooter = () => {
     return <Text>{' '}</Text>;
