@@ -16,6 +16,7 @@ function VisualizeResponses(){
   const [hf, setHardRefresh] = useState(false);
 
   const r = phyResponses();
+  console.error(r)
   async function getPhysicianResponses(hardRefresh){
     // const response =  
     let response;
@@ -48,10 +49,11 @@ function VisualizeResponses(){
     setResponses(result)
     // console.error("grouped by phys")
     setIsLoading(false)
-   }
+   
+  }
   useEffect(()=>{
     r.isFetched && getPhysicianResponses();
-  }, [r.isFetched])
+  }, [r.isFetched && !r.isRefetching])
 
   const refreshData = async () => {
     setHardRefresh(true);

@@ -51,8 +51,8 @@ const PhysicianQuestionScreen = () => {
       < ScrollView refreshControl={
         <RefreshControl refreshing={isloading} onRefresh={refreshData} />
       }>
-        {(phys.isLoading || phys.isFetching ) && <Text>Fetching Physicians..</Text>}
-        {phys.isFetched && !manualRefresh && <PhysiciansOutput physicians={phys['data']['data']['physician_users'].filter(obj => Object.keys(obj.questions).length != 0)} />  }
+        {(phys.isLoading || phys.isRefetching  ) && <Text>Fetching Physicians..</Text>}
+        {phys.isFetched && !manualRefresh  && <PhysiciansOutput physicians={phys['data']['data']['physician_users'].filter(obj => Object.keys(obj.questions).length != 0)} />  }
         {manualRefresh && <PhysiciansOutput physicians={physicians}/>}
       {/* <ScrollView>
        { isloading ?  (<SplashStack/> ) :  <PhysiciansOutput physicians={physicians} />  }
