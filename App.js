@@ -17,23 +17,24 @@ export default () => {
     {
     defaultOptions: {
       queries: {
-        cacheTime: `Infinity`
+        cacheTime: Infinity
       },
     },
   }
   )
-
   const persister = createAsyncStoragePersister({
     storage: AsyncStorage,
   });
+ 
   persistQueryClient({
     queryClient,
     persister,
-    maxAge: `Infinity`
+    maxAge: Infinity
 
   })
+  
   useEffect(() => {
-    console.log("setting up okta config");
+    console.warn("setting up okta config");
 
     createConfig({
       clientId: oktaConfig.oidc.clientId,
@@ -44,6 +45,7 @@ export default () => {
       requireHardwareBackedKeyStore:
         oktaConfig.oidc.requireHardwareBackedKeyStore,
     }).then((resp) => console.log(resp));
+   
   }, []);
 
   console.log("starting app in app js");
@@ -51,14 +53,14 @@ export default () => {
   return (
     
     <QueryClientProvider client={queryClient}>
-      {/* <PersistQueryClientProvider 
+      <PersistQueryClientProvider 
         client={queryClient}
         persistOptions={{ persister: persister }}
-        > */}
+        >
       <Provider>
         <Router />
       </Provider>
-      {/* </PersistQueryClientProvider> */}
+      </PersistQueryClientProvider>
     </QueryClientProvider>
 
   );

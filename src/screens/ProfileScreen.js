@@ -194,10 +194,11 @@ const ProfileScreen = ({ navigation }) => {
       )}
       
         <FlashMessage position="top" />
-        
+        {/* {userData.isRefetching && <Text></Text>} */}
+        {userData['data'] === undefined && userData.isRefetching && <Text>Refetching...</Text>}
         {profileImage.isError && <Text>Error uploading image</Text>}
         {/* uncomment once image upload service is running  */}
-     { userData.isFetched &&  userData.isSuccess && <SafeAreaView style= {styles.container}>
+     { userData.isFetched &&  userData.isSuccess  && userData['data'] !== undefined && profileImage['data'] !== undefined && <SafeAreaView style= {styles.container}>
        
         <View style={styles.userInfoSection}>
           <View style={{flexDirection: 'row', marginTop: 15}}>

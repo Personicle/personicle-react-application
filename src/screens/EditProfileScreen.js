@@ -194,7 +194,7 @@ function EditProfileScreen ({navigation}){
         {profileImageMutation.isLoading && Object.keys(profileImageMutation.variables).length !== 0 && <Text>Updating Profile Image...</Text>}
         {profileImageMutation.isError && <Text>There was an error uploading profile image</Text>}
          { (userData.isLoading ) && <Text>Loading...</Text>}
-         {userData.isFetched && userData.isSuccess &&  (<View style={styles.container}>
+         {userData.isFetched && userData.isSuccess && userData['data'] !== undefined && (<View style={styles.container}>
             <BottomSheet
                 ref={bs}
                 snapPoints={[330, 0]}

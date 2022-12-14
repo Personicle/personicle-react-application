@@ -60,7 +60,7 @@ function VisualizeResponses() {
   }
   useEffect(() => {
     r.isFetched && getPhysicianResponses();
-  }, [r.isFetched]);
+  }, [r.isFetched && !r.isRefetching]);
 
   const refreshData = async () => {
     setHardRefresh(true);
