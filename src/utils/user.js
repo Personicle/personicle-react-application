@@ -1,15 +1,19 @@
 import React, {useState,useEffect} from 'react';
 import axios from 'axios'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
-import { getUserInfo, updateUserInfo, getImageUrl } from '../../api/http';
+import { useMutation, useQuery, useQueryClient , } from 'react-query'
+import { getUserInfo, updateUserInfo, getImageUrl, uploadProfilePic } from '../../api/http';
+import { showMessage } from 'react-native-flash-message';
 
    export const userProfileData = () => {
         const profileData = useQuery('user-profile-data',getUserInfo, {
             onSuccess: ()=> {
                 console.warn("on success use query user profile data fetched")
             },
-            refetchIntervalInBackground: true,
-            refetchInterval: 60 * 1000 ,
+            
+            // cacheTime: 1000 * 60 * 60 * 24,
+            // refetchIntervalInBackground: true,
+            // refetchInterval: 60 * 1000 * 20,
+            // staleTime: 60 * 1000 * 60 * 24 // data will be considered state after 2 minutes
         })
         // console.error(profileData)
         return profileData;
@@ -28,8 +32,11 @@ import { getUserInfo, updateUserInfo, getImageUrl } from '../../api/http';
       try {
         const profileImage = useQuery("user-profile-image", () => getProfileImageUrl(), { 
             onSuccess: () => {console.warn("on success user profile image url fetched")},
-            keepPreviousData: true,
-            staleTime:  60 * 1000 * 12
+
+            // refetchIntervalInBackground: true,
+            // refetchInterval: 60 * 1000 * 12,
+            cacheTime: 1000 * 60 * 60 * 24,
+            // refetchOnMount: "always"
           });
   
         return profileImage;
@@ -37,6 +44,35 @@ import { getUserInfo, updateUserInfo, getImageUrl } from '../../api/http';
           console.error(error)
       }
       
+  }
+
+  export const updateUserProfileImage = async (image) => {
+      // try {
+        const res = await uploadProfilePic(image);
+        if(res['status'] != 422){
+           const key =  res['data'][0]['image_key']
+           let payload = {}
+           payload["image_key"] = key
+           const r = updateUserInfo(payload);
+           
+           return r; 
+        }  else {
+            throw `${res['error']}`;
+        }
+      // } catch (error) {
+      //   showMessage({
+      //     message: `${error}`,
+      //     type: "warning",
+      //     statusBarHeight: 2,
+      //     duration: 3500,
+      //     floating: true,
+      //   });
+      //     console.error("herre")
+      //     console.error(error)
+
+      //     return error
+      //     console.error(error)
+      // }
   }
   
    

@@ -176,6 +176,8 @@ export const isAuthed = async() =>{
   try {
     const token = await SecureStore.getItemAsync("token");
     const tokenIsActive = await introspectAccessToken(token); //  throws error
+
+
     if(tokenIsActive["active"]){
       return true;
     } else {
@@ -187,7 +189,7 @@ export const isAuthed = async() =>{
     
   } catch (error) {
     const res = await refreshAllTokens();
-
+   
     if(res)
       return true;
     

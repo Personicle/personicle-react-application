@@ -18,6 +18,8 @@
     "@react-navigation/native": "^6.0.12",
     "@react-navigation/native-stack": "^6.7.0",
     "@react-navigation/stack": "^6.2.3",
+    "@tanstack/query-async-storage-persister": "^4.19.1",
+    "@tanstack/react-query-persist-client": "^4.19.1",
     "axios": "^0.27.2",
     "d3-voronoi": "^1.1.4",
     "delaunay-find": "^0.0.6",

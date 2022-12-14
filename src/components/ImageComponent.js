@@ -33,7 +33,7 @@ function ImageComponent({questionIdRes, questionId,physicianId}){
               }));
               setImages(sortedByTime)
               await ImageCache.set(`${physicianId}_${questionId}`, sortedByTime )
-              await ImageCache.clearAll();
+              // await ImageCache.clearAll();
             }
             return true;
          } else{
@@ -43,7 +43,7 @@ function ImageComponent({questionIdRes, questionId,physicianId}){
     }
     const  processResponses = async () => {
         const cachedImages = await ImageCache.get(`${physicianId}_${questionId}`)
-        await ImageCache.clearAll();
+        // await ImageCache.clearAll();
         if(cachedImages !== undefined && cachedImages.length > 0){
             console.error("cached")
             setImages(cachedImages)

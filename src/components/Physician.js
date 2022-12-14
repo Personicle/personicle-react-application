@@ -7,17 +7,24 @@ import { navigationRef } from "../RootNavigation";
 import {navigate} from "../RootNavigation"
 import {useEffect, useState } from "react";
 import { FlatList } from 'react-native-gesture-handler';
+import { getPhyNameFromId } from "../utils/physician"
 
 
-function Physician({phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
+function Physician({hardRefresh,phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
 
     const [phyName, setPhyName] = useState("")
     const [phyRemoved, setPhyRemoved] = useState(false)
     const isFocused = useIsFocused();
     const [isLoading, setLoading] = useState(true)
+    const r = getPhyNameFromId(phy_id);
+    // console.error(r)
     // to get physician
-    async function getName(){
-        const res = await getPhyName(phy_id);
+    async function getName(hardRefresh){
+        let res;
+        hardRefresh = hardRefresh || false
+        if(!hardRefresh) res = r['data']
+        else res = await getPhyName(phy_id);
+        
         if(res.status == 404){
             setPhyRemoved(true); // requested phy does not exist for this user
         } else {
@@ -36,10 +43,10 @@ function Physician({phy_id,visualization,responses,physician_user_id, questions,
         if(!visualization){
             setLoading(false);
         } else{
-            getName();
+            getName(hardRefresh);
         }
     
-    }, [isFocused])
+    }, [isFocused && r.isFetched])
     const refreshData = async () => {
         console.error("hola")
         await getName();

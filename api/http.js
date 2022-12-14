@@ -60,6 +60,8 @@ export const uploadProfilePic = async (image) => {
           return res
       } catch (error) {
         console.error(error.response)
+        return  {'error': error.response.data, 'status': error.response.status}
+
         return error
       }
       
@@ -249,8 +251,7 @@ export async function getDatastreams(datatype,dataSource=undefined,start=undefin
             'Authorization': `Bearer ${token}`
         }
         const res = await axios.get('https://api.personicle.org/data/read/datastreams', config)
-
-        console.error(res)
+        // console.error(res)
         return res
     } catch (error) {
         console.error(error)

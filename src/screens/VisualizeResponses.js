@@ -14,24 +14,35 @@ import { getDatastreams } from "../../api/http";
 import UsersPhysicians from "../components/UsersPhysicians";
 import { SplashStack } from "../navigationStacks";
 import Physician from "../components/Physician";
+import { phyResponses } from "../utils/physician";
 
 function VisualizeResponses() {
   const [responses, setResponses] = useState([]);
   const [isloading, setIsLoading] = useState(true);
   const [physicianIds, setPhysicianIds] = useState([]);
+  const [hf, setHardRefresh] = useState(false);
 
-  async function getPhysicianResponses() {
-    const response = await getDatastreams(
-      (datatype =
-        "com.personicle.individual.datastreams.subjective.physician_questionnaire")
-    );
+  const r = phyResponses();
+  async function getPhysicianResponses(hardRefresh) {
+    // const response =
+    let response;
+    var hardRefresh = hardRefresh || false;
+    if (!hardRefresh) {
+      response = r["data"];
+    } else {
+      response = await getDatastreams(
+        (datatype =
+          "com.personicle.individual.datastreams.subjective.physician_questionnaire")
+      );
+    }
+    console.error(r);
+    console.error(response);
 
     var result = response.data.reduce(function (r, a) {
       r[a.source.split(":")[1]] = r[a.source.split(":")[1]] || [];
       r[a.source.split(":")[1]].push(a);
       return r;
     }, Object.create(null));
-    console.error("here");
     console.error(result);
 
     let arr = [];
@@ -39,25 +50,26 @@ function VisualizeResponses() {
       let temp = {
         phy_id: key,
       };
-
       arr.push(temp);
     }
     setPhysicianIds(arr);
 
     setResponses(result);
-    console.error("grouped by phys");
+    // console.error("grouped by phys")
     setIsLoading(false);
   }
   useEffect(() => {
-    getPhysicianResponses();
-  }, []);
+    r.isFetched && getPhysicianResponses();
+  }, [r.isFetched]);
 
   const refreshData = async () => {
-    await getPhysicianResponses();
+    setHardRefresh(true);
+    await getPhysicianResponses(true);
   };
   function renderPhysicians(itemData) {
     return (
       <Physician
+        hardRefresh={hf}
         visualization={true}
         responses={responses}
         {...itemData.item}

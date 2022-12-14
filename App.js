@@ -6,12 +6,32 @@ import "react-native-gesture-handler";
 import { Provider } from "./src/context/AuthorizationContext";
 import  AsyncStorage  from '@react-native-async-storage/async-storage';
 import oktaConfig from "./okta.config";
-import { QueryClientProvider, QueryClient} from 'react-query';
+import {  QueryClientProvider, QueryClient} from 'react-query';
 import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
+import { PersistQueryClientProvider ,persistQueryClient, persistQueryClientRestore } from '@tanstack/react-query-persist-client'
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 
 export default () => {
-  const queryClient = new QueryClient()
+  const queryClient = new QueryClient(
+    {
+    defaultOptions: {
+      queries: {
+        cacheTime: `Infinity`
+      },
+    },
+  }
+  )
+
+  const persister = createAsyncStoragePersister({
+    storage: AsyncStorage,
+  });
+  persistQueryClient({
+    queryClient,
+    persister,
+    maxAge: `Infinity`
+
+  })
   useEffect(() => {
     console.log("setting up okta config");
 
@@ -29,11 +49,18 @@ export default () => {
   console.log("starting app in app js");
 
   return (
+    
     <QueryClientProvider client={queryClient}>
+      {/* <PersistQueryClientProvider 
+        client={queryClient}
+        persistOptions={{ persister: persister }}
+        > */}
       <Provider>
         <Router />
       </Provider>
+      {/* </PersistQueryClientProvider> */}
     </QueryClientProvider>
+
   );
 };
 
