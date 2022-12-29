@@ -2,61 +2,113 @@ import {Text,View, Button, StyleSheet, Dimensions, StatusBar,TouchableOpacity,Im
 import { ImageGallery, Header} from '@georstat/react-native-image-gallery';
 import {useState, useEffect} from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { getImageUrl } from '../../api/http';
+import { getImageUrls } from '../../api/http';
 import moment from "moment";
 import {ImageCache} from "../utils/cache"
 import GridImageViewerCaption from 'react-native-grid-image-viewer-with-caption';
-function ImageComponent({questionIdRes, questionId,physicianId}){
+import { useQueryClient, useQueries } from 'react-query';
+function ImageComponent({questionIdRes, imageResponses, questionId,physicianId}){
     // console.error(questionIdRes)
     const [images, setImages] = useState([]);
-
+    const queryClient = useQueryClient();
     let temp = []
     const[isLoading, setIsLoading] = useState(true);
-    const getImageUrls = async (imageKey, userResponse, index) => {
-        const res = await getImageUrl(imageKey)
-        // console.error(userResponse);
+    // const res = useQueries(
         
-        if (res){
-            let t = {}
-            // t['id'] = imageKey;
-            t['image'] = res['data']['image_url']
-            t['text'] = moment(userResponse['timestamp']).utc(userResponse['timestamp']).local().format('MMM Do YY')
-            t['timestamp'] = userResponse['timestamp']
-            // temp.push(res['data']['image_url'])
-            temp.push(t)
-           
-            if( index == questionIdRes.length - 1){
-              // if this is the last response
-              // sort the responses now by time (asc order)
-              var sortedByTime= temp.sort((function (a, b) { 
-                return  moment(a['timestamp']).diff(moment(b['timestamp']))
-              }));
-              setImages(sortedByTime)
-              await ImageCache.set(`${physicianId}_${questionId}`, sortedByTime )
-              // await ImageCache.clearAll();
-            }
-            return true;
-         } else{
-            return false;
-         }
-        
-    }
-    const  processResponses = async () => {
-        const cachedImages = await ImageCache.get(`${physicianId}_${questionId}`)
-        // await ImageCache.clearAll();
-        if(cachedImages !== undefined && cachedImages.length > 0){
-            console.error("cached")
-            setImages(cachedImages)
-            setIsLoading(false)
+    //   imageResponses.map( res  => {
+    //              return {
+    //               queryKey: Object.keys(res)[0],
+    //               queryFn: () => getImageUrls(Object.values(res)[0]),
+    //               staleTime: 780000
+    //           }
+    //   })
+    // )
+    // console.error("fsdfdfds")
 
-        } else {
-            for(var i = 0 ; i < questionIdRes.length; ++i){
-                const res = await getImageUrls(questionIdRes[i]['value'], questionIdRes[i], i);
-                if(res && i == questionIdRes.length-1){ 
-                    setIsLoading(false)
-                } 
-            }
+    // console.error(res)
+    // for(const d of data){
+    //   console.error(d[1].data)
+    // }
+    // const getImageUrls = async (imageKey, userResponse, index) => {
+    //     const res = await getImageUrl(imageKey)
+    //     // console.error(userResponse);
+        
+    //     if (res){
+    //         let t = {}
+    //         // t['id'] = imageKey;
+    //         t['image'] = res['data']['image_url']
+    //         t['text'] = moment(userResponse['timestamp']).utc(userResponse['timestamp']).local().format('MMM Do YY')
+    //         t['timestamp'] = userResponse['timestamp']
+    //         // temp.push(res['data']['image_url'])
+    //         temp.push(t)
+           
+    //         if( index == questionIdRes.length - 1){
+    //           // if this is the last response
+    //           // sort the responses now by time (asc order)
+    //           var sortedByTime= temp.sort((function (a, b) { 
+    //             return  moment(a['timestamp']).diff(moment(b['timestamp']))
+    //           }));
+    //           setImages(sortedByTime)
+    //           await ImageCache.set(`${physicianId}_${questionId}`, sortedByTime )
+              
+    //           // await ImageCache.clearAll();
+    //         }
+    //         return true;
+    //      } else{
+    //         return false;
+    //      }
+        
+    // }
+    const  processResponses = async () => {
+      const data = queryClient.getQueriesData({queryKey: `${physicianId}-${questionId}`})
+      console.error(data)
+      if(data.length == 0){
+        console.error("hereee")
+        setIsLoading(true)
+       const refetchQueries = await queryClient.refetchQueries({queryKey: `${physicianId}-${questionId}`})
+       console.error(`${physicianId}-${questionId}`)
+
+
+        if(refetchQueries){
+          let temp = []
+          refetchQueries[0][1].forEach( d => {
+            //  setImages([...images, d.data.image_url])
+            //  setImages(curr => [...curr, d.data.image_url])
+            temp.push({image: d.data.image_url})
+            
+            })
+            setImages(temp)
         }
+      } else {
+        console.error("holaaaaa")
+      
+        let temp = []
+        data[0][1].forEach( d => {
+        //  setImages([...images, d.data.image_url])
+        //  setImages(curr => [...curr, d.data.image_url])
+        temp.push({image: d.data.image_url})
+        
+        })
+        setImages(temp)
+      }
+
+      
+        // const cachedImages = await ImageCache.get(`${physicianId}_${questionId}`)
+        // // await ImageCache.clearAll();
+        // if(cachedImages !== undefined && cachedImages.length > 0){
+        //     console.error("cached")
+        //     // console.error(cachedImages.length)
+        //     setImages(cachedImages)
+        //     setIsLoading(false)
+
+        // } else {
+        //     for(var i = 0 ; i < questionIdRes.length; ++i){
+        //         const res = await getImageUrls(questionIdRes[i]['value'], questionIdRes[i], i);
+        //         if(res && i == questionIdRes.length-1){ 
+                    setIsLoading(false)
+        //         } 
+        //     }
+        // }
     }
     useEffect(() => {
         processResponses();
@@ -97,7 +149,7 @@ function ImageComponent({questionIdRes, questionId,physicianId}){
                 <Text style={styles.explore_text}>
                   {/* Click on an image to view in full screen mode */}
                 </Text>
-        
+          {console.error(images.length)}
                 {/* Basic Usage */}
                 {/* <GridImageView data={images} transparent={0.8}  /> */}
                 {images.length !== 0 ?  <GridImageViewerCaption data={ images} captionColor="#fff" /> : <Text>No Data Available</Text>}

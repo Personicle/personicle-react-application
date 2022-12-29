@@ -59,20 +59,6 @@ import { showMessage } from 'react-native-flash-message';
         }  else {
             throw `${res['error']}`;
         }
-      // } catch (error) {
-      //   showMessage({
-      //     message: `${error}`,
-      //     type: "warning",
-      //     statusBarHeight: 2,
-      //     duration: 3500,
-      //     floating: true,
-      //   });
-      //     console.error("herre")
-      //     console.error(error)
-
-      //     return error
-      //     console.error(error)
-      // }
   }
   
    

@@ -4,12 +4,15 @@ import SelectPicker from 'react-native-form-select-picker';
 import LineChartComponent from '../components/LineChartComponent';
 import PieChart from '../components/PieChart';
 import ImageComponent from '../components/ImageComponent';
+import { userImageResponses } from '../utils/physician';
 
 function AllResponses({route, navigation}){
 
     const responses = route.params?.responses;
     const physicianId = route.params?.physician_id;
     const name = route.params?.phyName;
+    const imageResponses = route.params?.imageResponses;
+
 
     const [selected, setSelected] = useState("");
     const [renderChart,setRenderChart] = useState(true);
@@ -71,7 +74,7 @@ function AllResponses({route, navigation}){
 
             return <PieChart questionIdRes={questionIdRes} />
           } else if (responseType[0] == "image" ){
-            return <ImageComponent  questionIdRes={questionIdRes} questionId={questionId} physicianId={physicianId}/>
+            return <ImageComponent  questionIdRes={questionIdRes} questionId={questionId} imageResponses={imageResponses} physicianId={physicianId}/>
           }
         }
   
