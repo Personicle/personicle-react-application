@@ -5,7 +5,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { getImageUrls } from '../../api/http';
 import moment from "moment";
 import {ImageCache} from "../utils/cache"
-import GridImageViewerCaption from 'react-native-grid-image-viewer-with-caption';
+import GridImageViewerCaption from '../components/UI/GridImageViewerCaption';
 import { useQueryClient, useQueries } from 'react-query';
 function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId,physicianId}){
     // console.error(questionIdRes)
