@@ -11,9 +11,10 @@ function AllResponses({ route, navigation }) {
   const physicianId = route.params?.physician_id;
   const name = route.params?.phyName;
   const imageResponses = route.params?.imageResponses;
-
+  const cachedImages = route.params?.cachedImages;
   const [selected, setSelected] = useState("");
   const [renderChart, setRenderChart] = useState(true);
+
   var groupedByQuestionIdTag = responses.reduce(function (r, a) {
     a.value.forEach((val) => {
       r[val.question_id] = r[val.question_id] || [];
@@ -25,7 +26,6 @@ function AllResponses({ route, navigation }) {
   let groupedByTag = {};
   responses.forEach(function (res) {
     const values = res.value;
-
     values.forEach(function (val) {
       let temp = {};
       temp = {
@@ -87,6 +87,7 @@ function AllResponses({ route, navigation }) {
             questionIdRes={questionIdRes}
             questionId={questionId}
             physicianId={physicianId}
+            cachedImages={cachedImages}
           />
         );
       }
@@ -94,6 +95,7 @@ function AllResponses({ route, navigation }) {
 
     return <Text>{"Not able to visualize this datastream"}</Text>;
   }
+
 
   return (
     <View style={styles.container}>

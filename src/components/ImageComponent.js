@@ -7,7 +7,7 @@ import moment from "moment";
 import {ImageCache} from "../utils/cache"
 import GridImageViewerCaption from 'react-native-grid-image-viewer-with-caption';
 import { useQueryClient, useQueries } from 'react-query';
-function ImageComponent({questionIdRes, imageResponses, questionId,physicianId}){
+function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId,physicianId}){
     // console.error(questionIdRes)
     const [images, setImages] = useState([]);
     const queryClient = useQueryClient();
@@ -62,6 +62,7 @@ function ImageComponent({questionIdRes, imageResponses, questionId,physicianId})
     const  processResponses = async () => {
       const data = queryClient.getQueriesData({queryKey: `${physicianId}-${questionId}`})
       console.error(data)
+      console.error("data")
       if(data.length == 0){
         console.error("hereee")
         setIsLoading(true)
@@ -133,7 +134,8 @@ function ImageComponent({questionIdRes, imageResponses, questionId,physicianId})
       return (
           < >
               {isLoading && <Text>Loading...</Text>}
-              { !isLoading &&  
+              {cachedImages.isStale && cachedImages.isRefetching && <Text>Refetching...</Text>}
+              { !isLoading && !cachedImages.isStale && 
                 // <View style={styles.screen}>
                 //     {/* <TouchableOpacity style={styles.commandButton} onPress={openGallery}>
                 //         <Text style={styles.panelButtonTitle}>{'View Responses'}</Text>

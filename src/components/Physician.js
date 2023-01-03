@@ -17,30 +17,27 @@ function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,
     const [phyRemoved, setPhyRemoved] = useState(false)
     const isFocused = useIsFocused();
     const [isLoading, setLoading] = useState(true)
+    // const[cachedImages, setCachedImages] = useState({});
     const r = getPhyNameFromId(phy_id);
 
     // to get physician
     // const res = queryClient.setQueryData("")
+    let cachedImages;
     if(visualization || hardRefresh){ // run this useQueries hook when on visualizaiton page, this will fetch all image responses in the background
-        console.error(imageResponses)
-        console.error("hereeeeeee")
 
-        const res = useQueries(
+        cachedImages = useQueries(
 
             Object.keys(imageResponses[0]).map(k => {
-                console.error(k)
                 // console.error(imageResponses[0][k])
                 return {
                     queryKey: k,
                     queryFn: () => getImageUrls(imageResponses[0][k]),
-
-                    // staleTime: 780000
+                    staleTime: 780000
                 }
 
             })
           )
-          
-   console.error(res[0].data.length)
+
         
     }
     
@@ -80,7 +77,7 @@ function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,
         if(!visualization)
             navigate("Questionnaire", {physician_id: physician_user_id, phyName: name, questions: questions['questions']});
         else
-            navigate("Responses Visualization", {physician_id: phy_id, phyName: phyName, imageResponses: imageResponses, responses: responses[phy_id]});
+            navigate("Responses Visualization", {physician_id: phy_id, phyName: phyName, cachedImages: cachedImages,imageResponses: imageResponses, responses: responses[phy_id]});
 
     }   
     return (

@@ -44,10 +44,8 @@ function VisualizeResponses() {
     if (!hardRefresh) {
       response = r["data"];
     } else {
-      response = await getDatastreams(
-        (datatype =
-          "com.personicle.individual.datastreams.subjective.physician_questionnaire")
-      );
+     response =  await getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire");
+
     }
     // console.error(r);
     // console.error(response);
@@ -75,9 +73,12 @@ function VisualizeResponses() {
     let t = {}; // phyId-questionId: [imageres1, imageres2]
     try {
       for (var phyId of Object.keys(result)) {
-        for (var responses of result[phyId]) {
-          for (var userRes of responses["value"]) {
-            if (userRes["response_type"] == "image") {
+        for(var responses of result[phyId]){
+          for(var userRes of responses['value']){
+            if(userRes['response_type'] == 'image'){
+              console.error("userREs")
+              console.error(responses['timestamp'])
+
               // temp.push([userRes,userRes['question_id']])
               // imageResponsesForPhy.push([phyId,userRes['question_id'], userRes['value']])
               if (t[`${phyId}-${userRes["question_id"]}`] !== undefined) {
