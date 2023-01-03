@@ -1,6 +1,6 @@
 import {Pressable, View, Text, StyleSheet, SafeAreaView, RefreshControl, ScrollView} from 'react-native';
 import {useNavigation, useIsFocused} from '@react-navigation/native'
-import { getPhyQuestions, getPhyName } from '../../api/http';
+import { getPhyQuestions, getPhyName, getImageUrl, getImageUrls } from '../../api/http';
 import {PhysiciansQuestion} from '../navigationStacks'
 import { NavigationContainer } from "@react-navigation/native";
 import { navigationRef } from "../RootNavigation";
@@ -8,17 +8,42 @@ import {navigate} from "../RootNavigation"
 import {useEffect, useState } from "react";
 import { FlatList } from 'react-native-gesture-handler';
 import { getPhyNameFromId } from "../utils/physician"
+import { useQueries, useQueryClient } from 'react-query';
 
 
-function Physician({hardRefresh,phy_id,visualization,responses,physician_user_id, questions, physician: {name} = {}} ) {
+function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,physician_user_id, questions, physician: {name} = {}} ) {
 
     const [phyName, setPhyName] = useState("")
     const [phyRemoved, setPhyRemoved] = useState(false)
     const isFocused = useIsFocused();
     const [isLoading, setLoading] = useState(true)
     const r = getPhyNameFromId(phy_id);
-    // console.error(r)
+
     // to get physician
+    // const res = queryClient.setQueryData("")
+    if(visualization || hardRefresh){ // run this useQueries hook when on visualizaiton page, this will fetch all image responses in the background
+        console.error(imageResponses)
+        console.error("hereeeeeee")
+
+        const res = useQueries(
+
+            Object.keys(imageResponses[0]).map(k => {
+                console.error(k)
+                // console.error(imageResponses[0][k])
+                return {
+                    queryKey: k,
+                    queryFn: () => getImageUrls(imageResponses[0][k]),
+
+                    // staleTime: 780000
+                }
+
+            })
+          )
+          
+   console.error(res[0].data.length)
+        
+    }
+    
     async function getName(hardRefresh){
         let res;
         hardRefresh = hardRefresh || false
@@ -55,13 +80,13 @@ function Physician({hardRefresh,phy_id,visualization,responses,physician_user_id
         if(!visualization)
             navigate("Questionnaire", {physician_id: physician_user_id, phyName: name, questions: questions['questions']});
         else
-            navigate("Responses Visualization", {physician_id: phy_id, phyName: phyName, responses: responses[phy_id]});
+            navigate("Responses Visualization", {physician_id: phy_id, phyName: phyName, imageResponses: imageResponses, responses: responses[phy_id]});
 
     }   
     return (
         
          <SafeAreaView> 
-            
+
             {isLoading && !phyRemoved ? <Text>{'Loading...'}</Text> : (phyRemoved ? null :  
              (visualization == true ) ?  <Pressable onPress={physicianPressHandler} style={({pressed}) => pressed && styles.pressed}>
                 <View style={styles.phy}>

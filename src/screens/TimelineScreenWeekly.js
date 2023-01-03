@@ -12,6 +12,7 @@ import {
   StackedBarChart
 } from "react-native-chart-kit";
 import { clearNodeFolder } from "broadcast-channel";
+import { getEvents } from "../utils/userEvents";
 
 const TimelineScreenWeekly = () => {
   const[weeklyEvents, setWeeklyEvents] = useState([]);
@@ -41,15 +42,19 @@ const TimelineScreenWeekly = () => {
     // marginVertical: 8,
     // ...chartConfig.style
   }
+  const events =  getEvents();
 
- 
-  useEffect(() => {
-    async function getEvents(){
+    async function formatEvents(hardRefresh){
         let data = []
         let start_times = []
-        const events =  await getUserEvents();
+        hardRefresh = hardRefresh || false
+        let userEvents ;
+        if(hardRefresh){
+          userEvents = await getUserEvents();
+        } else userEvents = events.data
+
         // console.error(events)
-        events["data"].forEach(event => {
+        userEvents["data"].forEach(event => {
           start_times.push(moment(event['start_time']).utc(event['start_time']).local().format('MM-DD-YYYY h:m:s.SSS a'))
           data.push({
             time: moment(event['start_time']).utc(event['start_time']).local().format('MM-DD-YYYY h:m:s.SSS a'),
@@ -77,8 +82,11 @@ const TimelineScreenWeekly = () => {
         
           setIsLoading(false);
      }
-    getEvents();
-  }, [])
+ 
+     useEffect(()=>{
+      events.isFetched && formatEvents();
+     }, [events.isFetched && !events.isRefetching])
+
 
   useEffect(() => {
     setCurrentWeekEvents(weeklyEvents[timelineYearWeek]);

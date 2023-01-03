@@ -69,7 +69,6 @@ export const uploadProfilePic = async (image) => {
 
 export async function getImageUrl(imageKey){
     try {
-        // console.error("network call get image url")
         const uid = await getUserId();
         const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${imageKey}?user_id=${uid}`, {
             headers: {
@@ -79,6 +78,28 @@ export async function getImageUrl(imageKey){
         // console.error(res)
         
         return res
+    } catch (error) {
+        console.error(error)
+    }
+}
+export async function getImageUrls(imageKeys){
+    try {
+        
+        console.error("network call get image urls")
+        const uid = await getUserId();
+        let urls = []
+        for(const key of imageKeys){
+            const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${key}?user_id=${uid}`, {
+                headers: {
+                    'Authorization': `Bearer ${await getToken()}`
+                  }
+               })
+               urls.push(res)
+        }
+        
+        // console.error(res)
+        
+        return urls
     } catch (error) {
         console.error(error)
     }

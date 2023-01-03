@@ -14,15 +14,29 @@ import { getDatastreams } from "../../api/http";
 import UsersPhysicians from "../components/UsersPhysicians";
 import { SplashStack } from "../navigationStacks";
 import Physician from "../components/Physician";
-import { phyResponses } from "../utils/physician";
+import { phyResponses, userImageResponses } from "../utils/physician";
+import { useMutation, useQueryClient } from "react-query";
 
 function VisualizeResponses() {
   const [responses, setResponses] = useState([]);
   const [isloading, setIsLoading] = useState(true);
   const [physicianIds, setPhysicianIds] = useState([]);
+  const [imageResponses, setImageResponsesForPhy] = useState([]);
   const [hf, setHardRefresh] = useState(false);
 
   const r = phyResponses();
+
+  const queryClient = useQueryClient();
+
+  //   const phyResponsesMutation = useMutation( {
+  //     onSuccess: () => {
+  //     // console.error("on success mutation")
+  //     // console.error(updatedData)
+
+  //     queryClient.setQueryData(['physician-responses'], (prev) => ( getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire") ))
+  //     }
+  // })
+
   async function getPhysicianResponses(hardRefresh) {
     // const response =
     let response;
@@ -35,8 +49,8 @@ function VisualizeResponses() {
           "com.personicle.individual.datastreams.subjective.physician_questionnaire")
       );
     }
-    console.error(r);
-    console.error(response);
+    // console.error(r);
+    // console.error(response);
 
     var result = response.data.reduce(function (r, a) {
       r[a.source.split(":")[1]] = r[a.source.split(":")[1]] || [];
@@ -55,7 +69,37 @@ function VisualizeResponses() {
     setPhysicianIds(arr);
 
     setResponses(result);
-    // console.error("grouped by phys")
+    // console.error("grouped by phys  ")
+    console.error(result);
+    // let imageResponsesForPhy = []
+    let t = {}; // phyId-questionId: [imageres1, imageres2]
+    try {
+      for (var phyId of Object.keys(result)) {
+        for (var responses of result[phyId]) {
+          for (var userRes of responses["value"]) {
+            if (userRes["response_type"] == "image") {
+              // temp.push([userRes,userRes['question_id']])
+              // imageResponsesForPhy.push([phyId,userRes['question_id'], userRes['value']])
+              if (t[`${phyId}-${userRes["question_id"]}`] !== undefined) {
+                t[`${phyId}-${userRes["question_id"]}`].push(userRes["value"]);
+              } else {
+                t[`${phyId}-${userRes["question_id"]}`] = [userRes["value"]];
+              }
+            }
+          }
+        }
+        // if(temp.length > 0) imageResponsesForPhy[phyId] = temp // push only if image reponses exists for this physician
+      }
+
+      console.error(Object.keys(t));
+      setImageResponsesForPhy([t]);
+    } catch (error) {
+      console.error(error);
+    }
+
+    console.error("grouped by phy images");
+
+    // console.error(imageResponsesForPhy)
     setIsLoading(false);
   }
   useEffect(() => {
@@ -64,13 +108,17 @@ function VisualizeResponses() {
 
   const refreshData = async () => {
     setHardRefresh(true);
+    setIsLoading(true);
+
     await getPhysicianResponses(true);
+    setIsLoading(false);
   };
   function renderPhysicians(itemData) {
     return (
       <Physician
         hardRefresh={hf}
         visualization={true}
+        imageResponses={imageResponses}
         responses={responses}
         {...itemData.item}
       />
@@ -80,17 +128,20 @@ function VisualizeResponses() {
     return <Text> </Text>;
   };
   return (
-    <FlatList
-      style={styles.container}
-      data={physicianIds}
-      renderItem={renderPhysicians}
-      keyExtractor={(item) => item.physician_id}
-      ListHeaderComponent={<></>}
-      refreshControl={
-        <RefreshControl refreshing={isloading} onRefresh={refreshData} />
-      }
-      ListFooterComponent={getFooter}
-    />
+    <>
+      {isloading && <Text>Syncing..</Text>}
+      <FlatList
+        style={styles.container}
+        data={physicianIds}
+        renderItem={renderPhysicians}
+        keyExtractor={(item) => item.physician_id}
+        ListHeaderComponent={<></>}
+        refreshControl={
+          <RefreshControl refreshing={isloading} onRefresh={refreshData} />
+        }
+        ListFooterComponent={getFooter}
+      />
+    </>
   );
 }
 

@@ -4,11 +4,13 @@ import SelectPicker from "react-native-form-select-picker";
 import LineChartComponent from "../components/LineChartComponent";
 import PieChart from "../components/PieChart";
 import ImageComponent from "../components/ImageComponent";
+import { userImageResponses } from "../utils/physician";
 
 function AllResponses({ route, navigation }) {
   const responses = route.params?.responses;
   const physicianId = route.params?.physician_id;
   const name = route.params?.phyName;
+  const imageResponses = route.params?.imageResponses;
 
   const [selected, setSelected] = useState("");
   const [renderChart, setRenderChart] = useState(true);
@@ -21,6 +23,26 @@ function AllResponses({ route, navigation }) {
   }, Object.create(null));
 
   let groupedByTag = {};
+  responses.forEach(function (res) {
+    const values = res.value;
+
+    values.forEach(function (val) {
+      let temp = {};
+      temp = {
+        question_id: val.question_id,
+        timestamp: res.timestamp,
+        value: val.value,
+        confidence: res.confidence,
+        response_type: val.response_type,
+      };
+      if (!groupedByTag[val.question_id]) {
+        groupedByTag[val.question_id] = [temp];
+      } else {
+        groupedByTag[val.question_id].push(temp);
+      }
+    });
+  });
+
   responses.forEach(function (res) {
     const values = res.value;
 
