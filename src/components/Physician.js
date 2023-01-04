@@ -7,7 +7,7 @@ import { navigationRef } from "../RootNavigation";
 import {navigate} from "../RootNavigation"
 import {useEffect, useState } from "react";
 import { FlatList } from 'react-native-gesture-handler';
-import { getPhyNameFromId } from "../utils/physician"
+import { getPhyNameFromId, userImageResponses } from "../utils/physician"
 import { useQueries, useQueryClient } from 'react-query';
 
 
@@ -25,19 +25,7 @@ function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,
     let cachedImages;
     if(visualization || hardRefresh){ // run this useQueries hook when on visualizaiton page, this will fetch all image responses in the background
 
-        cachedImages = useQueries(
-
-            Object.keys(imageResponses[0]).map(k => {
-                // console.error(imageResponses[0][k])
-                return {
-                    queryKey: k,
-                    queryFn: () => getImageUrls(imageResponses[0][k]),
-                    staleTime: 780000
-                }
-
-            })
-          )
-
+        cachedImages = userImageResponses(imageResponses);
         
     }
     

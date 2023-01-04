@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useMutation, useQuery, useQueryClient, useQueries } from 'react-query'
-import { getPhyQuestions, getDatastreams, getPhyName, getImageUrl } from '../../api/http';
+import { getPhyQuestions, getDatastreams, getPhyName, getImageUrl, getImageUrls } from '../../api/http';
 
 export const physicianQuestions = () => {
     const phyQuestions = useQuery('physician-questions', getPhyQuestions, {
@@ -34,22 +34,21 @@ export const getPhyNameFromId = (phyId) => {
     });
     return res;
 }
-// export const userImageResponses = (imageResponses) => {
-//   const res = useQueries(
+export const userImageResponses = (imageResponses) => {
+  const res = useQueries(
 
-//     Object.keys(imageResponses[0]).map(k => {
-//         console.error(k)
-//         // console.error(imageResponses[0][k])
-//         return {
-//             queryKey: k,
-//             queryFn: () => getImageUrls(imageResponses[0][k]),
-//             // staleTime: 780000
-//         }
+    Object.keys(imageResponses[0]).map(k => {
+        // console.error(imageResponses[0][k])
+        return {
+            queryKey: k,
+            queryFn: () => getImageUrls(imageResponses[0][k]),
+            staleTime: 780000
+        }
 
-//     })
-//   )
-//   return res
-// }
+    })
+  )
+  return res
+}
 // export const userImageResponses =  () => {
 //     // try {
 //     //     imageResponses.map(response => {

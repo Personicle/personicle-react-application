@@ -87,6 +87,7 @@ function AllResponses({ route, navigation }) {
             questionIdRes={questionIdRes}
             questionId={questionId}
             physicianId={physicianId}
+            imageResponses={imageResponses}
             cachedImages={cachedImages}
           />
         );

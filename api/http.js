@@ -88,16 +88,22 @@ export async function getImageUrls(imageKeys){
         console.error("network call get image urls")
         const uid = await getUserId();
         let urls = []
+
+        
         for(const key of imageKeys){
-            const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${key}?user_id=${uid}`, {
+            const res = await axios.get(`https://personicle-file-upload.herokuapp.com/user_images/${key[0]}?user_id=${uid}`, {
                 headers: {
                     'Authorization': `Bearer ${await getToken()}`
                   }
                })
-               urls.push(res)
+
+               res['data']['timestamp'] = key[1] // add timestamp key
+               
+               urls.push(res) 
         }
+        console.error("urls")
         
-        // console.error(res)
+        console.error(urls)
         
         return urls
     } catch (error) {

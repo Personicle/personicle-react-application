@@ -7,12 +7,19 @@ import moment from "moment";
 import {ImageCache} from "../utils/cache"
 import GridImageViewerCaption from '../components/UI/GridImageViewerCaption';
 import { useQueryClient, useQueries } from 'react-query';
+import { userImageResponses } from '../utils/physician';
 function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId,physicianId}){
     // console.error(questionIdRes)
     const [images, setImages] = useState([]);
     const queryClient = useQueryClient();
     let temp = []
     const[isLoading, setIsLoading] = useState(true);
+    const[isRefetching, setIsRefetching] = useState(true);
+    const[isRefetched, setRefetched] = useState(false);
+
+    
+
+
     // const res = useQueries(
         
     //   imageResponses.map( res  => {
@@ -59,18 +66,16 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
     //      }
         
     // }
-    const  processResponses = async () => {
-      const data = queryClient.getQueriesData({queryKey: `${physicianId}-${questionId}`})
-      console.error(data)
-      console.error("data")
-      if(data.length == 0){
-        console.error("hereee")
-        setIsLoading(true)
+    const refetchImageResponses = async () => {
+      // setIsLoading(true)
+    
        const refetchQueries = await queryClient.refetchQueries({queryKey: `${physicianId}-${questionId}`})
+       setIsRefetching(true);
+       setIsLoading(true)
        console.error(`${physicianId}-${questionId}`)
 
 
-        if(refetchQueries){
+        if(refetchQueries != undefined){
           let temp = []
           refetchQueries[0][1].forEach( d => {
             //  setImages([...images, d.data.image_url])
@@ -80,18 +85,34 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
             })
             setImages(temp)
         }
-      } else {
-        console.error("holaaaaa")
-      
+      setIsLoading(false)
+      setIsRefetching(false);
+      setRefetched(true);
+
+
+
+    }
+    const  processResponses = async () => {
+      const data = queryClient.getQueriesData({queryKey: `${physicianId}-${questionId}`})
+      console.error(data)
+      console.error("data")
+
         let temp = []
         data[0][1].forEach( d => {
         //  setImages([...images, d.data.image_url])
         //  setImages(curr => [...curr, d.data.image_url])
-        temp.push({image: d.data.image_url})
+        temp.push({
+          image: d.data.image_url,
+          text: moment(d.data.timestamp).utc(d.data.timestamp).local().format('MMM Do YY'),
+          timestamp: d.data.timestamp
+        })
         
         })
-        setImages(temp)
-      }
+
+        var sortedByTime= temp.sort((function (a, b) { 
+          return  moment(a['timestamp']).diff(moment(b['timestamp']))
+        }));
+        setImages(sortedByTime)
 
       
         // const cachedImages = await ImageCache.get(`${physicianId}_${questionId}`)
@@ -106,7 +127,10 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
         //     for(var i = 0 ; i < questionIdRes.length; ++i){
         //         const res = await getImageUrls(questionIdRes[i]['value'], questionIdRes[i], i);
         //         if(res && i == questionIdRes.length-1){ 
-                    setIsLoading(false)
+         setIsLoading(false)
+         setIsRefetching(false)
+
+        
         //         } 
         //     }
         // }
@@ -114,6 +138,9 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
     useEffect(() => {
         processResponses();
     }, [])
+  //   useEffect(() => {
+  //     processResponses();
+  // }, [cachedImages[0].isStale && cachedImages[0].isRefetching])
   
 
       const renderHeaderComponent = (image, currentIndex) => {
@@ -133,9 +160,10 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
       
       return (
           < >
-              {isLoading && <Text>Loading...</Text>}
-              {cachedImages.isStale && cachedImages.isRefetching && <Text>Refetching...</Text>}
-              { !isLoading && !cachedImages.isStale && 
+              {isLoading &&  processResponses() && <Text>Loading...</Text>}
+              
+              {/* {cachedImages[0].isStale==true && !isRefetched && refetchImageResponses() && <Text>Refetching...</Text>} */}
+              { !isLoading &&
                 // <View style={styles.screen}>
                 //     {/* <TouchableOpacity style={styles.commandButton} onPress={openGallery}>
                 //         <Text style={styles.panelButtonTitle}>{'View Responses'}</Text>

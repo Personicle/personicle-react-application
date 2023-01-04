@@ -71,20 +71,24 @@ function VisualizeResponses() {
     console.error(result);
     // let imageResponsesForPhy = []
     let t = {}; // phyId-questionId: [imageres1, imageres2]
+    let t2 = {}; // phyId-questionId: [imageres1, imageres2]
+
     try {
       for (var phyId of Object.keys(result)) {
         for(var responses of result[phyId]){
           for(var userRes of responses['value']){
             if(userRes['response_type'] == 'image'){
-              console.error("userREs")
-              console.error(responses['timestamp'])
 
               // temp.push([userRes,userRes['question_id']])
               // imageResponsesForPhy.push([phyId,userRes['question_id'], userRes['value']])
               if (t[`${phyId}-${userRes["question_id"]}`] !== undefined) {
                 t[`${phyId}-${userRes["question_id"]}`].push(userRes["value"]);
+                t2[`${phyId}-${userRes["question_id"]}`].push( [userRes["value"], responses['timestamp']]);
+
               } else {
                 t[`${phyId}-${userRes["question_id"]}`] = [userRes["value"]];
+                t2[`${phyId}-${userRes["question_id"]}`] = [ [userRes["value"], responses['timestamp']]];
+
               }
             }
           }
@@ -93,7 +97,12 @@ function VisualizeResponses() {
       }
 
       console.error(Object.keys(t));
-      setImageResponsesForPhy([t]);
+      setImageResponsesForPhy([t2]);
+      // console.error("t")
+      // console.error([t])
+      // console.error("t2")
+      // console.error([t2])
+
     } catch (error) {
       console.error(error);
     }
