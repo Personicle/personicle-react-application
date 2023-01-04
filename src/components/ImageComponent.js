@@ -7,7 +7,6 @@ import moment from "moment";
 import {ImageCache} from "../utils/cache"
 import GridImageViewerCaption from '../components/UI/GridImageViewerCaption';
 import { useQueryClient, useQueries } from 'react-query';
-import { userImageResponses } from '../utils/physician';
 function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId,physicianId}){
     // console.error(questionIdRes)
     const [images, setImages] = useState([]);
