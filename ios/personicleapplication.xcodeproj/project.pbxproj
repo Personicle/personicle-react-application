@@ -281,6 +281,7 @@
 				"${BUILT_PRODUCTS_DIR}/fmt/fmt.framework",
 				"${BUILT_PRODUCTS_DIR}/glog/glog.framework",
 				"${BUILT_PRODUCTS_DIR}/libwebp/libwebp.framework",
+				"${BUILT_PRODUCTS_DIR}/react-native-heic-converter/react_native_heic_converter.framework",
 				"${BUILT_PRODUCTS_DIR}/react-native-safe-area-context/react_native_safe_area_context.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
@@ -327,6 +328,7 @@
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/fmt.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/libwebp.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/react_native_heic_converter.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/react_native_safe_area_context.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;

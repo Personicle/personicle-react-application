@@ -4,7 +4,7 @@ import getPhysiciansQuestions from "./interceptors"
 import { getUser } from "@okta/okta-react-native";
 import axios from 'axios';
 import moment from 'moment';
-
+import RNHeicConverter from 'react-native-heic-converter';
 export async function getUserEvents(){
     try {
         const res = await eventRead();
@@ -17,8 +17,24 @@ export async function getUserEvents(){
 export const uploadImage = async (image) => {
     const formData = new FormData();
     const uid = await getUserId();
+    let uri = Platform.OS === 'android' ? image : image.replace('file://', '');
+    const t = image.lastIndexOf("/")
+
+    try {
+        let filename = image.substring(t+1,image.length);
+        const extension = filename.substring(filename.length - 4);
+        if(extension == "HEIC") {
+            
+            const res = await RNHeicConverter.convert({path: uri})
+            console.error(res.path)
+            uri = res.path
+        }
+    } catch (error) {
+        console.error(error)
+    }
+   
     formData.append('user_image[images][]', {
-        uri: Platform.OS === 'android' ? image : image.replace('file://', ''),
+        uri: uri,
         name: `image-${uid}`,
         type: image['mime']
     })
