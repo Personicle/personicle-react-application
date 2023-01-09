@@ -42,7 +42,9 @@ const GridImageViewerCaption = ({ data, headers = null, renderGridImage = null, 
                                         priority: FastImage.priority.high,
                                         ...(headers == null || headers == undefined || headers == {} ? {} : {method: 'POST', headers})
                                     }} />
+                                    
                                     <View style={{width:"100%",height:80,bottom:10,position:"absolute",paddingHorizontal:10,alignItems:"center"}}>
+                                    
                                       <Text style={{color:`${captionColor}`,width:"100%",bottom:0,position:"absolute",textAlign:"center",backgroundColor:`rgba(0, 0, 0, ${transparent})`,padding:10,justifyContent:"center"}}>{item.text}</Text>
                                     </View>
                                     </View>
@@ -138,7 +140,11 @@ const GridImageViewerCaption = ({ data, headers = null, renderGridImage = null, 
                                                     uri: data[index * 3].image,
                                                     priority: FastImage.priority.high,
                                                     ...(headers == null || headers == undefined || headers == {} ? {} : {method: 'POST', headers})
-                                                }} />
+                                                }} /> 
+                                               
+                                        }
+                                        {
+                                            <Text>{data[index * 3].text}</Text>
                                         }
                                     </TouchableOpacity> : null}
                             </View>
@@ -165,6 +171,9 @@ const GridImageViewerCaption = ({ data, headers = null, renderGridImage = null, 
                                                     ...(headers == null || headers == undefined || headers == {} ? {} : {method: 'POST', headers})
                                                 }} />
                                         }
+                                        {
+                                            <Text>{data[index * 3].text}</Text>
+                                        }
                                     </TouchableOpacity> : null}
                             </View>
                             <View style={styles.unit_item}>
@@ -189,6 +198,9 @@ const GridImageViewerCaption = ({ data, headers = null, renderGridImage = null, 
                                                     priority: FastImage.priority.high,
                                                     ...(headers == null || headers == undefined || headers == {} ? {} : {method: 'POST', headers})
                                                 }} />
+                                        }
+                                        {
+                                            <Text>{data[index * 3].text}</Text>
                                         }
                                     </TouchableOpacity> : null}
                             </View>
