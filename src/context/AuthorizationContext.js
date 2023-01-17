@@ -1,4 +1,4 @@
-import { signIn, signOut, signInWithBrowser, getUser, revokeAccessToken} from "@okta/okta-react-native";
+import { signIn, signOut, signInWithBrowser, getUser, revokeAccessToken, clearTokens} from "@okta/okta-react-native";
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 import { stopLocationTracking } from "../utils/location";
@@ -81,7 +81,7 @@ const googleSignIn = (dispatch) => {
     console.log("google sign in triggered");
     try {
       
-      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7' });
+      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7', noSSO: true  });
 
       console.log("sign in success");
       await SecureStore.setItemAsync("token", token.access_token);
@@ -135,11 +135,13 @@ const logout = (dispatch) => {
   return async () => {
     try {
       await revokeAccessToken();
+     
       await SecureStore.deleteItemAsync("token");
+      await SecureStore.deleteItemAsync("user_id");
+
 
       await signOut();
       stopLocationTracking();
-
       dispatch({ type: "sign_out" });
       // RootNavigation.navigate("Login")
 
