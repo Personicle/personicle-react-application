@@ -3,7 +3,7 @@ import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 import { stopLocationTracking } from "../utils/location";
 import { introspectAccessToken, refreshTokens }  from "@okta/okta-react-native";
-
+import { useQueryClient } from 'react-query';
 
 export const authReducer = (state, action) => {
   switch (action.type) {
@@ -132,8 +132,11 @@ const signUp = (dispatch) => {
 };
 
 const logout = (dispatch) => {
+  const queryClient = useQueryClient();
+  queryClient.removeQueries();
   return async () => {
     try {
+     
       await revokeAccessToken();
      
       await SecureStore.deleteItemAsync("token");
