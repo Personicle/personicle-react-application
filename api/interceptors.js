@@ -22,26 +22,28 @@ function toString(number, padLength) {
 eventRead.interceptors.request.use(async (request)=>{
     
         let date = new Date();
-        let dateTimeNow =
-                            toString( date.getFullYear(),     4 )
-                + '-'  + toString( date.getMonth() +1,    2 )
-                + '-'  + toString( date.getDate(),         2 )
-                + ' ' + toString( date.getHours(),        2 )
-                + ':'  + toString( date.getMinutes(),      2 )
-                + ':'  + toString( date.getSeconds(),      2 )
-                + '.'  + toString( date.getMilliseconds(), 6 );
+        // let dateTimeNow =
+        //                     toString( date.getFullYear(),     4 )
+        //         + '-'  + toString( date.getMonth() +1,    2 )
+        //         + '-'  + toString( date.getDate(),         2 )
+        //         + ' ' + toString( date.getHours(),        2 )
+        //         + ':'  + toString( date.getMinutes(),      2 )
+        //         + ':'  + toString( date.getSeconds(),      2 )
+        //         + '.'  + toString( date.getMilliseconds(), 6 );
 
-        let threeMonthsAgo =
-                    toString( date.getFullYear(),     4 )
-        + '-'  + toString( date.getMonth() -2,    2 )
-        + '-'  + toString( date.getDate(),         2 )
-        + ' ' + toString( date.getHours(),        2 )
-        + ':'  + toString( date.getMinutes(),      2 )
-        + ':'  + toString( date.getSeconds(),      2 )
-        + '.'  + toString( date.getMilliseconds(), 6 );
+        // let threeMonthsAgo =
+        //             toString( date.getFullYear(),     4 )
+        // + '-'  + toString( date.getMonth() -2,    2 )
+        // + '-'  + toString( date.getDate(),         2 )
+        // + ' ' + toString( date.getHours(),        2 )
+        // + ':'  + toString( date.getMinutes(),      2 )
+        // + ':'  + toString( date.getSeconds(),      2 )
+        // + '.'  + toString( date.getMilliseconds(), 6 );
         
-        dateTimeNow = new moment(dateTimeNow, "YYYY-MM-DD HH:mm:ss.SSSSSS").utc().format("YYYY-MM-DD HH:mm:ss.SSSSSS");
-        threeMonthsAgo = new moment(threeMonthsAgo, "YYYY-MM-DD HH:mm:ss.SSSSSS").utc().format("YYYY-MM-DD HH:mm:ss.SSSSSS");
+        // dateTimeNow = new moment(dateTimeNow, "YYYY-MM-DD HH:mm:ss.SSSSSS").utc().format("YYYY-MM-DD HH:mm:ss.SSSSSS");
+        // threeMonthsAgo = new moment(threeMonthsAgo, "YYYY-MM-DD HH:mm:ss.SSSSSS").utc().format("YYYY-MM-DD HH:mm:ss.SSSSSS");
+        let dateTimeNow = moment(new Date()).utc().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
+        let threeMonthsAgo =  moment().subtract(3, 'months').utc().format('YYYY-MM-DD HH:mm:ss.SSSSSS');
         request.params = {
             ...request.params,
             startTime: threeMonthsAgo,

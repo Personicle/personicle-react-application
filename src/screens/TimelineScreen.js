@@ -41,17 +41,17 @@ const TimelineScreen = () => {
        })
         let groupedByDay = groupBy(data, (dt) => moment(dt['time']).format('MM-DD-YYYY'))
         setDailyEvents(groupedByDay)
-        setIsLoading(false);
         if(hardRefresh){
-          const userEventsMutation = useMutation( {
-            onSuccess: () => {
-            // console.error("on success mutation")
-            // console.error(updatedData)
-        
+        //   const userEventsMutation = useMutation( {
+        //     onSuccess: () => {
+        //     // console.error("on success mutation")
+        //     // console.error(updatedData)
             queryClient.setQueryData(['user-events'], (prev) => (userEvents ))
-            }
-        })
+        //     }
+        // })
         }
+        setIsLoading(false);
+        
     } catch (error) {
       console.error(error)
     }
