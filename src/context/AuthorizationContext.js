@@ -22,6 +22,8 @@ export const authReducer = (state, action) => {
     // upon success return new state else log error and return existing state
 
     case "sign_out":
+      const queryClient = useQueryClient();
+      queryClient.removeQueries();
       return { token: null, logged_in: false, errorMessage: "" , isLoading: false};
 
     case "sign_up":
@@ -132,11 +134,8 @@ const signUp = (dispatch) => {
 };
 
 const logout = (dispatch) => {
-  const queryClient = useQueryClient();
-  queryClient.removeQueries();
   return async () => {
     try {
-     
       await revokeAccessToken();
      
       await SecureStore.deleteItemAsync("token");

@@ -47,6 +47,8 @@ const ProfileScreen = ({ navigation }) => {
   const userData = userProfileData();
   console.error(userData);
   const profileImage = userProfileImage();
+  console.error("here")
+  console.error(profileImage)
   const r = phyResponses();
 
   useLayoutEffect(() => {

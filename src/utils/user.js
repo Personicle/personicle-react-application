@@ -36,6 +36,9 @@ import { showMessage } from 'react-native-flash-message';
             // refetchIntervalInBackground: true,
             // refetchInterval: 60 * 1000 * 12,
             cacheTime: 1000 * 60 * 60 * 24,
+            staleTime: 1000 * 60 * 60 * 24,
+
+            
             // refetchOnMount: "always"
           });
   
