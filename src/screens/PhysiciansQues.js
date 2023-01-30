@@ -133,7 +133,7 @@ function PhysiciansQues({ route, navigation }) {
         confidence: 100,
         dataPoints: [
           {
-            timestamp: moment().format("YYYY-MM-DD HH:mm:ss"),
+            timestamp: moment().utc().format("YYYY-MM-DD HH:mm:ss"),
             value: finalPacket,
           },
         ],

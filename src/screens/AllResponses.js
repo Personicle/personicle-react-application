@@ -72,16 +72,18 @@ function AllResponses({ route, navigation }) {
   function RenderChart({ questionId }) {
     const questionIdRes = groupedByTag[questionId];
     const responseType = groupedByQuestionIdTag[questionId];
+    console.error(questionIdRes)
+    console.error("response rtpeee")
+    console.error(responseType)
+    console.error(groupedByQuestionIdTag)
+
 
     if (responseType !== undefined) {
-      if (responseType[0] == "numeric") {
+      if (responseType.some(value => value !== null) && responseType.includes("numeric")) {
         return <LineChartComponent questionIdRes={questionIdRes} />;
-      } else if (responseType[0] == "survey" || responseType[0] == "string") {
-        console.error("holaaaaaqaa");
-        console.error(responseType);
-
+      } else if (responseType.some(value => value !== null) && (responseType.includes("survey") || responseType.includes("string"))) {
         return <PieChart questionIdRes={questionIdRes} />;
-      } else if (responseType[0] == "image") {
+      } else if (responseType.some(value => value !== null) && responseType.includes("image")) {
         return (
           <ImageComponent
             questionIdRes={questionIdRes}
@@ -93,7 +95,6 @@ function AllResponses({ route, navigation }) {
         );
       }
     }
-
     return <Text>{"Not able to visualize this datastream"}</Text>;
   }
 

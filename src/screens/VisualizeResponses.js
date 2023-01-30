@@ -47,6 +47,8 @@ function VisualizeResponses() {
      response =  await getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire");
 
     }
+    console.error("hardRefresh")
+    console.error(hardRefresh)
     // console.error(r);
     // console.error(response);
 
