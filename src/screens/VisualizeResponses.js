@@ -141,7 +141,7 @@ function VisualizeResponses() {
   };
   return (
     <>
-      {isloading && <Text>Syncing..</Text>}
+      {(isloading || r.isFetching || r.isLoading) && <Text>Syncing..</Text>}
       <FlatList
         style={styles.container}
         data={physicianIds}
