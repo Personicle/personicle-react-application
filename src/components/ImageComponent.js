@@ -178,7 +178,7 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
                 <Text style={styles.explore_text}>
                   {/* Click on an image to view in full screen mode */}
                 </Text>
-          {console.error(images.length)}
+          {/* {console.error(images.length)} */}
                 {/* Basic Usage */}
                 {/* <GridImageView data={images} transparent={0.8}  /> */}
                 {images.length !== 0 ?  <GridImageViewerCaption data={ images} captionColor="#fff" /> : <Text>No Data Available</Text>}

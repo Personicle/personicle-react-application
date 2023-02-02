@@ -24,7 +24,7 @@ const TimelineScreenWeekly = () => {
   const [chartData, setChartData] = useState({});
   const [formattedChartData, setFormattedChatData] = useState([]);
 
-  
+
   const chartConfig = {
     backgroundGradientFrom: "#FFFFFF",
     backgroundGradientFromOpacity: 0,
@@ -39,6 +39,7 @@ const TimelineScreenWeekly = () => {
   };
 
   const graphStyle = {
+    // paddingLeft: 10
     // marginVertical: 8,
     // ...chartConfig.style
   }
@@ -198,7 +199,7 @@ const TimelineScreenWeekly = () => {
         width={Dimensions.get('window').width}
         height={220}
         chartConfig={chartConfig}
-          
+        formatYLabel={(t) => Math.trunc(parseInt(t)).toString()+"min"}
         /> : <Text>No events</Text>)]}
     </View>
   );

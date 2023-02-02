@@ -45,17 +45,16 @@ function VisualizeResponses() {
       response = r["data"];
     } else {
      response =  await getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire");
-
     }
-    console.error("hardRefresh")
-    console.error(hardRefresh)
+    // console.error("hardRefresh")
+    // console.error(hardRefresh)
     // console.error(r);
     // console.error(response);
 
-    var result = response.data.reduce(function (r, a) {
-      r[a.source.split(":")[1]] = r[a.source.split(":")[1]] || [];
-      r[a.source.split(":")[1]].push(a);
-      return r;
+    var result = response.data.reduce(function (re, a) {
+      re[a.source.split(":")[1]] = re[a.source.split(":")[1]] || [];
+      re[a.source.split(":")[1]].push(a);
+      return re;
     }, Object.create(null));
     console.error(result);
 
@@ -70,7 +69,7 @@ function VisualizeResponses() {
 
     setResponses(result);
     // console.error("grouped by phys  ")
-    console.error(result);
+    // console.error(result);
     // let imageResponsesForPhy = []
     let t = {}; // phyId-questionId: [imageres1, imageres2]
     let t2 = {}; // phyId-questionId: [imageres1, imageres2]
@@ -98,7 +97,7 @@ function VisualizeResponses() {
         // if(temp.length > 0) imageResponsesForPhy[phyId] = temp // push only if image reponses exists for this physician
       }
 
-      console.error(Object.keys(t));
+      // console.error(Object.keys(t));
       setImageResponsesForPhy([t2]);
       // console.error("t")
       // console.error([t])
