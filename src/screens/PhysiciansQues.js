@@ -28,6 +28,7 @@ import { ScrollView, TouchableOpacity } from "react-native-gesture-handler";
 import { Dropdown } from "react-native-element-dropdown";
 import ImagePicker from "react-native-image-crop-picker";
 import { showMessage } from "react-native-flash-message";
+import { useQueryClient } from "react-query";
 
 function PhysiciansQues({ route, navigation }) {
   const PhysicianCtx = useContext(PhysiciansContext);
@@ -40,6 +41,8 @@ function PhysiciansQues({ route, navigation }) {
   const phyName = route.params?.phyName;
   const questions = route.params?.questions;
   const physicianId = route.params?.physician_id;
+
+  const queryClient = useQueryClient();
   useLayoutEffect(() => {
     navigation.setOptions({
       title: `Questionnaire by ${phyName}`,
@@ -57,7 +60,7 @@ function PhysiciansQues({ route, navigation }) {
       cropping: true,
       compressImageQuality: 0.7,
     }).then((image) => {
-      console.error(image);
+
       setResponses((prevState) => ({
         res: {
           ...prevState.res,
@@ -83,7 +86,7 @@ function PhysiciansQues({ route, navigation }) {
         // call image uupload api to validate and return image key, then format datastream response
         // calling uploadImagefunction, (call image upload service with image)
         const r = await uploadImage(responses.res[key]);
-        console.error(r);
+
         try {
           if (r["status"] == 201) {
             image_data_packet.push({
@@ -91,8 +94,7 @@ function PhysiciansQues({ route, navigation }) {
               value: r["data"][0]["image_key"],
               response_type: resType,
             });
-            console.error("here");
-            console.error(image_data_packet);
+
           } else if (r["status"] == 422) {
             Alert.alert("Error", `${r["error"][0]}`, [
               {
@@ -103,7 +105,7 @@ function PhysiciansQues({ route, navigation }) {
             return;
           }
         } catch (error) {
-          console.error(error);
+          // console.error(error);
         }
       } else {
         data_packet.push({
@@ -139,6 +141,9 @@ function PhysiciansQues({ route, navigation }) {
         ],
       };
       const res = await sendPhysicianResponses(finalDataPacket);
+      if(res){
+        await queryClient.refetchQueries({ queryKey: ['physician-responses']})
+      }
       navigation.goBack();
     }
 

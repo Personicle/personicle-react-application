@@ -59,7 +59,7 @@ const PhysicianQuestionScreen = () => {
       }
     >
       {(phys.isLoading || phys.isFetching) && (
-        <Text>Fetching Physicians..</Text>
+        <Text></Text>
       )}
       {phys.isFetched && !manualRefresh && (
         <PhysiciansOutput

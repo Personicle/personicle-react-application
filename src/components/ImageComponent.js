@@ -93,9 +93,6 @@ function ImageComponent({questionIdRes, cachedImages, imageResponses, questionId
     }
     const  processResponses = async () => {
       const data = queryClient.getQueriesData({queryKey: `${physicianId}-${questionId}`})
-      console.error(data)
-      console.error("data")
-
         let temp = []
         data[0][1].forEach( d => {
         //  setImages([...images, d.data.image_url])

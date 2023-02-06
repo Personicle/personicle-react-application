@@ -11,7 +11,8 @@ import {createConfig}  from "@okta/okta-react-native";
 import Router from "./src/Router";
 import { PersistQueryClientProvider ,persistQueryClient, persistQueryClientRestore } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-
+import { LogBox } from 'react-native';
+LogBox.ignoreAllLogs();//Ignore all log notifications
 export default () => {
   const queryClient = new QueryClient(
     {
@@ -34,7 +35,7 @@ export default () => {
   })
   
   useEffect(() => {
-    console.warn("setting up okta config");
+    // console.warn("setting up okta config");
 
     createConfig({
       clientId: oktaConfig.oidc.clientId,
@@ -48,7 +49,7 @@ export default () => {
    
   }, []);
 
-  console.log("starting app in app js");
+  // console.log("starting app in app js");
 
   return (
     

@@ -5,6 +5,7 @@ import { getUser } from "@okta/okta-react-native";
 import axios from 'axios';
 import moment from 'moment';
 import RNHeicConverter from 'react-native-heic-converter';
+import { phyResponses } from "../src/utils/physician";
 export async function getUserEvents(){
     try {
         const res = await eventRead();
@@ -248,6 +249,7 @@ export async function getUsersPhysicians(){
 
 export async function sendPhysicianResponses (data_packet){
     console.error(data_packet)
+
     try {
         const res = await axios.post('https://api.personicle.org/data/write/datastream/upload', data_packet, {
             headers: {

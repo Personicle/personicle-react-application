@@ -7,7 +7,7 @@ import { showMessage } from 'react-native-flash-message';
    export const userProfileData = () => {
         const profileData = useQuery('user-profile-data',getUserInfo, {
             onSuccess: ()=> {
-                console.warn("on success use query user profile data fetched")
+                // console.warn("on success use query user profile data fetched")
             },
             
             // cacheTime: 1000 * 60 * 60 * 24,
@@ -31,7 +31,7 @@ import { showMessage } from 'react-native-flash-message';
   export const userProfileImage = () => {
       try {
         const profileImage = useQuery("user-profile-image", () => getProfileImageUrl(), { 
-            onSuccess: () => {console.warn("on success user profile image url fetched")},
+            // onSuccess: () => {console.warn("on success user profile image url fetched")},
 
             // refetchIntervalInBackground: true,
             // refetchInterval: 60 * 1000 * 12,
@@ -44,7 +44,7 @@ import { showMessage } from 'react-native-flash-message';
   
         return profileImage;
       } catch (error) {
-          console.error(error)
+          // console.error(error)
       }
       
   }

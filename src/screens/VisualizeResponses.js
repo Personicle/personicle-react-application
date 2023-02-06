@@ -56,7 +56,7 @@ function VisualizeResponses() {
       re[a.source.split(":")[1]].push(a);
       return re;
     }, Object.create(null));
-    console.error(result);
+    // console.error(result);
 
     let arr = [];
     for (const [key, value] of Object.entries(result)) {
@@ -82,35 +82,37 @@ function VisualizeResponses() {
 
               // temp.push([userRes,userRes['question_id']])
               // imageResponsesForPhy.push([phyId,userRes['question_id'], userRes['value']])
-              if (t[`${phyId}-${userRes["question_id"]}`] !== undefined) {
-                t[`${phyId}-${userRes["question_id"]}`].push(userRes["value"]);
+              if (t2[`${phyId}-${userRes["question_id"]}`] !== undefined) {
+                // t[`${phyId}-${userRes["question_id"]}`].push(userRes["value"]);
                 t2[`${phyId}-${userRes["question_id"]}`].push( [userRes["value"], responses['timestamp']]);
 
               } else {
-                t[`${phyId}-${userRes["question_id"]}`] = [userRes["value"]];
+                // t[`${phyId}-${userRes["question_id"]}`] = [userRes["value"]];
                 t2[`${phyId}-${userRes["question_id"]}`] = [ [userRes["value"], responses['timestamp']]];
 
               }
+              
+
             }
+            
           }
         }
         // if(temp.length > 0) imageResponsesForPhy[phyId] = temp // push only if image reponses exists for this physician
       }
 
-      // console.error(Object.keys(t));
+      
       setImageResponsesForPhy([t2]);
-      // console.error("t")
+
       // console.error([t])
       // console.error("t2")
       // console.error([t2])
 
     } catch (error) {
-      console.error(error);
+      // console.error(error);
     }
 
-    console.error("grouped by phy images");
+    // console.error("grouped by phy images");
 
-    // console.error(imageResponsesForPhy)
     setIsLoading(false);
   }
   useEffect(() => {
@@ -125,7 +127,7 @@ function VisualizeResponses() {
     setIsLoading(false);
   };
   function renderPhysicians(itemData) {
-    return (
+    return !isloading && (
       <Physician
         hardRefresh={hf}
         visualization={true}
@@ -140,7 +142,7 @@ function VisualizeResponses() {
   };
   return (
     <>
-      {(isloading || r.isFetching || r.isLoading) && <Text>Syncing..</Text>}
+      {/* {(isloading || r.isFetching || r.isLoading) && <Text>Syncing..</Text>} */}
       <FlatList
         style={styles.container}
         data={physicianIds}

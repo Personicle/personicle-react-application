@@ -45,10 +45,9 @@ const ProfileScreen = ({ navigation }) => {
   const [phys, setPhys] = useState([]);
   const isFocused = useIsFocused();
   const userData = userProfileData();
-  console.error(userData);
+
   const profileImage = userProfileImage();
-  console.error("here")
-  console.error(profileImage)
+ 
   const r = phyResponses();
 
   useLayoutEffect(() => {
@@ -89,7 +88,6 @@ const ProfileScreen = ({ navigation }) => {
       <Animated.View style={[styles.rowFront]}>
         <TouchableHighlight
           style={styles.rowFrontVisible}
-          onPress={() => console.log("Element touched")}
           underlayColor={"#aaa"}
         >
           <View>
@@ -197,7 +195,7 @@ const ProfileScreen = ({ navigation }) => {
         },
         {
           text: "Cancel",
-          onPress: () => console.error("Cancel Pressed"),
+          // onPress: () => console.error("Cancel Pressed"),
           style: "cancel",
         },
       ]

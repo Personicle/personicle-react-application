@@ -107,23 +107,11 @@ const TimelineScreenWeekly = () => {
        return [event[0],lodash.groupBy(event[1],'title')]
       })
 
-          // console.error("result")
-      
-          // console.error(formattedData)
-
           setFormattedChatData(formattedData)          
-          
-
   
       } else {
         setChartData(undefined);
-
       }
-        // for (var i = 0; i < currentEvents.length; i++) {
-        //   temp[currentEvents[i].title] = currentEvents[i];
-        //   // temp[varjson.DATA[i].name] = varjson.DATA[i];
-        // }
-    // }
     } catch (error) {
       console.error(error)
     }
@@ -141,17 +129,18 @@ const TimelineScreenWeekly = () => {
           // console.error("inside for each")
           //  console.error(e.length)
            for (const [key, value] of Object.entries(e[1])) {
-            console.log(`${key}: ${value}`);
+            console.warn(`${key}: ${value}`);
             temp[key+"_"+e[0]]  = lodash.sumBy(value, (o)=> {
-              // console.error(o['duration']);
-              return (moment.duration(o['duration']).minutes() )
+              return (Math.floor(moment.duration(o['duration']).asMinutes()))
             })
           }
           
-          
+          console.error("temp")
+          console.error(temp)
            dataToDisplay.push(Object.values(temp))
         })
-
+        console.error("datatoDisplay")
+        console.error(dataToDisplay)
           const datas = {
             labels: daysActive,
             legend: uniqueEventsInWeek,

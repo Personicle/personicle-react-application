@@ -8,7 +8,7 @@ import {navigate} from "../RootNavigation"
 import {useEffect, useState } from "react";
 import { FlatList } from 'react-native-gesture-handler';
 import { getPhyNameFromId, userImageResponses } from "../utils/physician"
-import { useQueries, useQueryClient , useMutation} from 'react-query';
+import { useQueries, useQueryClient , useMutation }from 'react-query';
 
 
 function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,physician_user_id, questions, physician: {name} = {}} ) {
@@ -19,25 +19,18 @@ function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,
     const [isLoading, setLoading] = useState(true)
     // const[cachedImages, setCachedImages] = useState({});
     const r = getPhyNameFromId(phy_id);
-    const { mutate } = useMutation(userImageResponses);
+    const queryClient = useQueryClient();
     // to get physician
     // const res = queryClient.setQueryData("")
     let cachedImages;
 
-    const mutateImageResponses = async () => {
-        try {
-          // Type error is gone
-          console.error("heeeeeeeee")
-          cachedImages = await mutate(imageResponses);
-            console.error(cachedImages)
-        } catch {
-          // Something went wrong
-        }
-      };
+
     if(visualization || hardRefresh){ // run this useQueries hook when on visualizaiton page, this will fetch all image responses in the background
+        //  queryClient.refetchQueries({ queryKey: [phy_id+"-"] , exact: false})
 
         cachedImages = userImageResponses(imageResponses);
-        // console.error("erfeijrfjebrfierfienr")
+      
+        
         // mutateImageResponses();
     }
     

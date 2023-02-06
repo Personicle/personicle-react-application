@@ -21,7 +21,7 @@ export const startTracking = async () => {
     // await trackLocations(token,user_id)
     return true;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return false;
   }
 };
@@ -31,7 +31,6 @@ export default () => {
   const { state, autoLogin } = useContext(Context);
   async function refetchTokens() {
 
-    console.error("refetch tokens called")
     try {
       if (state.logged_in == false) {
         // console.error("if is logged in:", state.logged_in)
@@ -46,11 +45,11 @@ export default () => {
         }
       } else {
         startTracking();
-        console.warn("Start tracking after signing in");
+        // console.warn("Start tracking after signing in");
         importHealthKit();
       }
     } catch (error) {
-      console.error(error)
+      // console.error(error)
     }
     
   }
@@ -62,7 +61,7 @@ export default () => {
           const ress =  setInterval( async () =>  await refetchTokens(), 3480000  ) // refresh tokens every 58 minutes
             // console.error(ress)
           } catch (error) {
-            console.error(error)
+            // console.error(error)
           }
       
     })();

@@ -4,7 +4,7 @@ import { getPhyQuestions, getDatastreams, getPhyName, getImageUrl, getImageUrls 
 
 export const physicianQuestions = () => {
     const phyQuestions = useQuery('physician-questions', getPhyQuestions, {
-        onSuccess: () => {console.warn("fetched physians questions")},
+        // onSuccess: () => {console.warn("fetched physians questions")},
         // refetchIntervalInBackground: true,
         // refetchInterval: 15 * 1000 ,
         refetchOnMount: "always"
@@ -15,7 +15,7 @@ export const physicianQuestions = () => {
 
 export const phyResponses = () => {
     const res = useQuery('physician-responses', () => getDatastreams(datatype="com.personicle.individual.datastreams.subjective.physician_questionnaire"), {
-        onSuccess: () => {console.warn("fetched physician responses")},
+        // onSuccess: () => {console.warn("fetched physician responses")},
         refetchOnMount: "always",
         // refetchIntervalInBackground: true,
         // refetchInterval: 15 * 1000 ,
@@ -27,7 +27,7 @@ export const phyResponses = () => {
 // get phy name based on id
 export const getPhyNameFromId = (phyId) => {
     const res = useQuery(["physician-name", phyId], () => getPhyName(phyId), {
-        onSuccess: () => {console.warn("fetched physician name")},
+        // onSuccess: () => {console.warn("fetched physician name")},
         // refetchIntervalInBackground: true,
         // refetchInterval: 15 * 1000 ,
 
@@ -42,7 +42,7 @@ export const userImageResponses = (imageResponses) => {
         return {
             queryKey: k,
             queryFn: () => getImageUrls(imageResponses[0][k]),
-            staleTime: 780000
+            // staleTime: 780000
         }
 
     })

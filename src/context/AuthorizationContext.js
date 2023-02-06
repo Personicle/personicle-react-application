@@ -11,7 +11,7 @@ export const authReducer = (state, action) => {
       return { ...state, errorMessage: action.payload.errorMessage };
     case "sign_in":
       // take sign in action
-      console.log("sign in action"); 
+      // console.log("sign in action"); 
 
       return {
         token: action.payload.token.access_token,
@@ -48,14 +48,13 @@ const handleError = (dispatch) => {
 
 const login = (dispatch) => {
   return async (userEmail, password) => {
-    console.log("sign in triggered");
+    // console.log("sign in triggered");
     try {
       const token = await signIn({
         username: userEmail,
         password: password,
       });
 
-      console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
@@ -66,7 +65,7 @@ const login = (dispatch) => {
       // navigate("Profile");
       // RootNavigation.navigate("Profile");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -80,12 +79,12 @@ const login = (dispatch) => {
 
 const googleSignIn = (dispatch) => {
   return async () => {
-    console.log("google sign in triggered");
+    // console.log("google sign in triggered");
     try {
       
       const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7', noSSO: true  });
 
-      console.log("sign in success");
+      // console.log("sign in success");
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
       await SecureStore.setItemAsync("user_id", user['sub']);
@@ -96,7 +95,7 @@ const googleSignIn = (dispatch) => {
       
       // RootNavigation.navigate('Profile')
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -110,11 +109,11 @@ const googleSignIn = (dispatch) => {
 
 const signUp = (dispatch) => {
   return async () => {
-    console.log("google sign in triggered");
+    // console.log("google sign in triggered");
     try {
       const token = await signInWithBrowser();
 
-      console.log("sign in success");
+      // console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
@@ -123,7 +122,7 @@ const signUp = (dispatch) => {
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
       // navigate("Profile");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -150,7 +149,7 @@ const logout = (dispatch) => {
       // navigate("Login");
       // RootNavigation.navigate("Login");
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       dispatch({ type: "add_error", payload: { errorMessage: err.message } });
     }
   };
@@ -162,7 +161,6 @@ export const refreshAllTokens = async () => {
     
 
   const refresh_tokens = await refreshTokens();
-  console.error("refresh token");
 
   if(refresh_tokens == null){
     return false;
@@ -171,7 +169,7 @@ export const refreshAllTokens = async () => {
   await SecureStore.setItemAsync("refresh_token", refresh_tokens.refresh_token); 
   return true;
   } catch (error) {
-    console.error(error)
+    // console.error(error)
     return false;
   }
   
