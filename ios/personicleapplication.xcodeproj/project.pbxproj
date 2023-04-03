@@ -13,7 +13,7 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4C59A4B728B83DB3002BE61E /* HealthKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4C59A4B628B83DB3002BE61E /* HealthKit.framework */; };
-		96905EF65AED1B983A6B3ABC /* BuildFile in Frameworks */ = {isa = PBXBuildFile; };
+		96905EF65AED1B983A6B3ABC /* (null) in Frameworks */ = {isa = PBXBuildFile; };
 		AE320037A728F5E15F99E81F /* Pods_personicleapplication.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 4D770090393777DEBE436981 /* Pods_personicleapplication.framework */; };
 		AF93C68628B6D034001DE2FB /* CoreLocation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = AF93C68528B6D034001DE2FB /* CoreLocation.framework */; };
 		B18059E884C0ABDD17F3DC3D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = FAC715A2D49A985799AEE119 /* ExpoModulesProvider.swift */; };
@@ -46,7 +46,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AF93C68628B6D034001DE2FB /* CoreLocation.framework in Frameworks */,
-				96905EF65AED1B983A6B3ABC /* BuildFile in Frameworks */,
+				96905EF65AED1B983A6B3ABC /* (null) in Frameworks */,
 				4C59A4B728B83DB3002BE61E /* HealthKit.framework in Frameworks */,
 				AE320037A728F5E15F99E81F /* Pods_personicleapplication.framework in Frameworks */,
 			);
@@ -180,7 +180,7 @@
 				LastUpgradeCheck = 1130;
 				TargetAttributes = {
 					13B07F861A680F5B00A75B9A = {
-						DevelopmentTeam = 5N76P3AKCN;
+						DevelopmentTeam = RQX9X2DZQV;
 						LastSwiftMigration = 1250;
 						ProvisioningStyle = Automatic;
 					};
@@ -422,7 +422,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5N76P3AKCN;
+				DEVELOPMENT_TEAM = RQX9X2DZQV;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
@@ -437,7 +437,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
-				PRODUCT_BUNDLE_IDENTIFIER = org.personicle.application.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = org.personicleBundled;
 				PRODUCT_NAME = personicleapplication;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -457,7 +457,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 5N76P3AKCN;
+				DEVELOPMENT_TEAM = RQX9X2DZQV;
 				INFOPLIST_FILE = personicleapplication/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
@@ -467,7 +467,7 @@
 					"-lc++",
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = org.personicle.application.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = org.personicleBundled;
 				PRODUCT_NAME = personicleapplication;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_VERSION = 5.0;

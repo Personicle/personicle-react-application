@@ -72,10 +72,6 @@ function AllResponses({ route, navigation }) {
   function RenderChart({ questionId }) {
     const questionIdRes = groupedByTag[questionId];
     const responseType = groupedByQuestionIdTag[questionId];
-    console.error(questionIdRes)
-    console.error("response rtpeee")
-    console.error(responseType)
-    console.error(groupedByQuestionIdTag)
 
 
     if (responseType !== undefined) {

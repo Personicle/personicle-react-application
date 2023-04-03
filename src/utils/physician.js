@@ -2,6 +2,7 @@ import axios from 'axios'
 import { useMutation, useQuery, useQueryClient, useQueries } from 'react-query'
 import { getPhyQuestions, getDatastreams, getPhyName, getImageUrl, getImageUrls } from '../../api/http';
 
+
 export const physicianQuestions = () => {
     const phyQuestions = useQuery('physician-questions', getPhyQuestions, {
         // onSuccess: () => {console.warn("fetched physians questions")},
@@ -35,6 +36,7 @@ export const getPhyNameFromId = (phyId) => {
     return res;
 }
 export const userImageResponses = (imageResponses) => {
+    console.error("user images called")
   const res = useQueries(
 
     Object.keys(imageResponses[0]).map(k => {
@@ -42,6 +44,7 @@ export const userImageResponses = (imageResponses) => {
         return {
             queryKey: k,
             queryFn: () => getImageUrls(imageResponses[0][k]),
+            refetchOnMount: "always",
             // staleTime: 780000
         }
 
