@@ -1,9 +1,9 @@
-import { signIn, signOut, signInWithBrowser, getUser, revokeAccessToken} from "@okta/okta-react-native";
+import { signIn, signOut, signInWithBrowser, getUser, revokeAccessToken, clearTokens} from "@okta/okta-react-native";
 import createDataContext from "./createDataContext";
 import * as SecureStore from "expo-secure-store";
 import { stopLocationTracking } from "../utils/location";
-import { introspectAccessToken, refreshTokens}  from "@okta/okta-react-native";
-
+import { introspectAccessToken, refreshTokens }  from "@okta/okta-react-native";
+import { useQueryClient } from 'react-query';
 
 export const authReducer = (state, action) => {
   switch (action.type) {
@@ -11,7 +11,7 @@ export const authReducer = (state, action) => {
       return { ...state, errorMessage: action.payload.errorMessage };
     case "sign_in":
       // take sign in action
-      console.log("sign in action"); 
+      // console.log("sign in action"); 
 
       return {
         token: action.payload.token.access_token,
@@ -22,6 +22,8 @@ export const authReducer = (state, action) => {
     // upon success return new state else log error and return existing state
 
     case "sign_out":
+      const queryClient = useQueryClient();
+      queryClient.removeQueries();
       return { token: null, logged_in: false, errorMessage: "" , isLoading: false};
 
     case "sign_up":
@@ -46,14 +48,13 @@ const handleError = (dispatch) => {
 
 const login = (dispatch) => {
   return async (userEmail, password) => {
-    console.log("sign in triggered");
+    // console.log("sign in triggered");
     try {
       const token = await signIn({
         username: userEmail,
         password: password,
       });
 
-      console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
@@ -64,7 +65,7 @@ const login = (dispatch) => {
       // navigate("Profile");
       // RootNavigation.navigate("Profile");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -78,12 +79,12 @@ const login = (dispatch) => {
 
 const googleSignIn = (dispatch) => {
   return async () => {
-    console.log("google sign in triggered");
+    // console.log("google sign in triggered");
     try {
       
-      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7' });
+      const token = await signInWithBrowser({ idp: '0oa3v658b8VCLoy3L5d7', noSSO: true  });
 
-      console.log("sign in success");
+      // console.log("sign in success");
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
       await SecureStore.setItemAsync("user_id", user['sub']);
@@ -94,7 +95,7 @@ const googleSignIn = (dispatch) => {
       
       // RootNavigation.navigate('Profile')
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -108,11 +109,11 @@ const googleSignIn = (dispatch) => {
 
 const signUp = (dispatch) => {
   return async () => {
-    console.log("google sign in triggered");
+    // console.log("google sign in triggered");
     try {
       const token = await signInWithBrowser();
 
-      console.log("sign in success");
+      // console.log("sign in success");
 
       await SecureStore.setItemAsync("token", token.access_token);
       let user = await getUser();
@@ -121,7 +122,7 @@ const signUp = (dispatch) => {
       await dispatch({ type: "sign_in", payload: { logged_in: true, token } });
       // navigate("Profile");
     } catch (error) {
-      console.log(error.message);
+      // console.log(error.message);
 
       dispatch({
         type: "add_error",
@@ -135,18 +136,20 @@ const logout = (dispatch) => {
   return async () => {
     try {
       await revokeAccessToken();
+     
       await SecureStore.deleteItemAsync("token");
+      await SecureStore.deleteItemAsync("user_id");
+
 
       await signOut();
       stopLocationTracking();
-
       dispatch({ type: "sign_out" });
       // RootNavigation.navigate("Login")
 
       // navigate("Login");
       // RootNavigation.navigate("Login");
     } catch (err) {
-      console.error(err);
+      // console.error(err);
       dispatch({ type: "add_error", payload: { errorMessage: err.message } });
     }
   };
@@ -158,7 +161,6 @@ export const refreshAllTokens = async () => {
     
 
   const refresh_tokens = await refreshTokens();
-  console.error("refresh token");
 
   if(refresh_tokens == null){
     return false;
@@ -167,7 +169,7 @@ export const refreshAllTokens = async () => {
   await SecureStore.setItemAsync("refresh_token", refresh_tokens.refresh_token); 
   return true;
   } catch (error) {
-    console.error(error)
+    // console.error(error)
     return false;
   }
   
@@ -176,6 +178,8 @@ export const isAuthed = async() =>{
   try {
     const token = await SecureStore.getItemAsync("token");
     const tokenIsActive = await introspectAccessToken(token); //  throws error
+
+
     if(tokenIsActive["active"]){
       return true;
     } else {
@@ -187,7 +191,7 @@ export const isAuthed = async() =>{
     
   } catch (error) {
     const res = await refreshAllTokens();
-
+   
     if(res)
       return true;
     

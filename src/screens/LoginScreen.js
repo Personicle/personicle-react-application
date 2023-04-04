@@ -14,7 +14,7 @@ import { Context } from "../context/AuthorizationContext";
 const LoginScreen = ({ navigation }) => {
   const [userEmail, setUserEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log(userEmail, password);
+
   const { state, login, googleSignIn, signUp } = useContext(Context);
 
   console.log(state);

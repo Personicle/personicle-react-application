@@ -7,7 +7,9 @@ import { SplashStack } from "../navigationStacks";
 import groupBy from "lodash/groupBy";
 import moment from "moment";
 import CalendarStrip from 'react-native-calendar-strip';
+import { getEvents } from "../utils/userEvents";
 
+import { useMutation, useQueryClient } from 'react-query'
 
 const TimelineScreen = () => {
   const[isloading, setIsLoading] = useState(true);
@@ -15,27 +17,72 @@ const TimelineScreen = () => {
   const [todayEvents, setTodayEvents] = useState([]);
   const [firstLoad, setFirstLoad] = useState(true);
   const [onRefresh, setRefresh] = useState(false);
-  useEffect(() => {
-    async function getEvents(){
+  const events = getEvents();
+  const queryClient = useQueryClient()
+
+  async function formatEvents(hardRefresh){
     let data = []
     let dates =[]
-     const events =  await getUserEvents();
-   
-     events["data"].forEach(event => {
+    //  const events =  await getUserEvents();
+    try {
+      hardRefresh = hardRefresh || false
+      let userEvents;
+      console.error(hardRefresh)
+      if(hardRefresh) userEvents = await getUserEvents();
+      else userEvents = events.data;
+
+      userEvents.data.forEach(event => {
        
-      data.push({
-        time: moment(event["start_time"]).utc(event['start_time']).local().format(''),
-        end_time: moment(event["end_time"]).utc(event['end_time']).local().format(''),
-        title: event["event_name"],
-      })
-     })
-      let groupedByDay = groupBy(data, (dt) => moment(dt['time']).format('MM-DD-YYYY'))
-      setDailyEvents(groupedByDay)
-      setIsLoading(false);
+        data.push({
+          time: moment(event["start_time"]).utc(event['start_time']).local().format(''),
+          end_time: moment(event["end_time"]).utc(event['end_time']).local().format(''),
+          title: event["event_name"],
+        })
+       })
+        let groupedByDay = groupBy(data, (dt) => moment(dt['time']).format('MM-DD-YYYY'))
+        setDailyEvents(groupedByDay)
+        if(hardRefresh){
+        //   const userEventsMutation = useMutation( {
+        //     onSuccess: () => {
+        //     // console.error("on success mutation")
+        //     // console.error(updatedData)
+            queryClient.setQueryData(['user-events'], (prev) => (userEvents ))
+        //     }
+        // })
+        }
+        setIsLoading(false);
+        
+    } catch (error) {
+      console.error(error)
     }
-    getEvents();
-    console.error("hola")
-  }, [onRefresh])
+   
+    
+    }
+  // useEffect(() => {
+  //   async function getEvents(){
+  //   let data = []
+  //   let dates =[]
+  //    const events =  await getUserEvents();
+
+   
+  //    events["data"].forEach(event => {
+       
+  //     data.push({
+  //       time: moment(event["start_time"]).utc(event['start_time']).local().format(''),
+  //       end_time: moment(event["end_time"]).utc(event['end_time']).local().format(''),
+  //       title: event["event_name"],
+  //     })
+  //    })
+  //     let groupedByDay = groupBy(data, (dt) => moment(dt['time']).format('MM-DD-YYYY'))
+  //     setDailyEvents(groupedByDay)
+  //     setIsLoading(false);
+  //   }
+  //   getEvents();
+  //   console.error("refresh")
+  // }, [onRefresh])
+  useEffect(() => {
+    events.isFetched && formatEvents()
+  },[events.isFetched && !events.isRefetching])
 
   function getSelectedDaysEvents(date){
     if(dailyEvents[moment(date).format('MM-DD-YYYY')] === undefined){
@@ -66,6 +113,8 @@ useEffect(()=> {
 },[])
 const refreshData = async () => {
   setRefresh(true);
+  formatEvents(true); // mutate cache as well
+ 
 }
 const getFooter = () => {
   return <Text>{' '}</Text>;

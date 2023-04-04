@@ -11,6 +11,7 @@ import {
   stopLocationTracking,
 } from "../src/utils/location";
 import { importHealthKit } from "./utils/healthKitSetup/healthKit";
+import PhysiciansContextProvider from "./context/physicians-context";
 
 export const startTracking = async () => {
   try {
@@ -20,20 +21,21 @@ export const startTracking = async () => {
     // await trackLocations(token,user_id)
     return true;
   } catch (error) {
-    console.error(error);
+    // console.error(error);
     return false;
   }
 };
 
 export default () => {
-  const { state, autoLogin } = useContext(Context);
-  useEffect(() => {
-    (async () => {
 
+  const { state, autoLogin } = useContext(Context);
+  async function refetchTokens() {
+
+    try {
       if (state.logged_in == false) {
         // console.error("if is logged in:", state.logged_in)
-
-        const res = await autoLogin();
+  
+        const res= await autoLogin();
         // console.error("auto login response: ", res)
         if (res) {
           startTracking();
@@ -43,22 +45,65 @@ export default () => {
         }
       } else {
         startTracking();
-        console.warn("Start tracking after signing in");
+        // console.warn("Start tracking after signing in");
         importHealthKit();
       }
-      // console.error("is logged in:", state.logged_in)
+    } catch (error) {
+      // console.error(error)
+    }
+    
+  }
+  useEffect(() => {
+    (async () => {
+      const firstFetch = await refetchTokens();
+     
+        try {
+          const ress =  setInterval( async () =>  await refetchTokens(), 3480000  ) // refresh tokens every 58 minutes
+            // console.error(ress)
+          } catch (error) {
+            // console.error(error)
+          }
+      
     })();
+    
+    // (async () => {
+
+    //   if (state.logged_in == false) {
+    //     // console.error("if is logged in:", state.logged_in)
+       
+        
+
+    //     const res = await autoLogin();
+    //     // console.error("auto login response: ", res)
+    //     if (res) {
+    //       startTracking();
+    //       importHealthKit();
+    //     } else {
+    //       stopLocationTracking();
+    //     }
+    //   } else {
+    //     startTracking();
+    //     console.warn("Start tracking after signing in");
+    //     importHealthKit();
+    //   }
+    //   // console.error("is logged in:", state.logged_in)
+    // })();
+
   }, []);
   return (
+    <PhysiciansContextProvider>
+
     <NavigationContainer ref={navigationRef}>
-      {state.isLoading ? (
-        <SplashStack />
-      ) : state.token == null ? (
-        <LoginStack />
-      ) : (
-        <AppStack />
-      )}
-      {/* { ( state.token) ? <AppStack /> : <LoginStack />} */}
-    </NavigationContainer>
+          {state.isLoading ? (
+            <SplashStack />
+          ) : state.token == null ? (
+            <LoginStack />
+          ) : (
+            <AppStack />
+          )}
+          {/* { ( state.token) ? <AppStack /> : <LoginStack />} */}
+        </NavigationContainer>
+    </PhysiciansContextProvider>
+  
   );
 };

@@ -12,6 +12,7 @@ import {
   StackedBarChart
 } from "react-native-chart-kit";
 import { clearNodeFolder } from "broadcast-channel";
+import { getEvents } from "../utils/userEvents";
 
 const TimelineScreenWeekly = () => {
   const[weeklyEvents, setWeeklyEvents] = useState([]);
@@ -23,7 +24,7 @@ const TimelineScreenWeekly = () => {
   const [chartData, setChartData] = useState({});
   const [formattedChartData, setFormattedChatData] = useState([]);
 
-  
+
   const chartConfig = {
     backgroundGradientFrom: "#FFFFFF",
     backgroundGradientFromOpacity: 0,
@@ -38,18 +39,23 @@ const TimelineScreenWeekly = () => {
   };
 
   const graphStyle = {
+    // paddingLeft: 10
     // marginVertical: 8,
     // ...chartConfig.style
   }
+  const events =  getEvents();
 
- 
-  useEffect(() => {
-    async function getEvents(){
+    async function formatEvents(hardRefresh){
         let data = []
         let start_times = []
-        const events =  await getUserEvents();
+        hardRefresh = hardRefresh || false
+        let userEvents ;
+        if(hardRefresh){
+          userEvents = await getUserEvents();
+        } else userEvents = events.data
+
         // console.error(events)
-        events["data"].forEach(event => {
+        userEvents["data"].forEach(event => {
           start_times.push(moment(event['start_time']).utc(event['start_time']).local().format('MM-DD-YYYY h:m:s.SSS a'))
           data.push({
             time: moment(event['start_time']).utc(event['start_time']).local().format('MM-DD-YYYY h:m:s.SSS a'),
@@ -77,8 +83,11 @@ const TimelineScreenWeekly = () => {
         
           setIsLoading(false);
      }
-    getEvents();
-  }, [])
+ 
+     useEffect(()=>{
+      events.isFetched && formatEvents();
+     }, [events.isFetched && !events.isRefetching])
+
 
   useEffect(() => {
     setCurrentWeekEvents(weeklyEvents[timelineYearWeek]);
@@ -98,23 +107,11 @@ const TimelineScreenWeekly = () => {
        return [event[0],lodash.groupBy(event[1],'title')]
       })
 
-          // console.error("result")
-      
-          // console.error(formattedData)
-
           setFormattedChatData(formattedData)          
-          
-
   
       } else {
         setChartData(undefined);
-
       }
-        // for (var i = 0; i < currentEvents.length; i++) {
-        //   temp[currentEvents[i].title] = currentEvents[i];
-        //   // temp[varjson.DATA[i].name] = varjson.DATA[i];
-        // }
-    // }
     } catch (error) {
       console.error(error)
     }
@@ -132,17 +129,18 @@ const TimelineScreenWeekly = () => {
           // console.error("inside for each")
           //  console.error(e.length)
            for (const [key, value] of Object.entries(e[1])) {
-            console.log(`${key}: ${value}`);
+            console.warn(`${key}: ${value}`);
             temp[key+"_"+e[0]]  = lodash.sumBy(value, (o)=> {
-              // console.error(o['duration']);
-              return (moment.duration(o['duration']).minutes() )
+              return (Math.floor(moment.duration(o['duration']).asMinutes()))
             })
           }
           
-          
+          console.error("temp")
+          console.error(temp)
            dataToDisplay.push(Object.values(temp))
         })
-
+        console.error("datatoDisplay")
+        console.error(dataToDisplay)
           const datas = {
             labels: daysActive,
             legend: uniqueEventsInWeek,
@@ -190,7 +188,7 @@ const TimelineScreenWeekly = () => {
         width={Dimensions.get('window').width}
         height={220}
         chartConfig={chartConfig}
-          
+        formatYLabel={(t) => Math.trunc(parseInt(t)).toString()+"min"}
         /> : <Text>No events</Text>)]}
     </View>
   );

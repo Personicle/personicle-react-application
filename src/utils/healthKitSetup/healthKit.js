@@ -113,12 +113,12 @@ export const connectHealthKit = () => {
     /* Called after we receive a response from the system */
 
     if (error) {
-      console.log("[ERROR] Cannot grant permissions!");
-      console.error("Cannot grant permission");
+      // console.log("[ERROR] Cannot grant permissions!");
+      // console.error("Cannot grant permission");
     }
 
     /* Can now read or write to HealthKit */
-    console.warn("Permission granted");
+    // console.warn("Permission granted");
     importHealthKit();
   });
 };
@@ -133,12 +133,14 @@ export const getWorkoutData = () => {
   return AppleHealthKit.getSamples(options, (callbackError, results) => {
     /* Samples are now collected from HealthKit */
     if (callbackError) {
-      console.warn(JSON.stringify(callbackError));
+      // console.warn(JSON.stringify(callbackError));
     } else {
       // console.warn("workouts" + JSON.stringify(results));
-      console.log(JSON.stringify(results));
+      // console.log(JSON.stringify(results));
 
       const formatted_events = workoutEventFormatter(results);
+      console.error("workout data")
+      console.error(results)
       writeEvents(formatted_events);
     }
   });
@@ -154,10 +156,10 @@ export const getSleepData = () => {
   return AppleHealthKit.getSleepSamples(options, (callbackError, results) => {
     /* Samples are now collected from HealthKit */
     if (callbackError) {
-      console.warn(JSON.stringify(callbackError));
+      // console.warn(JSON.stringify(callbackError));
     } else {
       // console.warn("Sleep" + JSON.stringify(results));
-      console.log(JSON.stringify(results));
+      // console.log(JSON.stringify(results));
 
       const formatted_events = sleepEventFormatter(results);
       writeEvents(formatted_events);
@@ -173,7 +175,7 @@ export const getMindfulnessData = () => {
 
   AppleHealthKit.getMindfulSession(options, (err, results) => {
     if (err) {
-      console.error("error getting mindful session: ", err);
+      // console.error("error getting mindful session: ", err);
       return;
     }
     // returns array of mindful session data
@@ -185,7 +187,7 @@ export const getMindfulnessData = () => {
 
 export const getDatastreams = () => {
   Object.keys(personicleDataMapping).forEach((streamName) => {
-    console.warn("Getting stream " + streamName);
+    // console.warn("Getting stream " + streamName);
     const getterMethod = dataGetterMapping[streamName];
 
     const options = {
@@ -194,13 +196,13 @@ export const getDatastreams = () => {
     };
     getterMethod(options, (err, results) => {
       if (err) {
-        console.error("error getting session: " + streamName, err);
+        // console.error("error getting session: " + streamName, err);
         return;
       }
       // returns array of mindful session data
       // console.warn(results);
       try {
-        console.warn(`${streamName} ${JSON.stringify(results)}`);
+        // console.warn(`${streamName} ${JSON.stringify(results)}`);
         const formatter =
           streamName in datastreamFormatterMapping
             ? datastreamFormatterMapping[streamName]
@@ -208,16 +210,18 @@ export const getDatastreams = () => {
         // const formatted_data = formatter(streamName, results);
         formatter(streamName, results)
           .then((formatted_data) => {
-            console.warn(
-              `formatted data for ${streamName} ${JSON.stringify(
-                formatted_data
-              )}`
-            );
+            // console.warn(
+            //   `formatted data for ${streamName} ${JSON.stringify(
+            //     formatted_data
+            //   )}`
+            // );
             writeDataStream(formatted_data);
           })
-          .catch((err) => console.err(err));
+          .catch((err) => {
+            // console.error(err)
+          });
       } catch (err) {
-        console.error(`error in ${streamName} ${err}`);
+        // console.error(`error in ${streamName} ${err}`);
       }
     });
   });
