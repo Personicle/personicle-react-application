@@ -11,6 +11,7 @@ export const sleepEventFormatter = (events) => {
         end_time: element.endDate ? element.endDate : element.startDate,
         duration: element.endDate - element.startDate,
         event_name: `Sleep:${element.value}`,
+        event_type: event_mapping[element.activityId],
         source: "PERSONICLE_IOS_APP",
         parameters: JSON.stringify({
           source_device: element.sourceName,
@@ -59,6 +60,7 @@ export const mindfulnessEventFormatter = (events) => {
         end_time: element.endDate ? element.endDate : element.startDate,
         duration: element.endDate - element.startDate,
         event_name: "Mindfulness",
+        event_type: event_mapping[element.activityId],
         source: "PERSONICLE_IOS_APP",
         parameters: JSON.stringify({}),
       });
