@@ -18,7 +18,7 @@ async function  sendLocation(location){
     values.push({
       'latitude': loc['coords']['latitude'],
       'longitude': loc['coords']['longitude'],
-      // 'timestamp': loc['timestamp']
+      'timestamp': loc['timestamp']
     })
     dataPoints.push({
       'timestamp': loc['timestamp'],
