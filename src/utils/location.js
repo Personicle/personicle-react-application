@@ -18,7 +18,7 @@ async function  sendLocation(location){
     values.push({
       'latitude': loc['coords']['latitude'],
       'longitude': loc['coords']['longitude'],
-      // 'timestamp': loc['timestamp']
+      'timestamp': loc['timestamp']
     })
     dataPoints.push({
       'timestamp': loc['timestamp'],
@@ -35,15 +35,18 @@ async function  sendLocation(location){
     "source": "PERSONICLE_IOS_APP",
     "dataPoints": dataPoints
   }
-  // console.error("sending location")
+  console.error("sending location")
+  console.warn(data)
   axios.post('https://api.personicle.org/data/write/datastream/upload', JSON.stringify(data), {
     headers: {
       'Accept': 'application/json',
       'Content-Type': 'application/json',
       'Authorization': "Bearer "+token
     }
+  
   }).then(res => {
-    // console.error(res)
+    console.error(res)
+    console.warn("hfohsfjsnf")
     if (res.status == 200){
       deleteLocs();
     }
