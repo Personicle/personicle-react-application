@@ -1,6 +1,6 @@
 import * as SecureStore from "expo-secure-store";
 import { personicleDataMapping } from "./dataMapping";
-
+import event_mapping from './event_mapping.json';
 export const sleepEventFormatter = (events) => {
   let response = [];
   SecureStore.getItemAsync("user_id").then((userId) => {
@@ -11,6 +11,7 @@ export const sleepEventFormatter = (events) => {
         end_time: element.endDate ? element.endDate : element.startDate,
         duration: element.endDate - element.startDate,
         event_name: `Sleep:${element.value}`,
+        event_type: event_mapping[element.activityId],
         source: "PERSONICLE_IOS_APP",
         parameters: JSON.stringify({
           source_device: element.sourceName,
@@ -33,6 +34,7 @@ export const workoutEventFormatter = (events) => {
         end_time: element.end ? element.end : element.start,
         duration: element.end - element.start,
         event_name: element.activityName,
+        event_type: event_mapping[element.activityId],
         source: "PERSONICLE_IOS_APP",
         parameters: JSON.stringify({
           source_device: element.sourceName,
@@ -58,6 +60,7 @@ export const mindfulnessEventFormatter = (events) => {
         end_time: element.endDate ? element.endDate : element.startDate,
         duration: element.endDate - element.startDate,
         event_name: "Mindfulness",
+        event_type: event_mapping[element.activityId],
         source: "PERSONICLE_IOS_APP",
         parameters: JSON.stringify({}),
       });

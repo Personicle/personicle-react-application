@@ -139,6 +139,8 @@ export const getWorkoutData = () => {
       // console.log(JSON.stringify(results));
 
       const formatted_events = workoutEventFormatter(results);
+      console.error("workout data")
+      console.error(results)
       writeEvents(formatted_events);
     }
   });

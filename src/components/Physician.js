@@ -29,8 +29,6 @@ function Physician({hardRefresh,phy_id,visualization, imageResponses, responses,
         //  queryClient.refetchQueries({ queryKey: [phy_id+"-"] , exact: false})
 
         cachedImages = userImageResponses(imageResponses);
-      
-        
         // mutateImageResponses();
     }
     

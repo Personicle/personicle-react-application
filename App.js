@@ -12,7 +12,7 @@ import Router from "./src/Router";
 import { PersistQueryClientProvider ,persistQueryClient, persistQueryClientRestore } from '@tanstack/react-query-persist-client'
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
 import { LogBox } from 'react-native';
-LogBox.ignoreAllLogs();//Ignore all log notifications
+// LogBox.ignoreAllLogs();//Ignore all log notifications
 export default () => {
   const queryClient = new QueryClient(
     {

@@ -89,23 +89,18 @@ function VisualizeResponses() {
               } else {
                 // t[`${phyId}-${userRes["question_id"]}`] = [userRes["value"]];
                 t2[`${phyId}-${userRes["question_id"]}`] = [ [userRes["value"], responses['timestamp']]];
-
               }
-              
-
-            }
-            
+            }    
           }
         }
         // if(temp.length > 0) imageResponsesForPhy[phyId] = temp // push only if image reponses exists for this physician
       }
 
-      
       setImageResponsesForPhy([t2]);
 
       // console.error([t])
-      // console.error("t2")
-      // console.error([t2])
+      console.error("t2")
+      console.error([t2])
 
     } catch (error) {
       // console.error(error);
@@ -127,7 +122,9 @@ function VisualizeResponses() {
     setIsLoading(false);
   };
   function renderPhysicians(itemData) {
-    return !isloading && (
+    console.error("image responses")
+    console.error(imageResponses)
+    return (
       <Physician
         hardRefresh={hf}
         visualization={true}
